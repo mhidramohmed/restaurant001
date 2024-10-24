@@ -26,8 +26,8 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 
 
-Route::apiResource('categories', CategoryController::class)->name('categories');
-Route::apiResource('menu-items', MenuItemController::class)->name('menu-items');
-Route::apiResource('orders', OrderController::class)->name('orders');
-Route::apiResource('order-elements', OrderElementController::class)->name('order-elements');
+Route::apiResource('categories', CategoryController::class);
+Route::apiResource('menu-items', MenuItemController::class);
+Route::apiResource('orders', OrderController::class);
+Route::apiResource('order-elements', OrderElementController::class);
 

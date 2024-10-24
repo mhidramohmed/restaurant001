@@ -31,7 +31,6 @@ class CategoryController extends Controller
             ]);
 
 
-            // $input = $request->all();
 
             if ( $request->has('image')) {
 
@@ -44,7 +43,6 @@ class CategoryController extends Controller
                 $data['image'] = $profileImage;
             }
 
-            // return 'hhhhhhhhhhhh';
 
             Category::create($data);
 
@@ -75,6 +73,8 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         try {
+
+            dd($request);
 
             if($category){
 
@@ -131,11 +131,15 @@ class CategoryController extends Controller
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
                 }
+
+                $category->delete();
+
+                return response()->json([
+                    'messsage'=>"the category deleted seccusfully"
+                ], 204);
             }
-            $category->delete();
-            return response()->json([
-                'messsage'=>"the category deleted seccusfully"
-            ], 204);
+
+            
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to delete category'], 500);
         }

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('client_phone');
             $table->text('client_address');
             $table->decimal('total_price', 8, 2);
-            $table->enum('payment_method', ['cart', 'cash']);
+            $table->enum('payment_method', ['visa', 'cash']);
             $table->enum('status', ['pending', 'delivered', 'declined'])->default('pending');
             $table->timestamps();
         });
