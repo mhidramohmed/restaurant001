@@ -3,6 +3,11 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\MenuItemController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderElementController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,3 +22,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+
+
+Route::apiResource('categories', CategoryController::class);
+Route::apiResource('menu-items', MenuItemController::class);
+Route::apiResource('orders', OrderController::class);
+Route::apiResource('order-elements', OrderElementController::class);
+
