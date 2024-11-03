@@ -1,12 +1,10 @@
+'use client';
 // import LoginLinks from '@/app/LoginLinks'
 import Header from '@/components/Header';
 import CategoryBar from '@/components/CategoryBar';
 // import MainButton from '@/components/MainButton'
 import Menu from '@/components/Menu';
 
-export const metadata = {
-    title: 'Restaurant',
-}
 
 const Home = () => {
     return (

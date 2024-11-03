@@ -1,24 +1,25 @@
-// CategoryBar.js
+"use client";
 import Category from './Category';
+import useSWR from 'swr';
+import axios from '@/lib/axios';
 
-// Categories with color placeholders for testing
-const categories = [
-    { title: 'Pizza', color: '#F87171' },   // Light Red
-    { title: 'Burgers', color: '#FBBF24' }, // Amber
-    { title: 'Sushi', color: '#34D399' },   // Green
-    { title: 'Desserts', color: '#60A5FA' },// Blue
-    { title: 'Drinks', color: '#A78BFA' },  // Purple
-  ];
+// Define the fetcher function outside of the component without async/await
+const fetcher = (url) => axios.get(url).then((res) => res.data.data);
 
 const CategoryBar = () => {
+  // useSWR will handle data fetching asynchronously
+  const { data: categories, error } = useSWR('/api/categories', fetcher);
+
+  if (error) return <div>Failed to load categories</div>;
+  if (!categories) return <div>Loading...</div>;
+
   return (
     <div className="flex overflow-x-auto bg-background py-4 px-2 md:px-4 lg:px-6 space-x-4">
       {categories.map((category, index) => (
         <Category
           key={index}
-          title={category.title}
-        //   imgSrc={category.imgSrc}
-        color={category.color}
+          name={category.name}
+          image={category.image}
         />
       ))}
     </div>
