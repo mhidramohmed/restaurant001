@@ -79,8 +79,8 @@ class CategoryController extends Controller
             if($category){
 
                 $data = $request->validate([
-                    'name' => 'string',
-                    'description' => 'string',
+                    'name' => 'sometimes|string',
+                    'description' => 'sometimes|string',
                     'image'=> ' sometimes|  image | mimes: jpeg,png,jpg,gif,svg|max:2048'
                 ]);
 
@@ -139,7 +139,7 @@ class CategoryController extends Controller
                 ], 204);
             }
 
-            
+
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to delete category'], 500);
         }
