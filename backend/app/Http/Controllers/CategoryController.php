@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\MenuItem;
+
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -61,10 +63,22 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         try {
-            return response()->json([
-                'data'=> $category,
+            if($category){
+
+                $menuItems = MenuItem::where('category_id',$category->id)->get();
+
+                return response()->json([
+                'data'=> [$category,$menuItems],
                 'messsage'=>"u get the data  "
-            ],200);
+                ],200);
+
+            }else{
+
+                return response()->json([
+                    'message' => "Your category  doesn't exist"
+                ], 404);
+            }
+
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to fetch category'], 500);
         }
