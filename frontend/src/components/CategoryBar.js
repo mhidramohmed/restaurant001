@@ -2,6 +2,7 @@
 import Category from './Category';
 import useSWR from 'swr';
 import axios from '@/lib/axios';
+import styles from '@/assets/styles/CategoryBar.module.css'
 
 // Define the fetcher function outside of the component without async/await
 const fetcher = (url) => axios.get(url).then((res) => res.data.data);
@@ -14,7 +15,7 @@ const CategoryBar = () => {
   if (!categories) return <div>Loading...</div>;
 
   return (
-    <div className="flex overflow-x-auto bg-background py-4 px-2 md:px-4 lg:px-6 space-x-4">
+    <div className={`${styles.categoryBar} ${styles.scrollbarHide} flex overflow-x-auto bg-background py-2 px-2 md:px-4 lg:px-6 space-x-4`}>
       {categories.map((category, index) => (
         <Category
           key={index}

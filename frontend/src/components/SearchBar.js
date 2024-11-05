@@ -9,7 +9,7 @@ const SearchBar = () => {
       <input
         type="text"
         placeholder="Search a dish"
-        className="w-full pl-10 pr-4 py-2 text-text rounded-lg border-none focus:outline-none focus:border-none focus:ring-0"
+        className="w-full h-12 pl-10 pr-4 py-2 bg-secondary text-text rounded-lg border-none focus:outline-none focus:border-none focus:ring-0"
       />
     </div>
   );

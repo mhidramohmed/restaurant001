@@ -2,6 +2,7 @@
 // import LoginLinks from '@/app/LoginLinks'
 import Header from '@/components/Header';
 import CategoryBar from '@/components/CategoryBar';
+import ShoppingCart from '@/components/ShoppingCart';
 // import MainButton from '@/components/MainButton'
 import Menu from '@/components/Menu';
 
@@ -20,9 +21,7 @@ const Home = () => {
                 </main>
                 {/* Shopping Cart with a stronger shadow */}
                 <aside className="fixed right-0 top-0 w-1/4 h-full p-4 bg-background shadow-xl overflow-y-auto z-10">
-                    <h2 className="text-xl font-bold">Shopping Cart</h2>
-                    {/* Add your shopping cart content here */}
-                    {/* <MainButton className='bg-primary text-background'>Add Item</MainButton> */}
+                    <ShoppingCart />
                 </aside>
                 {/* <LoginLinks /> */}
             </div>

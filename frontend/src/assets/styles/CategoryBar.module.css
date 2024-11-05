@@ -1,0 +1,13 @@
+/* CategoryBar.module.css */
+.categoryBar {
+    overflow-x: auto; /* Allow horizontal scrolling */
+  }
+  
+  .scrollbarHide {
+    scrollbar-width: none; /* Firefox */
+  }
+  
+  .scrollbarHide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
+  }
+  

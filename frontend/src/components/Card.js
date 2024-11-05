@@ -5,14 +5,13 @@ import { IoLink } from "react-icons/io5";
 
 const Card = ({ image, name, price, onAddToCart, onDetails }) => {
   return (
-    <div className="border border-gray-200 rounded-md shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden">
+    <div className="h-[450px] border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden">
       {/* Image Section */}
       <div className="h-2/3">
         <img
-          // src={image}
-          src='https://via.placeholder.com/150'
+          src={image}
           alt={name}
-          className="w-full h-full object-cover rounded-t-md"
+          className="w-full h-full object-cover rounded-t-lg"
         />
       </div>
       
@@ -21,11 +20,11 @@ const Card = ({ image, name, price, onAddToCart, onDetails }) => {
         <h3 className="text-lg font-semibold text-text">{name}</h3>
         <div className="flex items-center justify-between mt-2">
           {/* Price */}
-          <p className="text-primary font-medium">${price}</p>
+          <p className="text-primary font-medium">{price} Dhs</p>
           {/* Buttons */}
           <div className="flex space-x-2">
             <MainButton onClick={onAddToCart} className="bg-primary text-white"><LuShoppingCart /></MainButton>
-            <MainButton onClick={onDetails} className="bg-gray-300 text-text"><IoLink /></MainButton>
+            <MainButton onClick={onDetails} className="bg-secondary text-text"><IoLink /></MainButton>
           </div>
         </div>
       </div>

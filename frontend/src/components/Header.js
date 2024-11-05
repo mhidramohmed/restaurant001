@@ -19,9 +19,9 @@ const Header = () => (
 
       {/* Buttons */}
       <div className="flex space-x-4">
-        <CircleButton label="Phone Number" icon={<HiOutlinePhone />} />
-        <CircleButton label="Address" icon={<HiOutlineLocationMarker />} />
-        <CircleButton label="Add to Cart" icon={<HiOutlinePlusSm />} />
+        <CircleButton body="+212 628 354575" href="tel:+212628354575" icon={<HiOutlinePhone />} />
+        <CircleButton body="Marrakech" href="https://maps.app.goo.gl/z1u3aWaZuMSjftQx8" icon={<HiOutlineLocationMarker />} />
+        <CircleButton body="visite our website" href="https://bonsai-marrakech.com/" icon={<HiOutlinePlusSm />} />
       </div>
     </header>
 )
