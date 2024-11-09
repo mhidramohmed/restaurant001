@@ -1,6 +1,8 @@
 import { Nunito } from 'next/font/google'
 import '@/app/global.css'
 
+import { CartProvider } from '@/contexts/CartContext';
+
 const nunitoFont = Nunito({
     subsets: ['latin'],
     display: 'swap',
@@ -9,7 +11,11 @@ const nunitoFont = Nunito({
 const RootLayout = ({ children }) => {
     return (
         <html lang="en" className={nunitoFont.className}>
-            <body className="antialiased bg-background">{children}</body>
+            <body className="antialiased bg-background">
+            <CartProvider>
+            {children}
+            </CartProvider>
+            </body>
         </html>
     )
 }

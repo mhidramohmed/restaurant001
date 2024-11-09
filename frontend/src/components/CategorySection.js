@@ -26,6 +26,7 @@ const CategorySection = ({ categoryName, categoryId }) => {
         {categoryItems.map((item) => (
           <Card
             key={item.id}
+            id={item.id}
             image={item.image}
             name={item.name}
             price={item.price}

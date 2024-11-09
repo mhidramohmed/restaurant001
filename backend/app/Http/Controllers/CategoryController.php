@@ -88,7 +88,7 @@ class CategoryController extends Controller
     {
         try {
 
-            dd($request);
+            // dd($request);
 
             if($category){
 
@@ -97,7 +97,6 @@ class CategoryController extends Controller
                     'description' => 'sometimes|string',
                     'image'=> ' sometimes|  image | mimes: jpeg,png,jpg,gif,svg|max:2048'
                 ]);
-
 
 
                 if($request->has('image')){
@@ -117,12 +116,13 @@ class CategoryController extends Controller
                 }
 
                 $category->update($data);
+                $category->refresh(); // Reloads the updated data
+
 
                 return response()->json([
-
-                    'messsage'=>"the category updated successfully  "
-
-                ]);
+                    'message' => "The category was updated successfully.",
+                    'request' => $request
+                ]);                
             }else{
 
                 return response()->json([
