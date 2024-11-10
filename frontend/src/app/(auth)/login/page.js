@@ -1,14 +1,14 @@
 'use client'
 
-import Button from '@/components/Button'
-import Input from '@/components/Input'
+import MainButton from '@/components/MainButton'
 import InputError from '@/components/InputError'
-import Label from '@/components/Label'
-import Link from 'next/link'
 import { useAuth } from '@/hooks/auth'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import AuthSessionStatus from '@/app/(auth)/AuthSessionStatus'
+import Logo from '@/components/Logo'
+import Image from 'next/image';
+import bgImage from '@/assets/img/bonsai-bg.jpg'
 
 const Login = () => {
     const router = useRouter()
@@ -45,78 +45,69 @@ const Login = () => {
     }
 
     return (
-        <>
-            <AuthSessionStatus className="mb-4" status={status} />
-            <form onSubmit={submitForm}>
-                {/* Email Address */}
-                <div>
-                    <Label htmlFor="email">Email</Label>
-
-                    <Input
-                        id="email"
-                        type="email"
-                        value={email}
-                        className="block mt-1 w-full"
-                        onChange={event => setEmail(event.target.value)}
-                        required
-                        autoFocus
-                    />
-
-                    <InputError messages={errors.email} className="mt-2" />
+        <div className="flex items-center justify-center min-h-screen bg-cover bg-center" 
+        style={{ backgroundImage: `url(${bgImage.src})` }}
+        >
+            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
+                <div className="flex items-center justify-center mb-6 text-center">
+                    <Logo className="mx-auto" />
                 </div>
-
-                {/* Password */}
-                <div className="mt-4">
-                    <Label htmlFor="password">Password</Label>
-
-                    <Input
-                        id="password"
-                        type="password"
-                        value={password}
-                        className="block mt-1 w-full"
-                        onChange={event => setPassword(event.target.value)}
-                        required
-                        autoComplete="current-password"
-                    />
-
-                    <InputError
-                        messages={errors.password}
-                        className="mt-2"
-                    />
-                </div>
-
-                {/* Remember Me */}
-                <div className="block mt-4">
-                    <label
-                        htmlFor="remember_me"
-                        className="inline-flex items-center">
+                <AuthSessionStatus className="mb-4" status={status} />
+                <form onSubmit={submitForm}>
+                    {/* Email Address */}
+                    <div>
+                        <label htmlFor="email" className="block text-text font-medium">Email</label>
                         <input
-                            id="remember_me"
-                            type="checkbox"
-                            name="remember"
-                            className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                            onChange={event =>
-                                setShouldRemember(event.target.checked)
-                            }
+                            id="email"
+                            type="email"
+                            value={email}
+                            className="block mt-2 w-full p-3 bg-secondary text-text rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-primary"
+                            onChange={event => setEmail(event.target.value)}
+                            required
+                            autoFocus
                         />
+                        <InputError messages={errors.email} className="mt-2 text-sm text-red-500" />
+                    </div>
 
-                        <span className="ml-2 text-sm text-gray-600">
-                            Remember me
-                        </span>
-                    </label>
-                </div>
+                    {/* Password */}
+                    <div className="mt-4">
+                        <label htmlFor="password" className="block text-text font-medium">Password</label>
+                        <input
+                            id="password"
+                            type="password"
+                            value={password}
+                            className="block mt-2 w-full p-3 bg-secondary text-text rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-primary"
+                            onChange={event => setPassword(event.target.value)}
+                            required
+                            autoComplete="current-password"
+                        />
+                        <InputError messages={errors.password} className="mt-2 text-sm text-red-500" />
+                    </div>
 
-                <div className="flex items-center justify-end mt-4">
-                    <Link
-                        href="/forgot-password"
-                        className="underline text-sm text-gray-600 hover:text-gray-900">
-                        Forgot your password?
-                    </Link>
+                    {/* Remember Me */}
+                    <div className="block mt-4">
+                        <label htmlFor="remember_me" className="inline-flex items-center">
+                            <input
+                                id="remember_me"
+                                type="checkbox"
+                                name="remember"
+                                className="rounded border-gray-300 text-primary shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+                                onChange={event => setShouldRemember(event.target.checked)}
+                            />
+                            <span className="ml-2 text-sm text-text">Remember me</span>
+                        </label>
+                    </div>
 
-                    <Button className="ml-3">Login</Button>
-                </div>
-            </form>
-        </>
+                    {/* Forgot Password Link */}
+                    <div className="flex items-center justify-between mt-4">
+                        {/* Submit Button */}
+                        <MainButton type="submit" className="w-full py-3 bg-primary text-background rounded-lg hover:bg-primary-dark transition">
+                            Login
+                        </MainButton>
+                    </div>
+                </form>
+            </div>
+        </div>
     )
 }
 

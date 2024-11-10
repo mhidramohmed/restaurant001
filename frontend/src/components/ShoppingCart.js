@@ -1,11 +1,14 @@
 // components/ShoppingCart.js
 'use client';
+import { useState } from 'react';
 import MainButton from './MainButton';
+import CheckoutForm from './CheckoutForm';
 import { LuShoppingCart, LuTrash2 } from "react-icons/lu";
 import { useCart } from '@/contexts/CartContext';
 
 const ShoppingCart = () => {
   const { items, removeItem, updateQuantity, getTotal } = useCart();
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   return (
     <div className="flex flex-col h-full">
@@ -67,10 +70,20 @@ const ShoppingCart = () => {
           <p>Total</p>
           <p className="text-xl">{getTotal()} Dhs</p>
         </div>
-        <MainButton className="mt-2 w-full bg-primary text-background">
+        <MainButton className="mt-2 w-full bg-primary text-background" 
+        onClick={() => items.length > 0 && setIsCheckoutOpen(true)}
+        disabled={items.length === 0}
+        >
           Checkout
         </MainButton>
       </div>
+
+      {isCheckoutOpen && (
+        <CheckoutForm onClose={() => setIsCheckoutOpen(false)}
+          cartItems={items} 
+          totalPrice={getTotal()} 
+         />
+      )}
     </div>
   );
 };

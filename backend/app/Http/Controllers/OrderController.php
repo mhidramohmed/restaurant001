@@ -42,11 +42,15 @@ class OrderController extends Controller
                 'client_address' => 'required|string|max:255',
                 'total_price' => 'required|numeric',
                 'payment_method' => 'required|string|in:visa,cash',
-                'status' => 'required|string|in:pending,delivered,declined',
+                // 'status' => 'required|string|in:pending,delivered,declined', //shouldent be passed in the request, it have a default value
                 'order_items' => 'required|array',
                 'order_items.*.menu_item_id' => 'required|exists:menu_items,id',
                 'order_items.*.quantity' => 'required|integer|min:1',
-                'order_items.*.price' => 'required|numeric'
+                'order_items.*.price' => 'required|numeric',
+                // Conditional validation for Visa payment method
+                'card_details.card_number' => 'required_if:payment_method,visa|string|digits_between:13,19',
+                'card_details.card_expiry' => 'required_if:payment_method,visa|date_format:m/y',
+                'card_details.card_cvv' => 'required_if:payment_method,visa|string|digits:3',
             ]);
 
             // Create the order
@@ -57,8 +61,26 @@ class OrderController extends Controller
                 'client_address' => $validated['client_address'],
                 'total_price' => $validated['total_price'],
                 'payment_method' => $validated['payment_method'],
-                'status' => $validated['status'],
+                // 'status' => $validated['status'], //default value
             ]);
+
+
+            // If payment method is Visa, process payment details (optional step)
+            if ($validated['payment_method'] === 'visa') {
+                // Here you would typically integrate with a payment gateway.
+                // For demonstration, we'll just log the card details.
+                // NEVER store raw card details in your database.
+                // This is just a placeholder to show how you might handle it.
+                $cardDetails = $validated['card_details'];
+                // Log or process the card details as needed
+                // Integrate with your payment gateway here using $cardDetails
+                // Example:
+                // $paymentResult = PaymentGateway::charge($cardDetails, $order->total_price);
+                // if (!$paymentResult->success) {
+                //     throw new \Exception('Payment failed: ' . $paymentResult->message);
+                // }
+            }
+
 
             // Loop through the order items and create each OrderElement
             foreach ($validated['order_items'] as $orderItem) {

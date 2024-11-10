@@ -14,8 +14,8 @@ module.exports = {
                 DEFAULT: '#432818',   // primary text color
                 light: '#6b5641'      // lighter text shade
             }
-            }
-        }
+            },
+        },
     
     },
     plugins: [require('@tailwindcss/forms')],
