@@ -25,9 +25,55 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 
 
+//Routes Categories
 
-Route::apiResource('categories', CategoryController::class);
-Route::apiResource('menu-items', MenuItemController::class);
-Route::apiResource('orders', OrderController::class);
-Route::apiResource('order-elements', OrderElementController::class);
+// Route::apiResource('categories', CategoryController::class);
+
+Route::get('/categories', [CategoryController::class,'index']);
+Route::get('/categories/{id}', [CategoryController::class,'show']);
+Route::post('/categories', [CategoryController::class,'store']);
+Route::put('/categories', [CategoryController::class,'update']);
+Route::delete('/categories/{id}', [CategoryController::class,'destroy']);
+
+
+
+
+//Routes MenuItems
+
+// Route::apiResource('menu-items', MenuItemController::class);
+
+Route::get('/menu-items', [MenuItemController::class,'index']);
+Route::get('/menu-items/{id}', [MenuItemController::class,'show']);
+Route::post('/menu-items', [MenuItemController::class,'store']);
+Route::put('/menu-items', [MenuItemController::class,'update']);
+Route::delete('/menu-items/{id}', [MenuItemController::class,'destroy']);
+
+
+
+//Routes Orders
+
+// Route::apiResource('orders', OrderController::class);
+
+
+Route::get('/orders', [OrderController::class,'index']);
+Route::get('/orders/{id}', [OrderController::class,'show']);
+Route::post('/orders', [OrderController::class,'store']);
+Route::put('/orders', [OrderController::class,'update']);
+Route::delete('/orders/{id}', [OrderController::class,'destroy']);
+
+//Routes OrderElements
+
+// Route::apiResource('order-elements', OrderElementController::class);
+
+// Route::prefix('/order-elements')->group(function () {
+//     Route::get('quantity-sold', [OrderElementController::class, 'quantitySoldByMenuItem']);
+// });
+
+Route::get('/order-elements', [OrderElementController::class,'index']);
+Route::get('/order-elements/{id}', [OrderElementController::class,'show']);
+Route::post('/order-elements', [OrderElementController::class,'store']);
+Route::put('/order-elements', [OrderElementController::class,'update']);
+Route::delete('/order-elements/{id}', [OrderElementController::class,'destroy']);
+Route::get('/analytics/menu-items/quantity-sold', [OrderElementController::class,'quantitySoldByMenuItem']);
+
 

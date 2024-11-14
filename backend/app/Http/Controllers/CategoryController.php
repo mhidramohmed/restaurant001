@@ -5,22 +5,31 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\MenuItem;
 
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use App\Http\Resources\CategorieResource;
 
 class CategoryController extends Controller
 {
      public function index()
     {
         try {
+            
             $categories = Category::all();
+            return CategorieResource::collection($categories)    ;
             return response()->json([
                 'data'=> $categories,
                 'messsage'=>"u get the data  "
             ],200);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to fetch categories'], 500);
+            return response()->json(['error' => 'Failed to fetch categories'], 200);
         }
     }
+
+
+
+
 
     public function store(Request $request)
     {
@@ -42,7 +51,7 @@ class CategoryController extends Controller
 
                 $request->image->move($destinationPath, $profileImage);
 
-                $data['image'] = $profileImage;
+                $data['image'] = '/'.$destinationPath.$profileImage;
             }
 
 
@@ -84,78 +93,102 @@ class CategoryController extends Controller
         }
     }
 
-    public function update(Request $request, Category $category)
+    public function update(Request $request,$id)
     {
-        try {
+        // try {
 
-            // dd($request);
-
-            if($category){
-
-                $data = $request->validate([
-                    'name' => 'sometimes|string',
-                    'description' => 'sometimes|string',
-                    'image'=> ' sometimes|  image | mimes: jpeg,png,jpg,gif,svg|max:2048'
-                ]);
+        //     $cate = Category::find($id);
 
 
-                if($request->has('image')){
-                    $olddestination = 'CategoriesImages/'.$category->image;
 
-                    if(\File::exists($olddestination)){
+        //     //    return(gettype($cate));
 
-                        \File::delete($olddestination);
+        //     if($cate){
 
-                    }
+        //         $data = $request->validate([
+        //             'name' => 'sometimes|string',
+        //             'description' => 'sometimes|string',
+        //             'image'=> ' sometimes|  image | mimes: jpeg,png,jpg,gif,svg|max:2048'
+        //         ]);
+        //         // info('ALIDATION PASSED ');
+
+        //         if($request->has('image')){
+        //             // info('HAS IMAGE ');
+
+        //             $olddestination = 'CategoriesImages/'.$cate->image;
+
+        //             if(File::exists($olddestination)){
+        //             // info('FILE EXESIT ');
 
 
-                    $destinationPath = 'CategoriesImages/';
-                    $profileImage = date('YmdHis') . "_" . $request->image->getClientOriginalName();
-                    $request->image->move($destinationPath, $profileImage);
-                    $data['image'] = "$profileImage";
-                }
+        //                 File::delete($olddestination);
+        //                 //  info('FILE Delted ');
 
-                $category->update($data);
-                $category->refresh(); // Reloads the updated data
+        //             }
 
 
-                return response()->json([
-                    'message' => "The category was updated successfully.",
-                    'request' => $request
-                ]);                
-            }else{
+        //             $destinationPath = 'CategoriesImages/';
+        //             $profileImage = date('YmdHis') . "_" . $request->image->getClientOriginalName();
+        //             $request->image->move($destinationPath, $profileImage);
+        //             $data['image'] = "$profileImage";
+        //         }
 
-                return response()->json([
-                    'message' => "Your category  doesn't exist"
-                ], 404);
-            }
+        //         $cate->update($data);
+        //         // $category->refresh(); // Reloads the updated data
 
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to update category'], 500);
-        }
+
+        //         return response()->json([
+        //             'message' => "The category was updated successfully.",
+        //             'request' => $request
+        //         ]);
+        //     }else{
+
+        //         return response()->json([
+        //             'message' => "Your category  doesn't exist"
+        //         ], 404);
+        //     }
+
+        // } catch (Exception $e) {
+
+        //     return response()->json(['error' => 'Failed to update category'], 500);
+        // }
+
+        // $categorie = Category::find($id);
+        info('i was here ');
+        return($request->all()) ;
+        if (!$categorie){ return "not existe" ;  }
+        $category = [
+                "name" => $request->name ,
+                "image" => "chemin",
+                "description" => $request->description
+        ];
+            $categorie->update($category) ;
+        return  "success";
+
+
+
+
+
+
     }
 
-    public function destroy(Category $category)
+    public function destroy($id)
     {
-        try {
-            if ($category) {
-                $imagePath = public_path('CategoriesImages/' . $category->image);
 
-                // Ensure the file exists before attempting to delete it
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
-                }
+      $category  = Category::find($id);
 
-                $category->delete();
+      if(!$category || $id =='')  return response()->json([
+        'status'=>false,
+        "message"=>"Your category whith ID $id doesn't exist "
+      ], 200);
 
-                return response()->json([
-                    'messsage'=>"the category deleted seccusfully"
-                ], 204);
-            }
+    //   return public_path().'/'.$category->image;
+      unlink(public_path().'/'.$category->image);
+      $category->delete();
 
-
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to delete category'], 500);
-        }
+      return response()->json([
+        'status'=>true,
+        "message"=>"Your category  has deleted successully "
+      ], 200);
     }
 }
