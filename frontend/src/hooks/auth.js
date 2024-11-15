@@ -100,8 +100,17 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     }
 
     useEffect(() => {
+        if (user) {
+            // Redirect based on role after login
+            if (user.role === 'admin') {
+                router.push('/dashboard')
+            } else if (user.role === 'user') {
+                router.push('/orders')
+            }
+        }
+        
         if (middleware === 'guest' && redirectIfAuthenticated && user)
-            router.push(redirectIfAuthenticated)
+            router.push('/orders') //redirectIfAuthenticated
 
         if (middleware === 'auth' && !user?.email_verified_at)
             router.push('/verify-email')
