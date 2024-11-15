@@ -11,7 +11,7 @@ const CheckoutForm = ({ onClose, cartItems, totalPrice }) => {
     client_email: '',
     client_phone: '',
     client_address: '',
-    payment_method: 'visa', // Default payment method
+    payment_method: 'cash', // Default payment method
     card_number: '',
     card_expiry: '',
     card_cvv: '',
@@ -68,7 +68,7 @@ const CheckoutForm = ({ onClose, cartItems, totalPrice }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
       <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto">
         <h2 className="text-xl font-bold mb-4 text-text">Checkout</h2>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Client Information Fields */}
           {[

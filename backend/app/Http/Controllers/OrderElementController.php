@@ -33,6 +33,15 @@ class OrderElementController extends Controller
     }
 
 
+
+
+    public function quantitySoldByMenuItem()
+    {
+
+        $salesData = OrderElement::getQuantitySoldByMenuItem();
+        return response()->json($salesData);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -44,14 +53,16 @@ class OrderElementController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(OrderElement $orderElement)
+    public function show( $id)
     {
         try {
+            $orderElement = OrderElement::find($id);
+
             if($orderElement){
 
                 return response()->json([
                     "data" => $orderElement,
-                    'messsage'=>"u get ur data "
+                    'messsage'=>"hhh "
                 ], 201);
             }else{
 
@@ -111,9 +122,9 @@ class OrderElementController extends Controller
 
                 return response()->json(['message' => "Your orderElement doesn't exist"], 404);
             }
-            
+
         } catch (\Throwable $th) {
-            
+
             return response()->json(['error' => 'Failed to delete  orderElement'], 500);
         }
     }

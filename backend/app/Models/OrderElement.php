@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OrderElement extends Model
 {
@@ -21,5 +22,15 @@ class OrderElement extends Model
     public function menuItem()
     {
         return $this->belongsTo(MenuItem::class);
+    }
+
+       public static function getQuantitySoldByMenuItem()
+    {
+        
+
+        return self::select('menu_item_id', DB::raw('SUM(quantity) as total_quantity_sold'))
+            ->groupBy('menu_item_id')
+            ->orderBy('total_quantity_sold', 'desc')
+            ->get();
     }
 }
