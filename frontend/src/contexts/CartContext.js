@@ -47,6 +47,9 @@ const cartReducer = (state, action) => {
         )
       };
 
+      case 'CLEAR_CART':
+        return { ...state, items: [] }; // Clear all items
+
     default:
       return state;
   }
@@ -75,7 +78,11 @@ export function CartProvider({ children }) {
     return state.items
         .reduce((total, item) => total + (item.price * item.quantity), 0)
         .toFixed(2);
-};
+  };
+
+  const clearCart = () => {
+    dispatch({ type: 'CLEAR_CART' });
+  };
 
   return (
     <CartContext.Provider value={{ 
@@ -83,7 +90,8 @@ export function CartProvider({ children }) {
       addItem, 
       removeItem, 
       updateQuantity,
-      getTotal 
+      getTotal,
+      clearCart
     }}>
       {children}
     </CartContext.Provider>

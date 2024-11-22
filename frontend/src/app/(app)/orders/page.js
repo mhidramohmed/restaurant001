@@ -22,7 +22,7 @@ const fetcher = async (url) => {
   }
 };
 
-const Orders = () => {
+const Page = () => {
   const router = useRouter();
   const { user, logout } = useAuth({ middleware: 'auth' });
   const { data: orders, error, mutate } = useSWR(
@@ -140,9 +140,10 @@ const Orders = () => {
                       <td className="py-4 px-6 text-text">{order.status}</td>
                     )}
                     <td className="py-4 px-6 text-center">
+                      <div>
                       {showPendingOnly ? (
                         <MainButton
-                          onClick={(e) => { e.stopPropagation(); handleDone(order.id); }}
+                          onClick={(e) => { e.stopPropagation(); console.log('Done button clicked for order:', order.id); handleDone(order.id); }}
                           className="bg-primary text-white text-sm py-1 px-2 ml-2"
                         >
                           Done
@@ -161,6 +162,7 @@ const Orders = () => {
                           Cancel
                         </MainButton></div>
                       )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -182,4 +184,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default Page;

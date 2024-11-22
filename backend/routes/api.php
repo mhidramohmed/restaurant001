@@ -52,14 +52,15 @@ Route::delete('/menu-items/{id}', [MenuItemController::class,'destroy']);
 
 //Routes Orders
 
-// Route::apiResource('orders', OrderController::class);
+Route::apiResource('orders', OrderController::class);
 
 
-Route::get('/orders', [OrderController::class,'index']);
-Route::get('/orders/{id}', [OrderController::class,'show']);
-Route::post('/orders', [OrderController::class,'store']);
-Route::put('/orders', [OrderController::class,'update']);
-Route::delete('/orders/{id}', [OrderController::class,'destroy']);
+// Route::get('/orders', [OrderController::class,'index']);
+// Route::get('/orders/{id}', [OrderController::class,'show']);
+// Route::post('/orders', [OrderController::class,'store']);
+// Route::put('/orders', [OrderController::class,'update']);
+// Route::patch('/orders/{id}', [OrderController::class, 'update']); //u forgot to add this one
+// Route::delete('/orders/{id}', [OrderController::class,'destroy']);
 
 //Routes OrderElements
 

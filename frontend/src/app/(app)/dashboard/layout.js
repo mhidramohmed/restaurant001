@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuth } from '@/hooks/auth'
-import Navigation from '@/app/(app)/Navigation'
+import SideBar from '@/components/SideBar'
 import Loading from '@/app/(app)/Loading'
 import { useRouter } from 'next/navigation'
 
@@ -16,15 +16,21 @@ const AppLayout = ({ children }) => {
     // Restrict dashboard to admin role only
     if (user.role !== 'admin' && router.pathname === '/dashboard') {
         router.push('/orders')
-        console.log('redirecting to orders page')
+        console.log('Redirecting to orders page')
         return null // Return null to prevent rendering
     }
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <Navigation user={user} />
+        <div className="flex min-h-screen bg-background">
+            {/* Sidebar */}
+            <aside className="fixed top-0 left-0 h-screen w-64 bg-primary shadow-lg z-50">
+                <SideBar />
+            </aside>
 
-            <main>{children}</main>
+            {/* Main Content */}
+            <main className="flex-1 ml-64 p-6">
+                {children}
+            </main>
         </div>
     )
 }

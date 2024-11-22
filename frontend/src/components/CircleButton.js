@@ -1,11 +1,12 @@
 const CircleButton = ({ body, icon, href }) => (
   <div className="relative group">
     <a href={href} target="_blank" rel="noopener noreferrer">
-      <button className="flex items-center justify-center w-14 h-14 border border-primary rounded-full hover:bg-primary hover:text-background transition-all duration-200">
-        <span className="text-xl">{icon}</span>
+      {/* Button size is smaller on small devices and normal on medium+ */}
+      <button className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 border border-primary rounded-full hover:bg-primary hover:text-background transition-all duration-200">
+        <span className="text-lg md:text-xl">{icon}</span> {/* Icon size adjusts based on screen size */}
       </button>
     </a>
-    {body && (
+    {/* {body && (
       <a
         href={href} // Link to the specified URL
         target="_blank" // Open the link in a new tab
@@ -14,7 +15,7 @@ const CircleButton = ({ body, icon, href }) => (
       >
         {body}
       </a>
-    )}
+    )} */}
   </div>
 );
 
