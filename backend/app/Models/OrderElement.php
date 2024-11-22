@@ -26,11 +26,14 @@ class OrderElement extends Model
 
        public static function getQuantitySoldByMenuItem()
     {
-        
+
 
         return self::select('menu_item_id', DB::raw('SUM(quantity) as total_quantity_sold'))
             ->groupBy('menu_item_id')
             ->orderBy('total_quantity_sold', 'desc')
             ->get();
     }
+
+
+    
 }

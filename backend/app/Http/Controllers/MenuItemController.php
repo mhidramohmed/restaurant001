@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MenuItem;
 use Illuminate\Http\Request;
+use App\Http\Resources\MenuItemResource;
 
 class MenuItemController extends Controller
 {
@@ -16,13 +17,13 @@ class MenuItemController extends Controller
             $menuItem = MenuItem::all();
 
             return response()->json([
-                'data' => $menuItem,
+                'data' => MenuItemResource::collection($menuItem),
                 'message' => 'u get the data'
             ], 200);
 
-        } catch (\Throwable $th) {
+        } catch (Exception $e) {
 
-            return response()->json([ 'error' =>'Failed to fetch menu item' ], 500);
+            return response()->json([ 'error' =>'Failed to fetch menu item' ], 200);
         }
     }
 
@@ -42,40 +43,52 @@ class MenuItemController extends Controller
                 'category_id' => 'required|exists:categories,id',
             ]);
 
-            if($request->has('image')){
+            if ( $request->has('image')) {
 
-                $distinationPath = 'MenuItemsImages/';
+                $destinationPath = 'MenuItemsImages/';
 
-                $imageName = date('YmdHis') . "." . $request->image->getClientOriginalName();
+                $profileImage = date('YmdHis') . "." . $request->image->getClientOriginalName();
 
-                $request->image->move($distinationPath,$imageName);
+                $request->image->move($destinationPath, $profileImage);
 
-                $data['image'] = $imageName;
-
+                $data['image'] = '/'.$destinationPath.$profileImage;
             }
 
-            // dd($data)
-            MenuItem :: create($data);
+            MenuItem::create($data);
 
             return response()->json([
-                'messsage'=>"the category is been create seccusfully  "
+
+                'messsage'=>"Your MenuItem has been create successfully  "
+
             ], 201);
 
+        } catch (Exception $e) {
 
-
-        } catch (\Throwable $th) {
-
-            return response()->json(['error' => 'Failed to create MenuItem'], 500);
-
+            return response()->json(['error' => 'Failed to create category'], 500);
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(MenuItem $menuItem)
+    public function show($id)
     {
         try {
+
+            $menuItem = MenuItem::findOrFail($id);
+
+            // return ($id);
+
+            return ($menuItem);
+
+            if(!$menuItem){
+                return response()->json([
+                    'message' => "Your MenuItem  doesn't exist"
+                ], 404);
+            }
+
+            return ('hhhh');
+
             if($menuItem){
 
                 return response()->json([
@@ -88,7 +101,7 @@ class MenuItemController extends Controller
                     'messsage'=>"Your MenuItem doesn't exist  "
                 ], 404);
             }
-        } catch (\Throwable $th) {
+        } catch (Exception $e) {
 
             return response()->json(['error' => 'Failed to fetch menu item'], 500);
         }
@@ -97,10 +110,21 @@ class MenuItemController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, MenuItem $menuItem)
+    public function update(Request $request,$id)
     {
         try {
-            if($menuItem){
+            $menuItem = MenuItem::find($id);
+
+            // return($menuItem);
+
+            if(!$menuItem){
+
+                return response()->json([
+                    'status' => false,
+                    'message'=>"Your MenuItem doen't exist "
+                ], 404);
+
+            }else{
 
                 $data = $request->validate([
                     'name' => 'sometimes |string',
@@ -112,21 +136,17 @@ class MenuItemController extends Controller
 
                 if($request->has('image')){
 
-                    $olddestination ='MenuItemsImages/'. $menuItem['image'];
 
-                    if(\File::exists($olddestination)){
+                    unlink(public_path().'/'.$menuItem->image);
 
-                        \File::delete($olddestination);
 
-                    }
+                    $destinationPath = 'MenuItemsImages/';
 
-                    $distinationPath = 'MenuItemImage/';
+                    $profileImage = date('YmdHis') . "." . $request->image->getClientOriginalName();
 
-                    $imageName = date('YmdHis') . "_" . $request->image->getClientOriginalName();
+                    $request->image->move($destinationPath, $profileImage);
 
-                    $request->image->move($distinationPath,$imageName);
-
-                    $data['image'] = $imageName;
+                    $data['image'] = '/'.$destinationPath.$profileImage;
 
                 }
 
@@ -134,9 +154,6 @@ class MenuItemController extends Controller
 
                 return response()->json(['messsage'=>"the mune_ithem  has been updated successfully  "], 201);
 
-            }else{
-
-                return response()->json(['message' => "Your MenuItem doesn't exist"], 404);
             }
         } catch (\Throwable $th) {
             return response()->json(['error' => 'Failed to update manu_ithem'], 500);
@@ -146,23 +163,32 @@ class MenuItemController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MenuItem $menuItem)
+    public function destroy( $id)
     {
         try {
-            if($menuItem){
+                        $menuItem = MenuItem::find($id);
+// return($menuItem);
 
-                $olddestination = $menuItem['image'];
+            if(!$menuItem){
 
-                if(\File::exists($olddestination)){
+                return response()->json([
+                    'status' => false,
+                    'message'=>"Your MenuItem doen't exist "
+                ], 404);
 
-                    \File::delete($olddestination);
+            }else{
 
-                }
+                unlink(public_path().'/'.$menuItem->image);
+
 
                 $menuItem->delete();
 
-            }else{
-                return response()->json(['message' => "Your MenuItem doesn't exist"], 404);
+                return response()->json([
+                    'status' => true,
+                    'message'=>"Your MenuItem has been delete successfully "
+                ], 404);
+
+
             }
         }catch (\Throwable $th) {
 

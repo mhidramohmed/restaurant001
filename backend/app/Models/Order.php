@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
@@ -23,5 +24,26 @@ class Order extends Model
     public function orderElements()
     {
         return $this->hasMany(OrderElement::class);
+    }
+
+    public static function getTotalOrders()
+    {
+        return self::count();
+    }
+
+    public static function getTotalByPaymentMethod()
+    {
+        return self::select('payment_method', DB::raw('SUM(total_price) as total_amount'))
+            ->whereIn('payment_method', ['cash', 'visa'])
+            ->groupBy('payment_method')
+            ->get();
+    }
+
+    public static function getTotalSpentByCustomers()
+    {
+        return self::select('client_name', 'client_phone', DB::raw('SUM(total_price) as total_spent'))
+            ->groupBy('client_phone', 'client_name')
+            ->orderBy('total_spent', 'desc')
+            ->get();
     }
 }

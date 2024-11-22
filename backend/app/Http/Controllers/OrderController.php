@@ -15,7 +15,7 @@ class OrderController extends Controller
     public function index()
     {
         try {
-            $orders = Order::all();
+            $orders = Order::with('orderElements')->get();
 
             return response()->json(['data'=>$orders], 200);
 
@@ -23,6 +23,25 @@ class OrderController extends Controller
 
             return response()->json(['error' => 'Failed to fetch orders'], 500);
         }
+    }
+
+    public function totalOrders()
+    {
+        $totalOrders = Order::getTotalOrders();
+        return response()->json(['total_orders' => $totalOrders]);
+    }
+
+
+    public function totalByPaymentMethod()
+    {
+        $totals = Order::getTotalByPaymentMethod();
+        return response()->json($totals);
+    }
+
+    public function totalSpentByCustomers()
+    {
+        $spendingData = Order::getTotalSpentByCustomers();
+        return response()->json($spendingData);
     }
 
     /**
@@ -112,9 +131,11 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Order $order)
+    public function show($id )
     {
+        // return($id);
         try {
+            $order = Order::find($id);
             if($order){
 
                 return response()->json(['data'=>$order], 200);
@@ -134,11 +155,18 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Order $order)
+    public function update(Request $request,  $id)
     {
         try {
-            if($order){
+            $order = Order::find($id);
 
+            // return($order);
+
+            if(!$order){
+                return response()->json(['message' => "Your Order doesn't exist"], 404);
+
+
+            }else{
                 $data = $request->validate([
                     'client_name' => 'sometimes|string|max:255',
                     'client_email' => 'sometimes|email|max:255',
@@ -153,9 +181,6 @@ class OrderController extends Controller
 
                 return response()->json(['messsage'=>"the Order  has been updated successfully  "], 201);
 
-            }else{
-
-                return response()->json(['message' => "Your Order doesn't exist"], 404);
             }
 
         } catch (\Throwable $th) {
@@ -167,22 +192,27 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Order $order)
+    public function destroy($id)
     {
         try {
-            if($order){
 
+            $order = Order::find($id);
+
+
+
+            if(!$order){
+                return response()->json(['message' => "Your Order doesn't exist"], 404);
+
+
+            }else{
                 $order->delete();
 
                 return response()->json(['messsage'=>"the Order  has been deleted successfully  "], 201);
 
-            }else{
-
-                return response()->json(['message' => "Your Order doesn't exist"], 404);
             }
-            
+
         } catch (\Throwable $th) {
-            
+
             return response()->json(['error' => 'Failed to delete  Order'], 500);
         }
     }

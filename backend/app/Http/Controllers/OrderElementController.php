@@ -39,6 +39,9 @@ class OrderElementController extends Controller
         return response()->json($salesData);
     }
 
+
+
+
     /**
      * Store a newly created resource in storage.
      */

@@ -30,10 +30,10 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 // Route::apiResource('categories', CategoryController::class);
 
 Route::get('/categories', [CategoryController::class,'index']);
-Route::get('/categories/{id}', [CategoryController::class,'show']);
+Route::get('/categories/{id}', [CategoryController::class,'show'])->where('id','\d+');
 Route::post('/categories', [CategoryController::class,'store']);
-Route::put('/categories', [CategoryController::class,'update']);
-Route::delete('/categories/{id}', [CategoryController::class,'destroy']);
+Route::put('/categories/{id}', [CategoryController::class,'update'])->where('id','\d+');
+Route::delete('/categories/{id}', [CategoryController::class,'destroy'])->where('id','\d+');
 
 
 
@@ -43,10 +43,10 @@ Route::delete('/categories/{id}', [CategoryController::class,'destroy']);
 // Route::apiResource('menu-items', MenuItemController::class);
 
 Route::get('/menu-items', [MenuItemController::class,'index']);
-Route::get('/menu-items/{id}', [MenuItemController::class,'show']);
+Route::get('/menu-items/{id}', [MenuItemController::class,'show'])->where('id','\d+');
 Route::post('/menu-items', [MenuItemController::class,'store']);
-Route::put('/menu-items', [MenuItemController::class,'update']);
-Route::delete('/menu-items/{id}', [MenuItemController::class,'destroy']);
+Route::put('/menu-items/{id}', [MenuItemController::class,'update'])->where('id','\d+');
+Route::delete('/menu-items/{id}', [MenuItemController::class,'destroy'])->where('id','\d+');
 
 
 
@@ -56,10 +56,16 @@ Route::delete('/menu-items/{id}', [MenuItemController::class,'destroy']);
 
 
 Route::get('/orders', [OrderController::class,'index']);
-Route::get('/orders/{id}', [OrderController::class,'show']);
+Route::get('/orders/{id}', [OrderController::class,'show'])->where('id','\d+');
 Route::post('/orders', [OrderController::class,'store']);
-Route::put('/orders', [OrderController::class,'update']);
-Route::delete('/orders/{id}', [OrderController::class,'destroy']);
+Route::put('/orders/{id}', [OrderController::class,'update'])->where('id','\d+');
+Route::delete('/orders/{id}', [OrderController::class,'destroy'])->where('id','\d+');
+Route::get('/analytics/orders/total', [OrderController::class, 'totalOrders']);
+Route::get('/analytics/orders/total-by-payment-method', [OrderController::class, 'totalByPaymentMethod']);
+Route::get('/customers/total-spent', [OrderController::class, 'totalSpentByCustomers']);
+
+
+
 
 //Routes OrderElements
 
@@ -70,10 +76,11 @@ Route::delete('/orders/{id}', [OrderController::class,'destroy']);
 // });
 
 Route::get('/order-elements', [OrderElementController::class,'index']);
-Route::get('/order-elements/{id}', [OrderElementController::class,'show']);
+Route::get('/order-elements/{id}', [OrderElementController::class,'show'])->where('id','\d+');
 Route::post('/order-elements', [OrderElementController::class,'store']);
-Route::put('/order-elements', [OrderElementController::class,'update']);
-Route::delete('/order-elements/{id}', [OrderElementController::class,'destroy']);
+Route::put('/order-elements/{id}', [OrderElementController::class,'update'])->where('id','\d+');
+Route::delete('/order-elements/{id}', [OrderElementController::class,'destroy'])->where('id','\d+');
 Route::get('/analytics/menu-items/quantity-sold', [OrderElementController::class,'quantitySoldByMenuItem']);
+
 
 

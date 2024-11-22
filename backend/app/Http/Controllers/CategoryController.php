@@ -15,11 +15,13 @@ class CategoryController extends Controller
      public function index()
     {
         try {
-            
-            $categories = Category::all();
-            return CategorieResource::collection($categories)    ;
+
+            $categories = Category::with("menuItems")->get();
+return $categories;
+
+
             return response()->json([
-                'data'=> $categories,
+                'data'=> CategorieResource::collection($categories) ,
                 'messsage'=>"u get the data  "
             ],200);
         } catch (Exception $e) {
@@ -41,8 +43,6 @@ class CategoryController extends Controller
                 'image'=> 'required | image | mimes: jpeg,png,jpg,gif,svg|max:2048'
             ]);
 
-
-
             if ( $request->has('image')) {
 
                 $destinationPath = 'CategoriesImages/';
@@ -53,7 +53,6 @@ class CategoryController extends Controller
 
                 $data['image'] = '/'.$destinationPath.$profileImage;
             }
-
 
             Category::create($data);
 
@@ -69,23 +68,30 @@ class CategoryController extends Controller
         }
     }
 
-    public function show(Category $category)
+    public function show( $id)
     {
         try {
-            if($category){
+            $category = Category:: findOrFail($id);
 
-                $menuItems = MenuItem::where('category_id',$category->id)->get();
-
-                return response()->json([
-                'data'=> [$category,$menuItems],
-                'messsage'=>"u get the data  "
-                ],200);
-
-            }else{
-
+            if(!$category){
                 return response()->json([
                     'message' => "Your category  doesn't exist"
                 ], 404);
+
+
+            }else{
+                // $menuItems = MenuItem::where('category_id',$category->id)->get();
+
+                    return response()->json([
+                    'data'=>
+                    [
+                        'category'->$category,
+                        // 'menoOfCategory'->$menuItems
+                    ],
+
+                    'messsage'=>"u get the data  "
+                    ],200);
+
             }
 
         } catch (Exception $e) {
@@ -95,81 +101,39 @@ class CategoryController extends Controller
 
     public function update(Request $request,$id)
     {
-        // try {
+        $category = Category::find($id);
 
-        //     $cate = Category::find($id);
+        if(!$category){
+            return response()->json([
+                'message'=>"Your category whith ID $id doesn't exist"
+            ], 404);
+        }else{
 
+            $data = $request->validate([
+                'name' => 'sometimes |string',
+                'description' => 'sometimes |string',
+                'image'=> 'sometimes | image | mimes: jpeg,png,jpg,gif,svg|max:2048',
+            ]);
 
+            if($request->hasFile('image')){
 
-        //     //    return(gettype($cate));
+                unlink(public_path().'/'.$category->image);
 
-        //     if($cate){
+                $destinationPath = 'CategoriesImages/';
 
-        //         $data = $request->validate([
-        //             'name' => 'sometimes|string',
-        //             'description' => 'sometimes|string',
-        //             'image'=> ' sometimes|  image | mimes: jpeg,png,jpg,gif,svg|max:2048'
-        //         ]);
-        //         // info('ALIDATION PASSED ');
+                $profileImage = date('YmdHis') . "." . $request->image->getClientOriginalName();
 
-        //         if($request->has('image')){
-        //             // info('HAS IMAGE ');
+                $request->image->move($destinationPath, $profileImage);
 
-        //             $olddestination = 'CategoriesImages/'.$cate->image;
+                $data['image'] = '/'.$destinationPath.$profileImage;
+            }
 
-        //             if(File::exists($olddestination)){
-        //             // info('FILE EXESIT ');
+            $category->update($data);
 
-
-        //                 File::delete($olddestination);
-        //                 //  info('FILE Delted ');
-
-        //             }
-
-
-        //             $destinationPath = 'CategoriesImages/';
-        //             $profileImage = date('YmdHis') . "_" . $request->image->getClientOriginalName();
-        //             $request->image->move($destinationPath, $profileImage);
-        //             $data['image'] = "$profileImage";
-        //         }
-
-        //         $cate->update($data);
-        //         // $category->refresh(); // Reloads the updated data
-
-
-        //         return response()->json([
-        //             'message' => "The category was updated successfully.",
-        //             'request' => $request
-        //         ]);
-        //     }else{
-
-        //         return response()->json([
-        //             'message' => "Your category  doesn't exist"
-        //         ], 404);
-        //     }
-
-        // } catch (Exception $e) {
-
-        //     return response()->json(['error' => 'Failed to update category'], 500);
-        // }
-
-        // $categorie = Category::find($id);
-        info('i was here ');
-        return($request->all()) ;
-        if (!$categorie){ return "not existe" ;  }
-        $category = [
-                "name" => $request->name ,
-                "image" => "chemin",
-                "description" => $request->description
-        ];
-            $categorie->update($category) ;
-        return  "success";
-
-
-
-
-
-
+            return response()->json([
+                'message'=> 'Your Category has updated successfully'
+            ], 200);
+        }
     }
 
     public function destroy($id)
@@ -182,8 +146,8 @@ class CategoryController extends Controller
         "message"=>"Your category whith ID $id doesn't exist "
       ], 200);
 
-    //   return public_path().'/'.$category->image;
       unlink(public_path().'/'.$category->image);
+
       $category->delete();
 
       return response()->json([
