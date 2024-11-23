@@ -1,11 +1,12 @@
 import useSWR from 'swr'
 import axios from '@/lib/axios'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 
 export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     const router = useRouter()
     const params = useParams()
+    const [isLoggingIn, setIsLoggingIn] = useState(false) // Track login process
 
     const { data: user, error, mutate } = useSWR('/api/user', () =>
         axios
@@ -38,11 +39,13 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
         setErrors([])
         setStatus(null)
+        setIsLoggingIn(true) // Set login flag
 
         axios
             .post('/login', props)
             .then(() => mutate())
             .catch(error => {
+                setIsLoggingIn(false) // Reset flag on failure
                 if (error.response.status !== 422) throw error
 
                 setErrors(error.response.data.errors)
@@ -92,20 +95,21 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     }
 
     useEffect(() => {
-        if (user) {
-            // Redirect based on role after login
+        if (user && isLoggingIn) {
+            // Redirect based on role only after login
             if (user.role === 'admin') {
                 router.push('/dashboard')
             } else if (user.role === 'user') {
                 router.push('/orders')
             }
+            setIsLoggingIn(false) // Reset flag after redirect
         }
-        
+
         if (middleware === 'guest' && redirectIfAuthenticated && user)
-            router.push('/orders') //redirectIfAuthenticated
+            router.push('/orders') // redirectIfAuthenticated
 
         if (middleware === 'auth' && error) logout()
-    }, [user, error])
+    }, [user, error, isLoggingIn])
 
     return {
         user,

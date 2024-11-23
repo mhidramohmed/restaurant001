@@ -9,7 +9,7 @@ const AppLayout = ({ children }) => {
 
     if (!user) {
         return <Loading />
-    }
+    } 
 
     return (
         <div className="min-h-screen bg-gray-100">

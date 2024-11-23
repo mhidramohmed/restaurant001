@@ -25,14 +25,11 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         try {
-
             $data = $request->validate([
                 'name' => 'required|string',
                 'description' => 'nullable|string',
                 'image'=> 'required | image | mimes: jpeg,png,jpg,gif,svg|max:2048'
             ]);
-
-
 
             if ( $request->has('image')) {
 
@@ -42,9 +39,8 @@ class CategoryController extends Controller
 
                 $request->image->move($destinationPath, $profileImage);
 
-                $data['image'] = $profileImage;
+                $data['image'] = '/'.$destinationPath.$profileImage;
             }
-
 
             Category::create($data);
 
@@ -60,102 +56,80 @@ class CategoryController extends Controller
         }
     }
 
-    public function show(Category $category)
+    public function show($id)
+{
+    try {
+        $category = Category::findOrFail($id);
+        
+        return response()->json([
+            'data' => [
+                'category' => $category,  // Fixed syntax error: changed -> to =>
+                // 'menuItems' => MenuItem::where('category_id', $category->id)->get()  // Uncomment if you need menu items
+            ],
+            'message' => "Category retrieved successfully"  // Fixed typo in 'message'
+        ], 200);
+        
+    } catch (\Exception $e) {  // Added proper Exception namespace
+        return response()->json([
+            'error' => 'Failed to fetch category: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+    public function update(Request $request,$id)
     {
-        try {
-            if($category){
+        $category = Category::find($id);
 
-                $menuItems = MenuItem::where('category_id',$category->id)->get();
+        if(!$category){
+            return response()->json([
+                'message'=>"Your category whith ID $id doesn't exist"
+            ], 404);
+        }else{
 
-                return response()->json([
-                'data'=> [$category,$menuItems],
-                'messsage'=>"u get the data  "
-                ],200);
+            $data = $request->validate([
+                'name' => 'sometimes |string',
+                'description' => 'sometimes |string',
+                'image'=> 'sometimes | image | mimes: jpeg,png,jpg,gif,svg|max:2048',
+            ]);
 
-            }else{
+            if($request->hasFile('image')){
 
-                return response()->json([
-                    'message' => "Your category  doesn't exist"
-                ], 404);
+                unlink(public_path().'/'.$category->image);
+
+                $destinationPath = 'CategoriesImages/';
+
+                $profileImage = date('YmdHis') . "." . $request->image->getClientOriginalName();
+
+                $request->image->move($destinationPath, $profileImage);
+
+                $data['image'] = '/'.$destinationPath.$profileImage;
             }
 
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to fetch category'], 500);
+            $category->update($data);
+
+            return response()->json([
+                'message'=> 'Your Category has updated successfully'
+            ], 200);
         }
     }
 
-    public function update(Request $request, Category $category)
+    public function destroy($id)
     {
-        try {
 
-            // dd($request);
+      $category  = Category::find($id);
 
-            if($category){
+      if(!$category || $id =='')  return response()->json([
+        'status'=>false,
+        "message"=>"Your category whith ID $id doesn't exist "
+      ], 200);
 
-                $data = $request->validate([
-                    'name' => 'sometimes|string',
-                    'description' => 'sometimes|string',
-                    'image'=> ' sometimes|  image | mimes: jpeg,png,jpg,gif,svg|max:2048'
-                ]);
+      unlink(public_path().'/'.$category->image);
 
+      $category->delete();
 
-                if($request->has('image')){
-                    $olddestination = 'CategoriesImages/'.$category->image;
-
-                    if(\File::exists($olddestination)){
-
-                        \File::delete($olddestination);
-
-                    }
-
-
-                    $destinationPath = 'CategoriesImages/';
-                    $profileImage = date('YmdHis') . "_" . $request->image->getClientOriginalName();
-                    $request->image->move($destinationPath, $profileImage);
-                    $data['image'] = "$profileImage";
-                }
-
-                $category->update($data);
-                $category->refresh(); // Reloads the updated data
-
-
-                return response()->json([
-                    'message' => "The category was updated successfully.",
-                    'request' => $request
-                ]);                
-            }else{
-
-                return response()->json([
-                    'message' => "Your category  doesn't exist"
-                ], 404);
-            }
-
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to update category'], 500);
-        }
-    }
-
-    public function destroy(Category $category)
-    {
-        try {
-            if ($category) {
-                $imagePath = public_path('CategoriesImages/' . $category->image);
-
-                // Ensure the file exists before attempting to delete it
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
-                }
-
-                $category->delete();
-
-                return response()->json([
-                    'messsage'=>"the category deleted seccusfully"
-                ], 204);
-            }
-
-
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to delete category'], 500);
-        }
+      return response()->json([
+        'status'=>true,
+        "message"=>"Your category  has deleted successully "
+      ], 200);
     }
 }

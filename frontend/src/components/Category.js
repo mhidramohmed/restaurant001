@@ -1,6 +1,12 @@
 const Category = ({ categoryId, name, image, isActive, setActiveCategory }) => {
   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
+  const imageUrl = image?.startsWith('http')
+    ? image
+    : image.includes('CategoriesImages')
+        ? `${baseURL}/${image.replace(/^\/+/, '')}`
+        : `${baseURL}/CategoriesImages/${image.replace(/^\/+/, '')}`;
+
   const handleClick = () => {
     const targetSection = document.getElementById(`category-${categoryId}`);
     if (targetSection) {
@@ -20,7 +26,7 @@ const Category = ({ categoryId, name, image, isActive, setActiveCategory }) => {
     >
       <div className="w-12 h-12 rounded-full overflow-hidden">
         <img
-          src={`${baseURL}/CategoriesImages/${image}`}
+          src={imageUrl}
           alt={name}
           className="w-full h-full object-cover"
         />

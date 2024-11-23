@@ -66,6 +66,12 @@ const Page = () => {
     }
   }, [user, router]);
 
+  if (user.role !== 'user') {
+    router.push('/dashboard')
+    console.log('Redirecting to dashboard page')
+    return null // Return null to prevent rendering
+  }
+
   if (error) {
     console.error('Error details:', error);
     return <div className="p-6 text-red-600">Failed to load orders: {error.message}</div>;

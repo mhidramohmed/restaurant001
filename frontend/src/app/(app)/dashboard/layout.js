@@ -1,9 +1,9 @@
 'use client'
 
 import { useAuth } from '@/hooks/auth'
+import { useRouter } from 'next/navigation'
 import SideBar from '@/components/SideBar'
 import Loading from '@/app/(app)/Loading'
-import { useRouter } from 'next/navigation'
 
 const AppLayout = ({ children }) => {
     const { user } = useAuth({ middleware: 'auth' })

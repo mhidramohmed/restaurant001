@@ -30,10 +30,10 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 // Route::apiResource('categories', CategoryController::class);
 
 Route::get('/categories', [CategoryController::class,'index']);
-Route::get('/categories/{id}', [CategoryController::class,'show']);
+Route::get('/categories/{id}', [CategoryController::class,'show'])->where('id','\d+');
 Route::post('/categories', [CategoryController::class,'store']);
-Route::put('/categories', [CategoryController::class,'update']);
-Route::delete('/categories/{id}', [CategoryController::class,'destroy']);
+Route::put('/categories/{id}', [CategoryController::class,'update'])->where('id','\d+');
+Route::delete('/categories/{id}', [CategoryController::class,'destroy'])->where('id','\d+');
 
 
 

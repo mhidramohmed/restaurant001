@@ -1,4 +1,6 @@
+'use client';
 import { useState } from 'react';
+import MainButton from './MainButton';
 import axios from '@/lib/axios';
 import { toast } from 'react-toastify';
 
@@ -27,27 +29,36 @@ const AddCategoryModal = ({ onClose, onSuccess }) => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+    const newValue = files ? files[0] : value;
+    
     setFormData((prevData) => ({
       ...prevData,
-      [name]: files ? files[0] : value,
+      [name]: newValue,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    
+    
     const data = new FormData();
     data.append('name', formData.name);
-    data.append('image', formData.image);
+    if (formData.image) {
+      data.append('image', formData.image);
+    }
 
-    setIsSubmitting(true);
     try {
-      await axios.post('/api/category', data);
-      toast.success('Category added successfully!', { position: 'top-right' });
-      onSuccess(); // Revalidate categories in the parent component
-      onClose();
+      const response = await axios.post('/api/categories', data, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+      });
+      
+      onSuccess();
     } catch (error) {
-      console.error('Error adding category:', error);
-      toast.error('Failed to add category. Please try again.', { position: 'top-right' });
+      toast.error(error.response?.data?.message || 'Failed to add category');
     } finally {
       setIsSubmitting(false);
     }
@@ -56,7 +67,7 @@ const AddCategoryModal = ({ onClose, onSuccess }) => {
   return (
     <Modal onClose={onClose}>
       <h2 className="text-lg font-semibold text-text mb-4">Add Category</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-4">
           <input
             type="text"
@@ -67,6 +78,7 @@ const AddCategoryModal = ({ onClose, onSuccess }) => {
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
           />
+
           <input
             type="file"
             name="image"
@@ -76,21 +88,23 @@ const AddCategoryModal = ({ onClose, onSuccess }) => {
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
           />
         </div>
-        <div className="mt-4 flex justify-end">
-          <button
+        
+        <div className="mt-4 flex justify-end space-x-2">
+          <MainButton
             type="button"
             onClick={onClose}
-            className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md mr-2"
+            className="bg-gray-200 text-gray-700"
           >
             Cancel
-          </button>
-          <button
+          </MainButton>
+
+          <MainButton
             type="submit"
-            className="bg-primary text-white px-4 py-2 rounded-md"
             disabled={isSubmitting}
+            className={`bg-primary text-white ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            {isSubmitting ? 'Saving...' : 'Save'}
-          </button>
+            {isSubmitting ? 'Adding...' : 'Add Category'}
+          </MainButton>
         </div>
       </form>
     </Modal>
