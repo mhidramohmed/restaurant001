@@ -41,6 +41,8 @@ const MostSellingItems = () => {
   // Limit to 5 items
   const limitedItems = sortedItems.slice(0, 5);
 
+  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
   return (
     <div className="flex flex-col w-1/3 bg-white p-4 rounded-lg shadow-md">
       <div className="flex items-center justify-between">
@@ -56,7 +58,7 @@ const MostSellingItems = () => {
               <li key={item.id} className="border-t pt-4">
                 <div className="flex items-center gap-4">
                   <img
-                    src={item.image}
+                    src={`${baseURL}/${item.image.replace(/^\/+/, '')}`}
                     alt={item.name}
                     className="w-16 h-16 object-cover rounded"
                   />

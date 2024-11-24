@@ -29,6 +29,7 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
     setSelectedItem(null); // Close the modal by clearing the selected item
   };
   
+  
   return (
     <section id={`category-${categoryId}`} className="my-8 px-2 md:px-4 lg:px-6">
       <h2 className="text-3xl font-bold text-primary mb-4">

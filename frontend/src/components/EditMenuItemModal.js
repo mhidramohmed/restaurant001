@@ -49,9 +49,10 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
         
         // Handle image preview
         if (item.image) {
+          const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
           const imageUrl = item.image.startsWith('http')
             ? item.image
-            : `${process.env.NEXT_PUBLIC_BACKEND_URL}/${item.image}`;
+            : `${baseURL}/${item.image.replace(/^\/+/, '')}`;
           setPreview(imageUrl);
         }
         

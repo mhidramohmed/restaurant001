@@ -13,6 +13,8 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
   const { data: orderItems, error } = useSWR('/api/order-elements', fetcher);
   const filteredItems = orderItems?.filter(item => item.order_id === order.id) || [];
 
+  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
   if (error) return <div>Failed to load order items.</div>;
   if (!orderItems) return <div>Loading order items...</div>;
 
@@ -47,7 +49,8 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
               <li key={item.id} className="flex items-center space-x-4">
                 {item.menu_item?.image && (
                   <img
-                    src={item.menu_item.image}
+                    // src={item.menu_item.image}
+                    src={`${baseURL}/${item.menu_item.image.replace(/^\/+/, '')}`}
                     alt={item.menu_item.name}
                     className="w-16 h-16 rounded-lg object-cover"
                   />

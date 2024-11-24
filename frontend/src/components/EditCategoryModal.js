@@ -156,12 +156,16 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
               Category Image
             </label>
             <div className="flex items-center space-x-4">
-              {preview && (
-                <div className="w-20 h-20 rounded-full overflow-hidden border border-gray-300">
+            {preview && (
+                <div className="w-20 h-20 rounded-lg overflow-hidden border border-gray-300">
                   <img
                     src={preview}
-                    alt="Category preview"
+                    alt="Item preview"
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://placehold.co/600x400/orange/white';
+                    }}
                   />
                 </div>
               )}
