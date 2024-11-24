@@ -1,19 +1,38 @@
-// Category.js
-import React from 'react';
+const Category = ({ categoryId, name, image, isActive, setActiveCategory }) => {
+  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-const Category = ({ name, image }) => {
+  const imageUrl = image?.startsWith('http')
+    ? image
+    : image.includes('CategoriesImages')
+        ? `${baseURL}/${image.replace(/^\/+/, '')}`
+        : `${baseURL}/CategoriesImages/${image.replace(/^\/+/, '')}`;
+
+  const handleClick = () => {
+    const targetSection = document.getElementById(`category-${categoryId}`);
+    if (targetSection) {
+      targetSection.scrollIntoView({ behavior: "smooth" });
+      // Update active category
+      setActiveCategory(`category-${categoryId}`);
+    }
+  };
+
   return (
-    <div className="flex items-center space-x-4 p-3 border border-primary rounded-full cursor-pointer">
+    <button
+      onClick={handleClick}
+      data-id={`category-${categoryId}`}
+      className={`flex items-center space-x-4 p-3 border border-primary rounded-full cursor-pointer hover:bg-primary hover:text-background ${
+        isActive ? "bg-primary text-background" : "bg-background text-text"
+      }`}
+    >
       <div className="w-12 h-12 rounded-full overflow-hidden">
         <img
-          src={image}
-          // src='https://via.placeholder.com/60'
+          src={imageUrl}
           alt={name}
           className="w-full h-full object-cover"
         />
       </div>
-      <p className="text-text font-medium pr-2">{name}</p>
-    </div>
+      <p className="font-medium pr-2">{name}</p>
+    </button>
   );
 };
 

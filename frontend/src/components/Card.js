@@ -20,7 +20,7 @@ const Card = ({ image, name, price, id, onDetails }) => {
   };
 
   return (
-    <div className="h-[450px] border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden">
+    <div className="h-[350px] border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden">
       <div className="h-2/3">
         <img
           src={image}

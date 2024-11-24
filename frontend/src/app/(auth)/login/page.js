@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import AuthSessionStatus from '@/app/(auth)/AuthSessionStatus'
 import Logo from '@/components/Logo'
-import Image from 'next/image';
 import bgImage from '@/assets/img/bonsai-bg.jpg'
 
 const Login = () => {

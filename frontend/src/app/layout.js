@@ -1,6 +1,9 @@
 import { Nunito } from 'next/font/google'
 import '@/app/global.css'
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { CartProvider } from '@/contexts/CartContext';
 
 const nunitoFont = Nunito({
@@ -13,7 +16,8 @@ const RootLayout = ({ children }) => {
         <html lang="en" className={nunitoFont.className}>
             <body className="antialiased bg-background">
             <CartProvider>
-            {children}
+                <ToastContainer />
+                {children}
             </CartProvider>
             </body>
         </html>
