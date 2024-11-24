@@ -54,16 +54,15 @@ class MenuItemController extends Controller
 
             }
 
-            // dd($data)
             MenuItem :: create($data);
 
             return response()->json([
-                'messsage'=>"the category is been create seccusfully  "
+                'messsage'=>"the menu item has been create seccusfully  "
             ], 201);
 
 
 
-        } catch (\Throwable $th) {
+        } catch (Exception $e) {
 
             return response()->json(['error' => 'Failed to create MenuItem'], 500);
 
@@ -73,9 +72,19 @@ class MenuItemController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(MenuItem $menuItem)
+    public function show($id)
     {
         try {
+
+            $menuItem = MenuItem::findOrFail($id);
+
+            if(!$menuItem){
+                return response()->json([
+                    'message' => "Your MenuItem  doesn't exist"
+                ], 404);
+            }
+
+
             if($menuItem){
 
                 return response()->json([
@@ -88,7 +97,7 @@ class MenuItemController extends Controller
                     'messsage'=>"Your MenuItem doesn't exist  "
                 ], 404);
             }
-        } catch (\Throwable $th) {
+        } catch (Exception $e) {
 
             return response()->json(['error' => 'Failed to fetch menu item'], 500);
         }
@@ -97,10 +106,21 @@ class MenuItemController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, MenuItem $menuItem)
+    public function update(Request $request,$id)
     {
         try {
-            if($menuItem){
+            $menuItem = MenuItem::find($id);
+
+            // return($menuItem);
+
+            if(!$menuItem){
+
+                return response()->json([
+                    'status' => false,
+                    'message'=>"Your MenuItem doen't exist "
+                ], 404);
+
+            }else{
 
                 $data = $request->validate([
                     'name' => 'sometimes |string',
@@ -112,21 +132,17 @@ class MenuItemController extends Controller
 
                 if($request->has('image')){
 
-                    $olddestination ='MenuItemsImages/'. $menuItem['image'];
 
-                    if(\File::exists($olddestination)){
+                    unlink(public_path().'/'.$menuItem->image);
 
-                        \File::delete($olddestination);
 
-                    }
+                    $destinationPath = 'MenuItemsImages/';
 
-                    $distinationPath = 'MenuItemImage/';
+                    $profileImage = date('YmdHis') . "." . $request->image->getClientOriginalName();
 
-                    $imageName = date('YmdHis') . "_" . $request->image->getClientOriginalName();
+                    $request->image->move($destinationPath, $profileImage);
 
-                    $request->image->move($distinationPath,$imageName);
-
-                    $data['image'] = $imageName;
+                    $data['image'] = $profileImage;
 
                 }
 
@@ -134,9 +150,6 @@ class MenuItemController extends Controller
 
                 return response()->json(['messsage'=>"the mune_ithem  has been updated successfully  "], 201);
 
-            }else{
-
-                return response()->json(['message' => "Your MenuItem doesn't exist"], 404);
             }
         } catch (\Throwable $th) {
             return response()->json(['error' => 'Failed to update manu_ithem'], 500);
@@ -146,27 +159,36 @@ class MenuItemController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MenuItem $menuItem)
+    public function destroy($id)
     {
+        $menuItem = MenuItem::find($id);
+
+        if(!$menuItem || $id == '') {
+            return response()->json([
+                'status' => false,
+                'message' => "Menu item doesn't exist"
+            ], 200);
+        }
+
         try {
-            if($menuItem){
-
-                $olddestination = $menuItem['image'];
-
-                if(\File::exists($olddestination)){
-
-                    \File::delete($olddestination);
-
+            if($menuItem->image) {
+                $imagePath = public_path() . '/' . $menuItem->image;
+                if(file_exists($imagePath)) {
+                    unlink($imagePath);
                 }
-
-                $menuItem->delete();
-
-            }else{
-                return response()->json(['message' => "Your MenuItem doesn't exist"], 404);
             }
-        }catch (\Throwable $th) {
 
-            return response()->json(['error' => 'Failed to update manu_ithem'], 500);
+            $menuItem->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => "Menu item has been deleted successfully"
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => "Failed to delete menu item"
+            ], 200);  // Keep 200 to match your category controller pattern
         }
     }
 }

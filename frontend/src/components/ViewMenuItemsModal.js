@@ -1,17 +1,14 @@
 'use client';
 import { useState } from 'react';
-import Card from './Card'; // Assuming you have the Card component
-import useSWR from 'swr';
+import AdminMenuItemCard from './AdminMenuItemCard';
+import useSWR, { mutate } from 'swr';
 import axios from '@/lib/axios';
-
-// Define the fetcher function outside of the component without async/await
-const fetcher = (url) => axios.get(url).then((res) => res.data.data);
+import EditMenuItemModal from './EditMenuItemModal'; // You'll need to create this component
 
 const Modal = ({ onClose, children }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-4xl relative">
-        {/* Close Button */}
+      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-4xl relative max-h-[90vh] overflow-hidden">
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -25,42 +22,83 @@ const Modal = ({ onClose, children }) => {
 };
 
 const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
+  const [editingItemId, setEditingItemId] = useState(null);
+  
   // Fetch menu items using SWR
-  const { data: items, error } = useSWR('/api/menu-items', fetcher);
+  const { data: items, error } = useSWR('/api/menu-items', (url) => 
+    axios.get(url).then((res) => res.data.data)
+  );
 
-  if (error) return <div>Failed to load items</div>;
-  if (!items) return <div>Loading...</div>;
+  const handleEdit = (itemId) => {
+    setEditingItemId(itemId);
+  };
+
+  const handleDelete = async (itemId) => {
+    // Optimistically update the UI
+    const updatedItems = items.filter(item => item.id !== itemId);
+    mutate('/api/menu-items', updatedItems, false);
+  };
+
+  const handleEditComplete = () => {
+    setEditingItemId(null);
+    mutate('/api/menu-items'); // Refresh the data
+  };
+
+  if (error) {
+    return (
+      <Modal onClose={onClose}>
+        <div className="text-red-500">Failed to load items</div>
+      </Modal>
+    );
+  }
+
+  if (!items) {
+    return (
+      <Modal onClose={onClose}>
+        <div className="flex justify-center items-center h-40">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </Modal>
+    );
+  }
 
   // Filter items based on categoryId
   const categoryItems = items.filter(item => item.category_id === categoryId);
 
   return (
     <Modal onClose={onClose}>
-      <h2 className="text-3xl font-bold text-primary mb-4">
-        Menu Items for {categoryName}
-      </h2>
-      
-      {/* Scrollable container for items */}
-      <div className="max-h-96 overflow-auto">
-        {/* Grid layout for items */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="flex flex-col h-full">
+        <h2 className="text-2xl font-bold text-primary mb-4">
+          Menu Items for {categoryName}
+        </h2>
+        
+        <div className="flex-1 overflow-auto px-2">
           {categoryItems.length === 0 ? (
-            <p className="text-center text-text">No items available in this category.</p>
+            <div className="text-center py-8 text-gray-500">
+              No items available in this category.
+            </div>
           ) : (
-            categoryItems.map((item) => (
-              <Card
-                key={item.id}
-                id={item.id}
-                image={item.image}
-                name={item.name}
-                price={item.price}
-                onAddToCart={() => console.log(`Added ${item.name} to cart`)}
-                onDetails={() => console.log(`Details for ${item.name}`)}
-              />
-            ))
+            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+              {categoryItems.map((item) => (
+                <AdminMenuItemCard
+                  key={item.id}
+                  {...item}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
           )}
         </div>
       </div>
+
+      {editingItemId && (
+        <EditMenuItemModal
+          itemId={editingItemId}
+          onClose={() => setEditingItemId(null)}
+          onSuccess={handleEditComplete}
+        />
+      )}
     </Modal>
   );
 };

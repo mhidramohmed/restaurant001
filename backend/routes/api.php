@@ -45,7 +45,7 @@ Route::delete('/categories/{id}', [CategoryController::class,'destroy'])->where(
 Route::get('/menu-items', [MenuItemController::class,'index']);
 Route::get('/menu-items/{id}', [MenuItemController::class,'show']);
 Route::post('/menu-items', [MenuItemController::class,'store']);
-Route::put('/menu-items', [MenuItemController::class,'update']);
+Route::put('/menu-items/{id}', [MenuItemController::class,'update']);
 Route::delete('/menu-items/{id}', [MenuItemController::class,'destroy']);
 
 
