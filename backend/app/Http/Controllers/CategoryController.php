@@ -5,10 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\MenuItem;
 
-
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use App\Http\Resources\CategorieResource;
 
 class CategoryController extends Controller
 {
@@ -25,18 +22,13 @@ return $categories;
                 'messsage'=>"u get the data  "
             ],200);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to fetch categories'], 200);
+            return response()->json(['error' => 'Failed to fetch categories'], 500);
         }
     }
-
-
-
-
 
     public function store(Request $request)
     {
         try {
-
             $data = $request->validate([
                 'name' => 'required|string',
                 'description' => 'nullable|string',
@@ -102,7 +94,19 @@ return $categories;
     public function update(Request $request,$id)
     {
         $category = Category::find($id);
+        $category = Category::find($id);
 
+        if(!$category){
+            return response()->json([
+                'message'=>"Your category whith ID $id doesn't exist"
+            ], 404);
+        }else{
+
+            $data = $request->validate([
+                'name' => 'sometimes |string',
+                'description' => 'sometimes |string',
+                'image'=> 'sometimes | image | mimes: jpeg,png,jpg,gif,svg|max:2048',
+            ]);
         if(!$category){
             return response()->json([
                 'message'=>"Your category whith ID $id doesn't exist"
@@ -118,7 +122,18 @@ return $categories;
             if($request->hasFile('image')){
 
                 unlink(public_path().'/'.$category->image);
+            if($request->hasFile('image')){
 
+                unlink(public_path().'/'.$category->image);
+
+                $destinationPath = 'CategoriesImages/';
+
+                $profileImage = date('YmdHis') . "." . $request->image->getClientOriginalName();
+
+                $request->image->move($destinationPath, $profileImage);
+
+                $data['image'] = '/'.$destinationPath.$profileImage;
+            }
                 $destinationPath = 'CategoriesImages/';
 
                 $profileImage = date('YmdHis') . "." . $request->image->getClientOriginalName();
@@ -129,7 +144,12 @@ return $categories;
             }
 
             $category->update($data);
+            $category->update($data);
 
+            return response()->json([
+                'message'=> 'Your Category has updated successfully'
+            ], 200);
+        }
             return response()->json([
                 'message'=> 'Your Category has updated successfully'
             ], 200);
@@ -147,6 +167,7 @@ return $categories;
       ], 200);
 
       unlink(public_path().'/'.$category->image);
+
 
       $category->delete();
 

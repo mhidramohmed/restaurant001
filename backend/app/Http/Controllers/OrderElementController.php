@@ -15,7 +15,10 @@ class OrderElementController extends Controller
 
         try {
 
-            $orderElements = OrderElement::all();
+            // Eager load `menuItem` with only `name` and `image` attributes
+            $orderElements = OrderElement::with(['menuItem' => function ($query) {
+                $query->select('id', 'name', 'image');
+            }])->get();
 
             return response()->json([
                 'data' => $orderElements,

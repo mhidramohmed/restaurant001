@@ -45,21 +45,27 @@ Route::delete('/categories/{id}', [CategoryController::class,'destroy'])->where(
 Route::get('/menu-items', [MenuItemController::class,'index']);
 Route::get('/menu-items/{id}', [MenuItemController::class,'show'])->where('id','\d+');
 Route::post('/menu-items', [MenuItemController::class,'store']);
-Route::put('/menu-items', [MenuItemController::class,'update']);
-Route::delete('/menu-items/{id}', [MenuItemController::class,'destroy']);
+Route::put('/menu-items/{id}', [MenuItemController::class,'update'])->where('id','\d+');
+Route::delete('/menu-items/{id}', [MenuItemController::class,'destroy'])->where('id','\d+');
 
 
 
 //Routes Orders
 
-Route::apiResource('orders', OrderController::class);
+// Route::apiResource('orders', OrderController::class);
 
 
 Route::get('/orders', [OrderController::class,'index']);
-Route::get('/orders/{id}', [OrderController::class,'show']);
+Route::get('/orders/{id}', [OrderController::class,'show'])->where('id','\d+');
 Route::post('/orders', [OrderController::class,'store']);
-Route::put('/orders', [OrderController::class,'update']);
-Route::delete('/orders/{id}', [OrderController::class,'destroy']);
+Route::put('/orders/{id}', [OrderController::class,'update'])->where('id','\d+');
+Route::delete('/orders/{id}', [OrderController::class,'destroy'])->where('id','\d+');
+Route::get('/analytics/orders/total', [OrderController::class, 'totalOrders']);
+Route::get('/analytics/orders/total-by-payment-method', [OrderController::class, 'totalByPaymentMethod']);
+Route::get('/customers/total-spent', [OrderController::class, 'totalSpentByCustomers']);
+
+
+
 
 //Routes OrderElements
 

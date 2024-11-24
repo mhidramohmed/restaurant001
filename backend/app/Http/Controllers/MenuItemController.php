@@ -27,19 +27,17 @@ class MenuItemController extends Controller
         }
     }
 
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
         try {
-
             $data = $request->validate([
                 'name' => 'required|string',
                 'description' => 'nullable|string',
                 'price' => 'required|numeric',
-                'image'=> 'required | image | mimes: jpeg,png,jpg,gif,svg|max:2048',
+                'image'=> 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'category_id' => 'required|exists:categories,id',
             ]);
 
@@ -79,7 +77,7 @@ class MenuItemController extends Controller
 
             // return ($id);
 
-            return ($menuItem);
+            // return ($menuItem);
 
             if(!$menuItem){
                 return response()->json([
@@ -90,18 +88,11 @@ class MenuItemController extends Controller
             return ('hhhh');
 
             if($menuItem){
-
                 return response()->json([
-                    "data" => $menuItem,
-                    'messsage'=>"u get ur data "
-                ], 201);
-            }else{
+                    'data' => $menuItem
+                ], 404);}
 
-                return response()->json([
-                    'messsage'=>"Your MenuItem doesn't exist  "
-                ], 404);
-            }
-        } catch (Exception $e) {
+        } catch (\Throwable $th) {
 
             return response()->json(['error' => 'Failed to fetch menu item'], 500);
         }
@@ -126,13 +117,13 @@ class MenuItemController extends Controller
 
             }else{
 
-                $data = $request->validate([
-                    'name' => 'sometimes |string',
-                    'description' => 'sometimes |string',
-                    'price' => 'sometimes |numeric',
-                    'image'=> 'sometimes | image | mimes: jpeg,png,jpg,gif,svg|max:2048',
-                    'category_id' => 'sometimes |exists:categories,id',
-                ]);
+            $data = $request->validate([
+                'name' => 'sometimes|string',
+                'description' => 'sometimes|string',
+                'price' => 'sometimes|numeric',
+                'image'=> 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'category_id' => 'sometimes|exists:categories,id',
+            ]);
 
                 if($request->has('image')){
 
@@ -156,7 +147,9 @@ class MenuItemController extends Controller
 
             }
         } catch (\Throwable $th) {
-            return response()->json(['error' => 'Failed to update manu_ithem'], 500);
+            return response()->json([
+                'error' => 'Failed to update menu item: ' . $th->getMessage()
+            ], 500);
         }
     }
 
@@ -181,7 +174,7 @@ class MenuItemController extends Controller
                 unlink(public_path().'/'.$menuItem->image);
 
 
-                $menuItem->delete();
+            $menuItem->delete();
 
                 return response()->json([
                     'status' => true,
