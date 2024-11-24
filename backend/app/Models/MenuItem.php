@@ -16,12 +16,7 @@ class MenuItem extends Model
     {
         return $this->belongsTo(Category::class);
     }
-
-    // get link of image
-    public function getImageAttribute($value){
-        $actual_link = (isset($_SERVER['HTTPS']) ? 'https' :'http') . '://'.$_SERVER['HTTP_HOST'] . '/';
-        return ($value == null?'' : $actual_link .  'MenuItemsImages/' . $value);
-    }
+    
 
     // A MenuItem has many OrderElements
     public function orderElements()

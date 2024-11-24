@@ -18,12 +18,14 @@ const Card = ({ image, name, price, id, onDetails }) => {
       image
     });
   };
+  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const imageUrl =  `${baseURL}/${image.replace(/^\/+/, '')}`;
 
   return (
     <div className="h-[350px] border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden">
       <div className="h-2/3">
         <img
-          src={image}
+          src={imageUrl}
           alt={name}
           className="w-full h-full object-cover rounded-t-lg"
         />

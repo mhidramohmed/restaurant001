@@ -3,12 +3,12 @@ import { useState } from 'react';
 import AdminMenuItemCard from './AdminMenuItemCard';
 import useSWR, { mutate } from 'swr';
 import axios from '@/lib/axios';
-import EditMenuItemModal from './EditMenuItemModal'; // You'll need to create this component
+import EditMenuItemModal from './EditMenuItemModal';
 
 const Modal = ({ onClose, children }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-4xl relative max-h-[90vh] overflow-hidden">
+      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-4xl relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -23,9 +23,9 @@ const Modal = ({ onClose, children }) => {
 
 const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
   const [editingItemId, setEditingItemId] = useState(null);
-  
+
   // Fetch menu items using SWR
-  const { data: items, error } = useSWR('/api/menu-items', (url) => 
+  const { data: items, error } = useSWR('/api/menu-items', (url) =>
     axios.get(url).then((res) => res.data.data)
   );
 
@@ -35,7 +35,7 @@ const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
 
   const handleDelete = async (itemId) => {
     // Optimistically update the UI
-    const updatedItems = items.filter(item => item.id !== itemId);
+    const updatedItems = items.filter((item) => item.id !== itemId);
     mutate('/api/menu-items', updatedItems, false);
   };
 
@@ -63,7 +63,7 @@ const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
   }
 
   // Filter items based on categoryId
-  const categoryItems = items.filter(item => item.category_id === categoryId);
+  const categoryItems = items.filter((item) => item.category_id === categoryId);
 
   return (
     <Modal onClose={onClose}>
@@ -71,7 +71,8 @@ const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
         <h2 className="text-2xl font-bold text-primary mb-4">
           Menu Items for {categoryName}
         </h2>
-        
+
+        {/* Scrollable area for menu items */}
         <div className="flex-1 overflow-auto px-2">
           {categoryItems.length === 0 ? (
             <div className="text-center py-8 text-gray-500">

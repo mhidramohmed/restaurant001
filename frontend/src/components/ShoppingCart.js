@@ -18,6 +18,8 @@ const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
     setIsCartVisible(false); // Close cart
   };
 
+  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
   return (
     <div className="flex flex-col h-full">
       {/* Cart Header */}
@@ -46,7 +48,7 @@ const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
               <li key={item.id} className="border-b pb-4">
                 <div className="flex items-center gap-4">
                   <img
-                    src={item.image}
+                    src={`${baseURL}/${item.image.replace(/^\/+/, '')}`}
                     alt={item.name}
                     className="w-16 h-16 object-cover rounded"
                   />

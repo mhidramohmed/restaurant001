@@ -32,6 +32,8 @@ class MenuItemController extends Controller
     public function store(Request $request)
     {
         try {
+
+            // return ($request);
             $data = $request->validate([
                 'name' => 'required|string',
                 'description' => 'nullable|string',
@@ -40,23 +42,44 @@ class MenuItemController extends Controller
                 'category_id' => 'required|exists:categories,id',
             ]);
 
+                        // return ($data);
+
+
             if($request->hasFile('image')){
+
+                $destinationPath = 'MenuItemsImages/';
+
                 $imageName = date('YmdHis') . "." . $request->image->getClientOriginalExtension();
-                $request->image->move(public_path('MenuItemsImages'), $imageName);
-                
+                $request->image->move($destinationPath, $imageName);
+
                 // Store just the filename in the database
-                $data['image'] = $imageName;
+                $data['image'] ="/".$destinationPath.$imageName;
             }
 
-            $menuItem = MenuItem::create($data);
+
+            // if ( $request->has('image')) {
+
+            //     $destinationPath = 'MenuItemsImages/';
+
+            //     $profileImage = date('YmdHis') . "." . $request->image->getClientOriginalName();
+
+            //     $request->image->move($destinationPath, $profileImage);
+
+            //     $data['image'] = '/'.$destinationPath.$profileImage;
+            // }
+
+            // return ($data);
+
+
+            MenuItem::create($data);
 
             // Transform the image path for the response
-            $menuItem->image = url('MenuItemsImages/' . $menuItem->image);
+            // $menuItem->image = url('MenuItemsImages/' . $menuItem->image);
 
             return response()->json([
                 'status' => true,
                 'message' => "The menu item has been created successfully",
-                'data' => $menuItem
+                'data' => $data
             ], 201);
 
         } catch (\Exception $e) {
@@ -66,6 +89,8 @@ class MenuItemController extends Controller
             ], 500);
         }
     }
+
+
 
     /**
      * Display the specified resource.
