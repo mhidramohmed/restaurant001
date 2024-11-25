@@ -81,7 +81,7 @@ const Page = () => {
 
   return (
     <>
-      <header className="bg-background border-b border-primary py-3 px-6">
+      <header className="bg-background py-3 px-6">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <h1 className="text-xl font-bold">{showPendingOnly ? 'Pending Orders' : 'Delivered Orders'}</h1>
