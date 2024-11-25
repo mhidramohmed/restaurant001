@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
+import { toast } from 'react-toastify';
 
 import OrderDetailsModal from '@/components/OrderDetailsModal';
 
@@ -35,20 +36,21 @@ const Page = () => {
   const handleDone = async (orderId) => {
     try {
       await axios.patch(`/api/orders/${orderId}`, { status: 'delivered' });
-      console.log(`Order ${orderId} marked as delivered.`);
+      toast.success('Order  marked as delivered.', { position: 'bottom-right' });
+
       mutate();
     } catch (error) {
-      console.error(`Failed to update order ${orderId}:`, error);
+      toast.error(`Failed to update order ${orderId}:`, error, { position: 'bottom-right' });
     }
   };
 
   const handleUpdate = async (orderId, status) => {
     try {
       await axios.patch(`/api/orders/${orderId}`, { status: status });
-      console.log(`Order ${orderId} status updated to ${status}.`);
+      toast.success(`Order  status updated to ${status}.`, { position: 'bottom-right' });
       mutate();
     } catch (error) {
-      console.error(`Failed to update order ${orderId} status to ${status}:`, error);
+      toast.error(`Failed to update order ${orderId} status to ${status}:`, error, { position: 'bottom-right' });
     }
   };
 

@@ -58,7 +58,7 @@ Route::delete('/menu-items/{id}', [MenuItemController::class,'destroy'])->where(
 Route::get('/orders', [OrderController::class,'index']);
 Route::get('/orders/{id}', [OrderController::class,'show'])->where('id','\d+');
 Route::post('/orders', [OrderController::class,'store']);
-Route::put('/orders/{id}', [OrderController::class,'update'])->where('id','\d+');
+Route::patch('/orders/{id}', [OrderController::class,'update'])->where('id','\d+');
 Route::delete('/orders/{id}', [OrderController::class,'destroy'])->where('id','\d+');
 Route::get('/analytics/orders/total', [OrderController::class, 'totalOrders']);
 Route::get('/analytics/orders/total-by-payment-method', [OrderController::class, 'totalByPaymentMethod']);

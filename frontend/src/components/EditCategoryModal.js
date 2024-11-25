@@ -20,7 +20,7 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
       try {
         const response = await axios.get(`/api/categories/${categoryId}`);
         // Updated to match the actual API response structure
-        const category = response.data.data.category;
+        const category = response.data.data;
         
         setFormData({
           name: category.name || '',
@@ -30,11 +30,11 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
         
         // Handle image preview
         if (category.image) {
-          // Check if image is a full URL or just a path
-          setPreview(category.image.startsWith('http')
+          const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+          const imageUrl = category.image.startsWith('http')
             ? category.image
-            : `${process.env.NEXT_PUBLIC_BACKEND_URL}/${category.image}`
-          );
+            : `${baseURL}/${category.image.replace(/^\/+/, '')}`;
+          setPreview(imageUrl);
         }
       } catch (error) {
         console.error('Error fetching category:', error);

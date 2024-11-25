@@ -2,7 +2,7 @@
 'use client';
 import MainButton from './MainButton';
 import { LuShoppingCart } from "react-icons/lu";
-import { IoLink } from "react-icons/io5";
+import { FiEye } from "react-icons/fi";
 import { useCart } from '@/contexts/CartContext';
 
 const Card = ({ image, name, price, id, onDetails }) => {
@@ -40,7 +40,7 @@ const Card = ({ image, name, price, id, onDetails }) => {
               <LuShoppingCart />
             </MainButton>
             <MainButton onClick={onDetails} className="bg-secondary text-text">
-              <IoLink />
+            <FiEye className="text-xl" />
             </MainButton>
           </div>
         </div>

@@ -63,7 +63,12 @@ class CategoryController extends Controller
     public function show( $id)
     {
         try {
-            $category = Category:: findOrFail($id);
+
+            // return($id);
+            $category = Category:: find($id);
+
+                        // return($category);
+
 
             if(!$category){
                 return response()->json([
@@ -73,14 +78,11 @@ class CategoryController extends Controller
 
             }else{
 
-                    return response()->json([
-                    'data'=>
-                    [
-                        'category'->$category,
-                    ],
+                return response()->json([
+                    'data'=>$category ,
 
                     'messsage'=>"u get the data  "
-                    ],200);
+                ],200);
 
             }
 

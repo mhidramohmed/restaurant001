@@ -13,7 +13,7 @@ const ConfirmDeleteModal = ({ categoryId, categoryName, onClose }) => {
       const response = await axios.delete(`/api/categories/${categoryId}`);
       
       if (response.data.status) {
-        toast.success('Category deleted successfully');
+        toast.success(response.data.message || 'Menu item updated successfully');
         // Force reload the page to refresh the category list
         window.location.reload();
       } else {
