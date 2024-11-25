@@ -15,7 +15,7 @@ const Header = ({ setSearchTerm }) => (
     <SearchBar setSearchTerm={setSearchTerm} className={'hidden md:block'} />
 
     <div className="flex gap-1 md:gap-4">
-      <CircleButton body="+212 628 354575" href="tel:+212628354575" icon={<HiOutlinePhone />} />
+      <CircleButton body="+212605274561 " href="tel:+212605274561 " icon={<HiOutlinePhone />} />
       <CircleButton body="Marrakech" href="https://maps.app.goo.gl/z1u3aWaZuMSjftQx8" icon={<HiOutlineLocationMarker />} />
       <CircleButton body="Visit our website" href="https://bonsai-marrakech.com/" icon={<HiOutlinePlusSm />} />
     </div>
