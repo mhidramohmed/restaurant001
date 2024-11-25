@@ -10,7 +10,6 @@ const Card = ({ image, name, price, id, onDetails }) => {
 
   const handleAddToCart = () => {
     // Make sure all required data is being passed
-    console.log('Adding item:', { id, name, price, image }); // Debug log
     addItem({
       id,
       name,
