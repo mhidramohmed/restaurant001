@@ -115,7 +115,7 @@ class MenuItemController extends Controller
             if($menuItem){
                 return response()->json([
                     'data' => $menuItem
-                ], 404);}
+                ], 200);}
 
         } catch (\Throwable $th) {
 
@@ -204,7 +204,7 @@ class MenuItemController extends Controller
                 return response()->json([
                     'status' => true,
                     'message'=>"Your MenuItem has been delete successfully "
-                ], 404);
+                ], 200);
 
 
             }
