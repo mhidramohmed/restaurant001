@@ -47,6 +47,15 @@ const SideBar = () => {
             Customers
           </MainButton>
         </Link>
+        <Link href="/dashboard/orders">
+          <MainButton
+            className={`w-full text-left border-0 text-text hover:bg-secondary hover:text-primary ${
+              pathname === '/dashboard/orders' ? 'bg-secondary text-primary' : ''
+            }`}
+          >
+            Orders
+          </MainButton>
+        </Link>
       </div>
 
       {/* Log Out Button at the bottom */}
