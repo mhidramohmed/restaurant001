@@ -38,7 +38,7 @@ Route::post('/categories', [CategoryController::class,'store']);
 Route::post('/categories/{id}', [CategoryController::class,'restoreCategory']);
 
 
-Route::put('/categories/{id}', [CategoryController::class,'update'])->where('id','\d+');
+Route::patch('/categories/{id}', [CategoryController::class,'update'])->where('id','\d+');
 Route::delete('/categories/{id}', [CategoryController::class,'destroy'])->where('id','\d+');
 
 
@@ -55,7 +55,7 @@ Route::get('/menu-items/trash', [MenuItemController::class,'getDeletedMenuItems'
 Route::post('/menu-items', [MenuItemController::class,'store']);
 Route::post('/menu-items/{id}', [MenuItemController::class,'restoreMenuItem']);
 
-Route::put('/menu-items/{id}', [MenuItemController::class,'update'])->where('id','\d+');
+Route::patch('/menu-items/{id}', [MenuItemController::class,'update'])->where('id','\d+');
 Route::delete('/menu-items/{id}', [MenuItemController::class,'destroy'])->where('id','\d+');
 
 
@@ -88,7 +88,7 @@ Route::get('/customers/total-spent', [OrderController::class, 'totalSpentByCusto
 Route::get('/order-elements', [OrderElementController::class,'index']);
 Route::get('/order-elements/{id}', [OrderElementController::class,'show'])->where('id','\d+');
 Route::post('/order-elements', [OrderElementController::class,'store']);
-Route::put('/order-elements/{id}', [OrderElementController::class,'update'])->where('id','\d+');
+Route::patch('/order-elements/{id}', [OrderElementController::class,'update'])->where('id','\d+');
 Route::delete('/order-elements/{id}', [OrderElementController::class,'destroy'])->where('id','\d+');
 Route::get('/analytics/menu-items/quantity-sold', [OrderElementController::class,'quantitySoldByMenuItem']);
 
