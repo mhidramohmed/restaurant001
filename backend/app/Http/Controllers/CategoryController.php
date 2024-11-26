@@ -72,7 +72,7 @@ class CategoryController extends Controller
             if(!$category){
                 return response()->json([
                     'message' => "Your category  doesn't exist"
-                ], 404);
+                ], 200);
 
 
             }else{
@@ -97,7 +97,7 @@ class CategoryController extends Controller
         if(!$category){
             return response()->json([
                 'message'=>"Your category whith ID $id doesn't exist"
-            ], 404);
+            ], 200);
         }else{
 
             $data = $request->validate([

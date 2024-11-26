@@ -107,7 +107,7 @@ class MenuItemController extends Controller
             if(!$menuItem){
                 return response()->json([
                     'message' => "Your MenuItem  doesn't exist"
-                ], 404);
+                ], 200);
             }
 
             // return ('hhhh');
@@ -138,7 +138,7 @@ class MenuItemController extends Controller
                 return response()->json([
                     'status' => false,
                     'message'=>"Your MenuItem doen't exist "
-                ], 404);
+                ], 200);
 
             }else{
 
@@ -190,7 +190,7 @@ class MenuItemController extends Controller
             return response()->json([
                 'status' => false,
                 'message'=>"Your MenuItem doen't exist "
-            ], 404);
+            ], 200);
 
             }else{
 
