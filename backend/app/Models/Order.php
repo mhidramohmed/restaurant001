@@ -4,11 +4,15 @@ namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
     use HasFactory;
+
+    use SoftDeletes;
+
 
     protected $fillable = [
         'client_name',
@@ -17,7 +21,9 @@ class Order extends Model
         'client_address',
         'total_price',
         'payment_method',
-        'status'
+        'status',
+        'order_status',
+        'payment_status'
     ];
 
     // An Order has many OrderElements

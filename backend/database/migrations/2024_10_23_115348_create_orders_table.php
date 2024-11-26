@@ -19,8 +19,11 @@ return new class extends Migration
             $table->text('client_address');
             $table->decimal('total_price', 8, 2);
             $table->enum('payment_method', ['visa', 'cash']);
-            $table->enum('status', ['pending', 'delivered', 'declined'])->default('pending');
+            $table->enum('order_status', ['pending', 'onprossec','delivered', 'declined'])->default('pending');
+            $table->enum('payment_status', ['paid', 'nopaid'])->default('nopaid');
             $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 

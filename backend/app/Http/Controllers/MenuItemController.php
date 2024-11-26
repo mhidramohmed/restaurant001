@@ -184,27 +184,25 @@ class MenuItemController extends Controller
     public function destroy( $id)
     {
         try {
-                        $menuItem = MenuItem::find($id);
-// return($menuItem);
-
+            $menuItem = MenuItem::find($id);
             if(!$menuItem){
 
-                return response()->json([
-                    'status' => false,
-                    'message'=>"Your MenuItem doen't exist "
-                ], 404);
+            return response()->json([
+                'status' => false,
+                'message'=>"Your MenuItem doen't exist "
+            ], 404);
 
             }else{
 
-                unlink(public_path().'/'.$menuItem->image);
+            // unlink(public_path().'/'.$menuItem->image);
 
 
             $menuItem->delete();
 
-                return response()->json([
-                    'status' => true,
-                    'message'=>"Your MenuItem has been deleted successfully "
-                ], 200);
+            return response()->json([
+                'status' => true,
+                'message'=>"Your MenuItem has been deleted successfully "
+            ], 200);
 
 
             }
@@ -212,5 +210,29 @@ class MenuItemController extends Controller
 
             return response()->json(['error' => 'Failed to update manu_ithem'], 500);
         }
+    }
+
+
+    public function getDeletedMenuItems(){
+
+        // return('hey');
+
+
+        $MenuItems =  MenuItem::onlyTrashed()->get();
+
+                // return($MenuItems);
+
+
+        return response()->json(['data' =>$MenuItems ], 200);
+    }
+
+    public function restoreMenuItem($id)
+    {
+        // Restore a specific soft-deleted post
+        $MenuItem = MenuItem::onlyTrashed()->findOrFail($id);
+        $MenuItem->restore();
+
+        return response()->json(['message'=>' Your MenuItem has been restore successfully'], 200);
+
     }
 }

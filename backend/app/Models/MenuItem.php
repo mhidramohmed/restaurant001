@@ -2,14 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MenuItem extends Model
 {
     use HasFactory;
 
-     protected $fillable = ['name', 'description', 'price', 'image', 'category_id'];
+    use SoftDeletes;
+
+
+    protected $fillable = ['name', 'description', 'price', 'image', 'category_id','is_deleted'];
 
     // A MenuItem belongs to a Category
     public function category()
