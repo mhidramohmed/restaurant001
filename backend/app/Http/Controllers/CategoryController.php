@@ -31,7 +31,6 @@ class CategoryController extends Controller
         try {
             $data = $request->validate([
                 'name' => 'required|string',
-                'description' => 'nullable|string',
                 'image'=> 'required | image | mimes: jpeg,png,jpg,gif,svg|max:2048'
             ]);
 
@@ -103,7 +102,6 @@ class CategoryController extends Controller
 
             $data = $request->validate([
                 'name' => 'sometimes |string',
-                'description' => 'sometimes |string',
                 'image'=> 'sometimes | image | mimes: jpeg,png,jpg,gif,svg|max:2048',
             ]);
 
