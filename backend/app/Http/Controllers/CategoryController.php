@@ -72,7 +72,7 @@ class CategoryController extends Controller
             if(!$category){
                 return response()->json([
                     'message' => "Your category  doesn't exist"
-                ], 404);
+                ], 200);
 
 
             }else{
@@ -97,7 +97,7 @@ class CategoryController extends Controller
         if(!$category){
             return response()->json([
                 'message'=>"Your category whith ID $id doesn't exist"
-            ], 404);
+            ], 200);
         }else{
 
             $data = $request->validate([
@@ -107,6 +107,10 @@ class CategoryController extends Controller
 
 
             if($request->hasFile('image')){
+
+                if(!$category->image){
+
+                }
 
                 unlink(public_path().'/'.$category->image);
 
@@ -140,8 +144,7 @@ class CategoryController extends Controller
         ], 200);
       }else{
 
-        unlink(public_path().'/'.$category->image);
-
+        // unlink(public_path().'/'.$category->image);
 
         $category->delete();
 
@@ -152,6 +155,29 @@ class CategoryController extends Controller
 
       }
 
+
+    }
+
+    public function getDeletedCategories(){
+
+        // return('hey');
+
+
+        $categories =  Category::onlyTrashed()->get();
+
+                // return($categories);
+
+
+        return response()->json(['data' =>$categories ], 200);
+    }
+
+    public function restoreCategory($id)
+    {
+        // Restore a specific soft-deleted post
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $category->restore();
+
+        return response()->json(['message'=>' Your Category has been restore successfully'], 200);
 
     }
 }

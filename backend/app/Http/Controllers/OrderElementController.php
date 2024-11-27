@@ -71,7 +71,7 @@ class OrderElementController extends Controller
 
                 return response()->json([
                     'messsage'=>"Your orderElement doesn't exist  "
-                ], 404);
+                ], 200);
             }
         } catch (\Throwable $th) {
 
@@ -100,7 +100,7 @@ class OrderElementController extends Controller
 
             }else{
 
-                return response()->json(['message' => "Your orderElement doesn't exist"], 404);
+                return response()->json(['message' => "Your orderElement doesn't exist"], 200);
             }
 
         } catch (\Throwable $th) {
@@ -123,7 +123,7 @@ class OrderElementController extends Controller
 
             }else{
 
-                return response()->json(['message' => "Your orderElement doesn't exist"], 404);
+                return response()->json(['message' => "Your orderElement doesn't exist"], 200);
             }
 
         } catch (\Throwable $th) {

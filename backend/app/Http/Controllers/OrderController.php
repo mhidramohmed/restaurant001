@@ -163,7 +163,7 @@ class OrderController extends Controller
             // return($order);
 
             if(!$order){
-                return response()->json(['message' => "Your Order doesn't exist"], 404);
+                return response()->json(['message' => "Your Order doesn't exist"], 200);
 
 
             }else{
@@ -174,7 +174,9 @@ class OrderController extends Controller
                     'client_address' => 'sometimes|string|max:255',
                     'total_price' => 'sometimes|numeric',
                     'payment_method' => 'sometimes|string|in:paypal,cash',
-                    'status' => 'sometimes|string|in:pending,delivered,declined',
+                    'order_status' => 'sometimes|string|in:pending,delivered,declined',
+                    'payment_status' => 'sometimes|string|in:paid,nopaid',
+
                 ]);
 
                 $order->update($data);
