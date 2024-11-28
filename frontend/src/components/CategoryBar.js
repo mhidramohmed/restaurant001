@@ -5,14 +5,15 @@ import useSWR from "swr";
 import axios from "@/lib/axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import { useSwiper } from "swiper/react";
+import SkeletonCategory from "./skeleton/SkeletonCategory";
+import '@/app/global.css'
 
 const fetcher = (url) => axios.get(url).then((res) => res.data.data);
 
 const CategoryBar = () => {
   const { data: categories, error } = useSWR("/api/categories", fetcher);
   const [activeCategory, setActiveCategory] = useState(null);
-  const [swiperInstance, setSwiperInstance] = useState(null); // Store the swiper instance
+  const [swiperInstance, setSwiperInstance] = useState(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -34,54 +35,56 @@ const CategoryBar = () => {
     };
   }, []);
 
-  // Automatically scroll to the active category in Swiper
   useEffect(() => {
     if (swiperInstance && activeCategory && categories) {
       const activeIndex = categories.findIndex(
         (category) => `category-${category.id}` === activeCategory
       );
       if (activeIndex !== -1) {
-        swiperInstance.slideTo(activeIndex); // Swipe to the active category
+        swiperInstance.slideTo(activeIndex);
       }
     }
   }, [swiperInstance, activeCategory, categories]);
 
   if (error) return <div>Failed to load categories</div>;
-  if (!categories) return <div>Loading...</div>;
 
   return (
     <Swiper
       slidesPerView="auto"
       spaceBetween={10}
       breakpoints={{
-        320: {
-          spaceBetween: 10,
-        },
-        640: {
-          spaceBetween: 20,
-        },
-        1024: {
-          spaceBetween: 30,
-        },
+        320: { spaceBetween: 10 },
+        640: { spaceBetween: 20 },
+        1024: { spaceBetween: 30 },
       }}
       className="bg-background py-2 md:pl-4 space-x-4 ml-2 md:ml-0"
       data-category-bar
-      onSwiper={setSwiperInstance} // Get the swiper instance
+      onSwiper={setSwiperInstance}
     >
-      {categories.map((category) => (
-        <SwiperSlide
-          key={category.id}
-          style={{ width: "auto", flexShrink: 0 }}
-        >
-          <Category
-            name={category.name}
-            image={category.image}
-            categoryId={category.id}
-            isActive={activeCategory === `category-${category.id}`}
-            setActiveCategory={setActiveCategory}
-          />
-        </SwiperSlide>
-      ))}
+      {!categories
+        ? Array(5).fill(null).map((_, index) => (
+          <SwiperSlide
+            key={`skeleton-${index}`}
+            className="skeleton-category-slide"
+            style={{ width: "auto", flexShrink: 0 }}
+          >
+            <SkeletonCategory />
+          </SwiperSlide>
+          ))
+        : categories.map((category) => (
+            <SwiperSlide
+              key={category.id}
+              style={{ width: "auto", flexShrink: 0 }}
+            >
+              <Category
+                name={category.name}
+                image={category.image}
+                categoryId={category.id}
+                isActive={activeCategory === `category-${category.id}`}
+                setActiveCategory={setActiveCategory}
+              />
+            </SwiperSlide>
+          ))}
     </Swiper>
   );
 };

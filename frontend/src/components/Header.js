@@ -1,6 +1,7 @@
 import Logo from "./Logo";
 import SearchBar from './SearchBar';
 import CircleButton from "./CircleButton";
+import Link from "next/link";
 
 import { HiOutlinePhone, HiOutlineLocationMarker, HiOutlinePlusSm } from "react-icons/hi";
 
@@ -8,9 +9,9 @@ const Header = ({ setSearchTerm }) => (
   <header className="border-b border-primary p-4">
   <div className="flex flex-row items-center bg-background text-text w-full justify-between ">
 
-    <div className="flex-shrink-0">
+    <Link href='/' className="flex-shrink-0">
       <Logo />
-    </div>
+    </Link>
 
     <SearchBar setSearchTerm={setSearchTerm} className={'hidden md:block'} />
 

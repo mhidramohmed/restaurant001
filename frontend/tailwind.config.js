@@ -9,7 +9,7 @@ module.exports = {
                 dark: '#7a4621'       // darker shade
             },
             secondary: '#faedcd',     // secondary color
-                background: '#ffffff',   // background color
+            background: '#ffffff',   // background color
             text: {
                 DEFAULT: '#432818',   // primary text color
                 light: '#6b5641'      // lighter text shade

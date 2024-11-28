@@ -49,11 +49,13 @@ Route::delete('/categories/{id}', [CategoryController::class,'destroy'])->where(
 // Route::apiResource('menu-items', MenuItemController::class);
 
 Route::get('/menu-items', [MenuItemController::class,'index']);
+Route::get('/menu-items/trashed', [MenuItemController::class, 'getDeletedMenuItems']);
+
 Route::get('/menu-items/{id}', [MenuItemController::class,'show'])->where('id','\d+');
-Route::get('/menu-items/trash', [MenuItemController::class,'getDeletedMenuItems']);
 
 Route::post('/menu-items', [MenuItemController::class,'store']);
-Route::post('/menu-items/{id}', [MenuItemController::class,'restoreMenuItem']);
+Route::post('/menu-items/{id}/restore', [MenuItemController::class, 'restoreMenuItem']);
+
 
 Route::patch('/menu-items/{id}', [MenuItemController::class,'update'])->where('id','\d+');
 Route::delete('/menu-items/{id}', [MenuItemController::class,'destroy'])->where('id','\d+');

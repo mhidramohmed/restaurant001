@@ -141,7 +141,7 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
       const response = await axios.post(`/api/menu-items/${itemId}`, data, {
         headers: { 
           'Content-Type': 'multipart/form-data',
-          'X-HTTP-Method-Override': 'PUT'
+          'X-HTTP-Method-Override': 'PATCH'
         }
       });
       

@@ -30,7 +30,9 @@ const Dashboard = () => {
 
     orders.forEach((order) => {
       totalOrders += 1;
-      totalProfit += parseFloat(order.total_price);
+      if (order.payment_status === 'paid') {
+        totalProfit += parseFloat(order.total_price);
+      }
       if (order.status === 'declined') {
         declinedOrders += 1;
       }

@@ -13,17 +13,17 @@ class OrderController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        try {
-            $orders = Order::with('orderElements')->get();
+{
+    try {
+        // Eager load 'orderElements' and 'menuItem' relationships
+        $orders = Order::with('orderElements.menuItem')->get();
 
-            return response()->json(['data'=>$orders], 200);
-
-        } catch (\Throwable $th) {
-
-            return response()->json(['error' => 'Failed to fetch orders'], 500);
-        }
+        return response()->json(['data' => $orders], 200);
+    } catch (\Throwable $th) {
+        return response()->json(['error' => 'Failed to fetch orders'], 500);
     }
+}
+
 
     public function totalOrders()
     {
@@ -174,8 +174,8 @@ class OrderController extends Controller
                     'client_address' => 'sometimes|string|max:255',
                     'total_price' => 'sometimes|numeric',
                     'payment_method' => 'sometimes|string|in:paypal,cash',
-                    'order_status' => 'sometimes|string|in:pending,delivered,declined',
-                    'payment_status' => 'sometimes|string|in:paid,nopaid',
+                    'order_status' => 'sometimes|string|in:pending,inprocess,delivered,declined',
+                    'payment_status' => 'sometimes|string|in:paid,unpaid',
 
                 ]);
 
