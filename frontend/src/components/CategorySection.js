@@ -31,7 +31,6 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
               0: {
                 slidesPerView: 1.5,
                 spaceBetween: 10,
-                allowTouchMove: false,
               },
               720: {
                 slidesPerView: 3,
@@ -90,7 +89,6 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
             0: {
               slidesPerView: 1.5,
               spaceBetween: 10,
-              allowTouchMove: false,
             },
             720: {
               slidesPerView: 3,
