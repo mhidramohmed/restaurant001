@@ -1,4 +1,3 @@
-// contexts/CartContext.js
 'use client';
 import { createContext, useContext, useReducer } from 'react';
 
@@ -12,7 +11,6 @@ const cartReducer = (state, action) => {
       );
       
       if (existingItemIndex !== -1) {
-        // Create a new array to avoid mutating state directly
         const newItems = [...state.items];
         newItems[existingItemIndex] = {
           ...newItems[existingItemIndex],
@@ -25,7 +23,6 @@ const cartReducer = (state, action) => {
         };
       }
       
-      // If item doesn't exist, add it with quantity 1
       return {
         ...state,
         items: [...state.items, { ...action.payload, quantity: 1 }]
@@ -48,7 +45,7 @@ const cartReducer = (state, action) => {
       };
 
       case 'CLEAR_CART':
-        return { ...state, items: [] }; // Clear all items
+        return { ...state, items: [] };
 
     default:
       return state;
@@ -75,9 +72,12 @@ export function CartProvider({ children }) {
   };
 
   const getTotal = () => {
-    return state.items
-        .reduce((total, item) => total + (item.price * item.quantity), 0)
-        .toFixed(2);
+    const totalWithoutDelivery = state.items
+      .reduce((total, item) => total + item.price * item.quantity, 0);
+
+    const deliveryFee = 15; 
+
+    return (totalWithoutDelivery + deliveryFee).toFixed(2);
   };
 
   const clearCart = () => {

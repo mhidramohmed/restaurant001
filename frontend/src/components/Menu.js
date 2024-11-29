@@ -4,7 +4,6 @@ import axios from "@/lib/axios";
 import SkeletonCategory from "./skeleton/SkeletonCategory";
 import SkeletonCard from "./skeleton/SkeletonCard";
 
-// Fetcher function for data fetching
 const fetcher = (url) => axios.get(url).then((res) => res.data.data);
 
 export default function Menu({ searchTerm }) {
@@ -12,7 +11,6 @@ export default function Menu({ searchTerm }) {
 
   if (error) return <div>Failed to load categories</div>;
 
-  // Skeleton placeholder while categories are loading
   if (!categories) {
     return (
       <div className="space-y-8">

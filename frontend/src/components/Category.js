@@ -11,7 +11,6 @@ const Category = ({ categoryId, name, image, isActive, setActiveCategory }) => {
     const targetSection = document.getElementById(`category-${categoryId}`);
     if (targetSection) {
       targetSection.scrollIntoView({ behavior: "smooth" });
-      // Update active category
       setActiveCategory(`category-${categoryId}`);
     }
   };

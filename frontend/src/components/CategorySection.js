@@ -15,7 +15,6 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
 
   if (error) return <div>Failed to load items</div>;
 
-  // Skeleton loading state
   if (!items) {
     return (
       <section
@@ -63,7 +62,6 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
     );
   }
 
-  // Existing item rendering logic remains the same
   const categoryItems = items
     .filter((item) => item.category_id === categoryId)
     .filter((item) => item.name.toLowerCase().startsWith(searchTerm));
@@ -112,7 +110,6 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
                 image={item.image}
                 name={item.name}
                 price={item.price}
-                onAddToCart={() => console.log(`Added ${item.name} to cart`)}
                 onDetails={() => handleCardClick(item)}
               />
             </SwiperSlide>
@@ -129,7 +126,6 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
             image={item.image}
             name={item.name}
             price={item.price}
-            onAddToCart={() => console.log(`Added ${item.name} to cart`)}
             onDetails={() => handleCardClick(item)}
           />
         ))}

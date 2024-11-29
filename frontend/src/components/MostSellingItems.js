@@ -4,13 +4,11 @@ import axios from '@/lib/axios';
 import useSWR from 'swr';
 import MainButton from './MainButton';
 
-// Axios fetcher function
 const fetcher = async (url) => {
   try {
     const response = await axios.get(url, { withCredentials: true });
     return response.data.data || response.data;
   } catch (error) {
-    console.error('Fetch Error:', error);
     throw error;
   }
 };
@@ -24,11 +22,10 @@ const MostSellingItems = () => {
     return <div>Loading...</div>;
   }
 
-  // Aggregate quantities by menu_item_id
   const itemSales = {};
   data.forEach((element) => {
     const { menu_item_id, quantity, menu_item } = element;
-    if (!menu_item) return; // Skip if menu_item is missing
+    if (!menu_item) return; 
 
     if (!itemSales[menu_item_id]) {
       itemSales[menu_item_id] = { ...menu_item, totalQuantity: 0 };
@@ -36,10 +33,8 @@ const MostSellingItems = () => {
     itemSales[menu_item_id].totalQuantity += quantity;
   });
 
-  // Sort items by total quantity sold
   const sortedItems = Object.values(itemSales).sort((a, b) => b.totalQuantity - a.totalQuantity);
 
-  // Limit to 5 items
   const limitedItems = sortedItems.slice(0, 5);
 
   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;

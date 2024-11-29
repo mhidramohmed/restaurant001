@@ -9,10 +9,8 @@ import { useState } from 'react';
 const fetcher = async (url) => {
   try {
     const response = await axios.get(url, { withCredentials: true });
-    console.log('Response from API:', response.data);
     return response.data.data || response.data;
   } catch (error) {
-    console.error('Fetch Error:', error.response ? error.response.data : error.message);
     throw error;
   }
 };

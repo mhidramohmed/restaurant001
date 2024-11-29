@@ -5,7 +5,6 @@ const MenuItemModal = ({ item, onClose, onAddToCart }) => {
   const { addItem } = useCart();
   const { id, name, price, image } = item;
   const handleAddToCart = () => {
-    // Make sure all required data is being passed
     addItem({
       id,
       name,

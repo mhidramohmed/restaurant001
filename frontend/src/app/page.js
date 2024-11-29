@@ -12,7 +12,7 @@ import { LuShoppingCart } from "react-icons/lu";
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { items, getTotal } = useCart();
-  const [isCartVisible, setIsCartVisible] = useState(false); // Track cart visibility
+  const [isCartVisible, setIsCartVisible] = useState(false);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">

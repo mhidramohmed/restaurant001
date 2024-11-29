@@ -22,7 +22,6 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
       mutate();
       onClose();
     } catch (error) {
-      console.error('Failed to update order:', error);
     }
   };
 
@@ -102,7 +101,7 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
               <div className="mt-4">
                 <p className="text-gray-600 font-medium">Payment Status</p>
                 <div className="flex space-x-2 mt-2">
-                  {['paid', 'unpaid'].map((status) => (  // Corrected typo here
+                  {['paid', 'unpaid'].map((status) => (  
                     <span
                       key={status}
                       className={`cursor-pointer px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ${getBgColorClass(

@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 
 const fetcher = (url) =>
   axios
-    .get(url, { withCredentials: true }) // Ensure credentials are included
+    .get(url, { withCredentials: true }) 
     .then((res) => res.data.data);
 
 const DeletedMenuItems = () => {

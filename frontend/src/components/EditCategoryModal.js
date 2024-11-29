@@ -18,7 +18,6 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
       setIsLoading(true);
       try {
         const response = await axios.get(`/api/categories/${categoryId}`);
-        // Updated to match the actual API response structure
         const category = response.data.data;
         
         setFormData({
@@ -26,7 +25,6 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
           image: null
         });
         
-        // Handle image preview
         if (category.image) {
           const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
           const imageUrl = category.image.startsWith('http')
@@ -35,7 +33,6 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
           setPreview(imageUrl);
         }
       } catch (error) {
-        console.error('Error fetching category:', error);
         toast.error(
           error.response?.data?.message || 
           error.response?.data?.error || 
@@ -58,7 +55,6 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
       const file = files[0];
       setFormData(prev => ({ ...prev, [name]: file }));
       
-      // Create preview URL for image
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
@@ -87,11 +83,10 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
 
       if (response.data.message) {
         toast.success(response.data.message);
-        onClose(); // Close modal after successful update
-        window.location.reload(); // Refresh to show updated data
+        onClose();
+        window.location.reload();
       }
     } catch (error) {
-      console.error('Error updating category:', error);
       toast.error(error.response?.data?.message || 'Failed to update category');
     } finally {
       setIsSaving(false);

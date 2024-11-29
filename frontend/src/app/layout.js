@@ -26,7 +26,7 @@ const RootLayout = ({ children }) => {
 }
 
 export const metadata = {
-    title: 'restaurant001',
+    title: process.env.NEXT_PUBLIC_APP_NAME,
 }
 
 export default RootLayout

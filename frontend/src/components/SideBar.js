@@ -3,13 +3,13 @@ import Link from 'next/link';
 import Logo from './Logo';
 import MainButton from './MainButton';
 import { FaSignOutAlt } from 'react-icons/fa';
-import { usePathname } from 'next/navigation'; // To check the current path
+import { usePathname } from 'next/navigation';
 
 import { useAuth } from '@/hooks/auth';
 
 const SideBar = () => {
   const { logout } = useAuth();
-  const pathname = usePathname(); // Get current pathname
+  const pathname = usePathname();
 
   return (
     <div className="w-64 h-full min-h-screen bg-background shadow-lg flex flex-col">
@@ -56,7 +56,7 @@ const SideBar = () => {
             Orders
           </MainButton>
         </Link>
-        <Link href="/dashboard/trashed/menu-items">
+        {/* <Link href="/dashboard/trashed/menu-items">
           <MainButton
             className={`w-full text-left border-0 text-text hover:bg-secondary hover:text-primary ${
               pathname === '/dashboard/trashed/menu-items' ? 'bg-secondary text-primary' : ''
@@ -64,13 +64,13 @@ const SideBar = () => {
           >
             Trashed
           </MainButton>
-        </Link>
+        </Link> */}
       </div>
 
       {/* Log Out Button at the bottom */}
       <div className="py-4 px-4 mt-auto">
         <MainButton
-          onClick={logout} // Add your logout logic here
+          onClick={logout}
           className="w-full text-left bg-primary text-background border-0 hover:bg-opacity-90 flex items-center"
         >
           <FaSignOutAlt className="mr-2" />

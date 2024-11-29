@@ -13,11 +13,9 @@ const AppLayout = ({ children }) => {
         return <Loading />
     }
 
-    // Restrict dashboard to admin role only
     if (user.role !== 'admin' && router.pathname === '/dashboard') {
         router.push('/orders')
-        console.log('Redirecting to orders page')
-        return null // Return null to prevent rendering
+        return null 
     }
 
     return (

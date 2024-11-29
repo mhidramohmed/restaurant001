@@ -2,22 +2,17 @@
 
 import useSWR from 'swr';
 import axios from '@/lib/axios';
-import MainButton from '@/components/MainButton';
 import { useAuth } from '@/hooks/auth';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Logo from '@/components/Logo';
 
 import OrderDetailsModal from '@/components/OrderDetailsModal';
 
 const fetcher = async (url) => {
   try {
     const response = await axios.get(url);
-    console.log('API Response:', response);
     return response.data.data || response.data;
   } catch (error) {
-    console.error('Fetch Error:', error);
     throw error;
   }
 };
@@ -41,7 +36,7 @@ const OrderStatusBadge = ({ status }) => {
 
 const Page = () => {
   const router = useRouter();
-  const { user, logout } = useAuth({ middleware: 'auth' });
+  const { user } = useAuth({ middleware: 'auth' });
   const { data: orders, error, mutate } = useSWR(
     user ? '/api/orders' : null,
     fetcher
@@ -67,16 +62,13 @@ const Page = () => {
     if (!orders) return [];
 
     return orders.filter(order => {
-      // Search filter
       const matchesSearch = !filters.searchTerm || 
         order.client_name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
         order.id.toString().includes(filters.searchTerm);
 
-      // Status filter
       const matchesStatus = filters.statuses.length === 0 || 
         filters.statuses.includes(order.order_status);
 
-      // Payment status filter
       const matchesPaymentStatus = filters.paymentStatuses.length === 0 || 
         filters.paymentStatuses.includes(order.payment_status);
 
@@ -108,7 +100,6 @@ const Page = () => {
   }, []);
 
   if (error) {
-    console.error('Error details:', error);
     return <div className="p-6 text-red-600">Failed to load orders: {error.message}</div>;
   }
 
