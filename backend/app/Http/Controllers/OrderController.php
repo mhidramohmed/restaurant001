@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\MenuItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;  // <-- Import DB facade here
 
@@ -103,8 +104,14 @@ class OrderController extends Controller
 
             // Loop through the order items and create each OrderElement
             foreach ($validated['order_items'] as $orderItem) {
+
+                // Fetch the menu item name using the menu_item_id
+                $menu_item = MenuItem::find($orderItem['menu_item_id']);
+                $item_name = $menu_item ? $menu_item->name : 'Unknown';
+
                 $order->orderElements()->create([
                     'menu_item_id' => $orderItem['menu_item_id'],
+                    'name' => $item_name,
                     'quantity' => $orderItem['quantity'],
                     'price' => $orderItem['price'],
                 ]);

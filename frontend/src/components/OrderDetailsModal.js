@@ -143,16 +143,16 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
             {order.order_elements.map((item) => (
               <li key={item.id} className="flex items-center space-x-4">
                 {/* Item Image */}
-                {item.menu_item?.image && (
                   <img
-                    src={`${baseUrl}${item.menu_item.image}`}
-                    alt={item.menu_item.name}
+                    src={item.menu_item && item.menu_item.image 
+                      ? `${baseUrl}${item.menu_item.image}` 
+                      : 'https://placehold.jp/30/99582a/faedcd/150x150.png?text=Trashed'}
+                    alt={item.name}
                     className="w-16 h-16 rounded-lg object-cover"
                   />
-                )}
                 {/* Item Details */}
                 <div>
-                  <p className="text-lg font-medium text-primary">{item.menu_item?.name || 'N/A'}</p>
+                  <p className="text-lg font-medium text-primary">{item.name}</p>
                   <p><strong>Qty:</strong> {item.quantity}</p>
                   <p><strong>Price:</strong> {item.price} Dhs</p>
                 </div>
