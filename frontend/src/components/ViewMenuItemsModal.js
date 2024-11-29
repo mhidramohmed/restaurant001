@@ -24,7 +24,6 @@ const Modal = ({ onClose, children }) => {
 const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
   const [editingItemId, setEditingItemId] = useState(null);
 
-  // Fetch menu items using SWR
   const { data: items, error } = useSWR('/api/menu-items', (url) =>
     axios.get(url).then((res) => res.data.data)
   );
@@ -34,14 +33,13 @@ const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
   };
 
   const handleDelete = async (itemId) => {
-    // Optimistically update the UI
     const updatedItems = items.filter((item) => item.id !== itemId);
     mutate('/api/menu-items', updatedItems, false);
   };
 
   const handleEditComplete = () => {
     setEditingItemId(null);
-    mutate('/api/menu-items'); // Refresh the data
+    mutate('/api/menu-items'); 
   };
 
   if (error) {
@@ -62,7 +60,6 @@ const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
     );
   }
 
-  // Filter items based on categoryId
   const categoryItems = items.filter((item) => item.category_id === categoryId);
 
   return (

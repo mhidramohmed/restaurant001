@@ -2,65 +2,55 @@
 
 import useSWR from 'swr';
 import axios from '@/lib/axios';
-import MainButton from '@/components/MainButton';
 import { useAuth } from '@/hooks/auth';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Logo from '@/components/Logo';
-import { toast } from 'react-toastify';
 
 import OrderDetailsModal from '@/components/OrderDetailsModal';
 
 const fetcher = async (url) => {
   try {
     const response = await axios.get(url);
-    console.log('API Response:', response);
     return response.data.data || response.data;
   } catch (error) {
-    console.error('Fetch Error:', error);
     throw error;
   }
 };
 
+const OrderStatusBadge = ({ status }) => {
+  const statusColors = {
+    pending: 'bg-yellow-500',
+    inprocess: 'bg-blue-500',
+    delivered: 'bg-green-500',
+    declined: 'bg-red-500'
+  };
+
+  return (
+    <span
+      className={`px-2 py-1 rounded-full text-white ${statusColors[status] || 'bg-gray-500'}`}
+    >
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </span>
+  );
+};
+
 const Page = () => {
   const router = useRouter();
-  const { user, logout } = useAuth({ middleware: 'auth' });
+  const { user } = useAuth({ middleware: 'auth' });
   const { data: orders, error, mutate } = useSWR(
     user ? '/api/orders' : null,
     fetcher
   );
-  const [showPendingOnly, setShowPendingOnly] = useState(true);
+
+  const [filters, setFilters] = useState({
+    searchTerm: '',
+    statuses: ['pending'],
+    paymentStatuses: []
+  });
+
   const [selectedOrder, setSelectedOrder] = useState(null);
-
-  const handleDone = async (orderId) => {
-    try {
-      await axios.patch(`/api/orders/${orderId}`, { status: 'delivered' });
-      toast.success('Order  marked as delivered.', { position: 'bottom-right' });
-
-      mutate();
-    } catch (error) {
-      toast.error(`Failed to update order ${orderId}:`, error, { position: 'bottom-right' });
-    }
-  };
-
-  const handleUpdate = async (orderId, status) => {
-    try {
-      await axios.patch(`/api/orders/${orderId}`, { status: status });
-      toast.success(`Order  status updated to ${status}.`, { position: 'bottom-right' });
-      mutate();
-    } catch (error) {
-      toast.error(`Failed to update order ${orderId} status to ${status}:`, error, { position: 'bottom-right' });
-    }
-  };
-
-  const handleRowClick = (order) => {
-    setSelectedOrder(order);
-  };
-
-  const closeModal = () => {
-    setSelectedOrder(null);
-  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
 
   useEffect(() => {
     if (!user) {
@@ -68,55 +58,136 @@ const Page = () => {
     }
   }, [user, router]);
 
+  const filteredOrders = useMemo(() => {
+    if (!orders) return [];
+
+    return orders.filter(order => {
+      const matchesSearch = !filters.searchTerm || 
+        order.client_name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+        order.id.toString().includes(filters.searchTerm);
+
+      const matchesStatus = filters.statuses.length === 0 || 
+        filters.statuses.includes(order.order_status);
+
+      const matchesPaymentStatus = filters.paymentStatuses.length === 0 || 
+        filters.paymentStatuses.includes(order.payment_status);
+
+      return matchesSearch && matchesStatus && matchesPaymentStatus;
+    });
+  }, [
+    orders, 
+    filters.searchTerm, 
+    filters.statuses.join(','), 
+    filters.paymentStatuses.join(',')
+  ]);
+
+  // Pagination
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(filteredOrders.length / ordersPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
+  const handleRowClick = useCallback((order) => {
+    setSelectedOrder(order);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setSelectedOrder(null);
+  }, []);
+
   if (error) {
-    console.error('Error details:', error);
     return <div className="p-6 text-red-600">Failed to load orders: {error.message}</div>;
   }
 
   if (!orders) return <div className="p-6">Loading...</div>;
 
-  const filteredOrders = showPendingOnly
-    ? orders?.filter(order => order.status === 'pending') || []
-    : orders?.filter(order => order.status !== 'pending') || [];
-
   return (
     <>
-      <header className="bg-background py-3 px-6">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-xl font-bold">{showPendingOnly ? 'Pending Orders' : 'Delivered Orders'}</h1>
+      
+
+      <div className="px-3">
+        {/* Filtering Section */}
+        <div className="mb-6 flex space-x-4">
+          
+          {/* Order Status Filters */}
+          <div className="flex space-x-2">
+            {['pending', 'inprocess', 'delivered', 'declined'].map(status => (
+              <button
+                key={status}
+                onClick={() => 
+                  setFilters(prev => ({
+                    ...prev,
+                    statuses: prev.statuses.includes(status)
+                      ? prev.statuses.filter(s => s !== status)
+                      : [...prev.statuses, status]
+                  }))
+                }
+                className={`px-3 py-1 rounded-full ${
+                  filters.statuses.includes(status) 
+                    ? 'bg-primary text-white' 
+                    : 'bg-gray-200 text-gray-700'
+                }`}
+              >
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </button>
+            ))}
           </div>
-          <div className="flex items-center space-x-4">
-            <MainButton
-              onClick={() => setShowPendingOnly(prev => !prev)}
-              className="border-2 border-primary text-text"
-            >
-              {showPendingOnly ? 'Show Delivered Orders' : 'Show Pending Orders'}
-            </MainButton>
+
+          {/* Payment Status Filters */}
+          <div className="flex space-x-2">
+            {['paid', 'unpaid'].map(paymentStatus => (
+              <button
+                key={paymentStatus}
+                onClick={() => 
+                  setFilters(prev => ({
+                    ...prev,
+                    paymentStatuses: prev.paymentStatuses.includes(paymentStatus)
+                      ? prev.paymentStatuses.filter(s => s !== paymentStatus)
+                      : [...prev.paymentStatuses, paymentStatus]
+                  }))
+                }
+                className={`px-3 py-1 rounded-full ${
+                  filters.paymentStatuses.includes(paymentStatus) 
+                    ? 'bg-green-500 text-white' 
+                    : 'bg-gray-200 text-gray-700'
+                }`}
+              >
+                {paymentStatus.charAt(0).toUpperCase() + paymentStatus.slice(1)}
+              </button>
+            ))}
           </div>
+
+          {/* Search Input */}
+          <input
+            type="text"
+            placeholder="Search orders by name or ID..."
+            value={filters.searchTerm}
+            onChange={(e) => setFilters(prev => ({...prev, searchTerm: e.target.value}))}
+            className="w-full h-12 pl-10 pr-4 py-2 bg-secondary text-text rounded-lg focus:outline-none focus:ring-0"
+          />
+
         </div>
-      </header>
-      <div className="p-6">
+
+        {/* Orders Table */}
         <div className="overflow-x-auto rounded-lg shadow-lg">
           <table className="min-w-full bg-background border border-gray-200">
             <thead>
               <tr className="bg-primary text-secondary">
                 <th className="py-4 px-6 text-left font-semibold">Order ID</th>
-                <th className="py-4 px-6 text-left font-semibold">Client</th>
-                <th className="py-4 px-6 text-left font-semibold">Email</th>
-                <th className="py-4 px-6 text-left font-semibold">Phone</th>
-                <th className="py-4 px-6 text-left font-semibold">Address</th>
-                <th className="py-4 px-6 text-left font-semibold">Total</th>
-                <th className="py-4 px-6 text-left font-semibold">Payment</th>
-                {!showPendingOnly && (
-                  <th className="py-4 px-6 text-left font-semibold">Status</th>
-                )}
-                <th className="py-4 px-6 text-center font-semibold">Actions</th>
+                <th className="py-4 px-6 text-left font-semibold">Client Name</th>
+                <th className="py-4 px-6 text-left font-semibold">Client Address</th>
+                <th className="py-4 px-6 text-left font-semibold">Order Status</th>
+                <th className="py-4 px-6 text-left font-semibold">Payment Method</th>
+                <th className="py-4 px-6 text-left font-semibold">Payment Status</th>
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.length > 0 ? (
-                filteredOrders.map((order) => (
+              {currentOrders.length > 0 ? (
+                currentOrders.map((order) => (
                   <tr
                     key={order.id}
                     className="hover:bg-secondary cursor-pointer transition-colors duration-150"
@@ -124,53 +195,59 @@ const Page = () => {
                   >
                     <td className="py-4 px-6 text-text">{order.id}</td>
                     <td className="py-4 px-6 text-text">{order.client_name}</td>
-                    <td className="py-4 px-6 text-text">{order.client_email}</td>
-                    <td className="py-4 px-6 text-text">{order.client_phone}</td>
                     <td className="py-4 px-6 text-text">{order.client_address}</td>
-                    <td className="py-4 px-6 text-primary font-semibold">{order.total_price} Dhs</td>
-                    <td className="py-4 px-6 text-text">{order.payment_method}</td>
-                    {!showPendingOnly && (
-                      <td className="py-4 px-6 text-text">{order.status}</td>
-                    )}
-                    <td className="py-4 px-6 text-center">
-                      <div>
-                      {showPendingOnly ? (
-                        <MainButton
-                          onClick={(e) => { e.stopPropagation(); console.log('Done button clicked for order:', order.id); handleDone(order.id); }}
-                          className="bg-primary text-white text-sm py-1 px-2 ml-2"
-                        >
-                          Done
-                        </MainButton>
-                      ) : (
-                        <div className='flex gap-1'><MainButton
-                        onClick={(e) => { e.stopPropagation(); handleUpdate(order.id, 'declined'); }}
-                        className="bg-red-500 text-white text-sm py-1 px-2 ml-2"
+                    <td className="py-4 px-6">
+                      <OrderStatusBadge status={order.order_status} />
+                    </td>
+                    <td className="py-4 px-6">{order.payment_method}</td>
+                    <td className="py-4 px-6">
+                      <span
+                        className={`px-2 py-1 rounded-full text-white ${
+                          order.payment_status === 'paid' ? 'bg-green-500' : 'bg-red-500'
+                        }`}
                       >
-                        Decline
-                      </MainButton>
-                      <MainButton
-                          onClick={(e) => { e.stopPropagation(); handleUpdate(order.id, 'pending'); }}
-                          className="bg-primary text-white text-sm py-1 px-2 ml-2"
-                        >
-                          Cancel
-                        </MainButton></div>
-                      )}
-                      </div>
+                        {order.payment_status === 'paid' ? 'Paid' : 'Unpaid'}
+                      </span>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="9" className="py-4 px-6 text-center text-text">
-                    There are no orders.
+                  <td colSpan="6" className="py-4 px-6 text-center text-text">
+                    No orders found matching your filters.
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {filteredOrders.length > ordersPerPage && (
+          <div className="flex justify-center mt-4 space-x-2">
+            {pageNumbers.map(number => (
+              <button
+                key={number}
+                onClick={() => setCurrentPage(number)}
+                className={`px-4 py-2 rounded ${
+                  currentPage === number 
+                    ? 'bg-primary text-white' 
+                    : 'bg-gray-200 text-gray-700'
+                }`}
+              >
+                {number}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Order Details Modal */}
         {selectedOrder && (
-          <OrderDetailsModal order={selectedOrder} onClose={closeModal} />
+          <OrderDetailsModal 
+            order={selectedOrder} 
+            onClose={closeModal} 
+            mutate={mutate}
+          />
         )}
       </div>
     </>

@@ -7,7 +7,6 @@ import { toast } from 'react-toastify';
 const EditCategoryModal = ({ categoryId, onClose }) => {
   const [formData, setFormData] = useState({
     name: '',
-    description: '',
     image: null
   });
   const [preview, setPreview] = useState(null);
@@ -19,16 +18,13 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
       setIsLoading(true);
       try {
         const response = await axios.get(`/api/categories/${categoryId}`);
-        // Updated to match the actual API response structure
         const category = response.data.data;
         
         setFormData({
           name: category.name || '',
-          description: category.description || '',
           image: null
         });
         
-        // Handle image preview
         if (category.image) {
           const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
           const imageUrl = category.image.startsWith('http')
@@ -37,7 +33,6 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
           setPreview(imageUrl);
         }
       } catch (error) {
-        console.error('Error fetching category:', error);
         toast.error(
           error.response?.data?.message || 
           error.response?.data?.error || 
@@ -60,7 +55,6 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
       const file = files[0];
       setFormData(prev => ({ ...prev, [name]: file }));
       
-      // Create preview URL for image
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
@@ -77,24 +71,22 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
 
     const data = new FormData();
     if (formData.name) data.append('name', formData.name);
-    if (formData.description) data.append('description', formData.description);
     if (formData.image) data.append('image', formData.image);
 
     try {
       const response = await axios.post(`/api/categories/${categoryId}`, data, {
         headers: { 
           'Content-Type': 'multipart/form-data',
-          'X-HTTP-Method-Override': 'PUT'
+          'X-HTTP-Method-Override': 'PATCH'
         }
       });
 
       if (response.data.message) {
         toast.success(response.data.message);
-        onClose(); // Close modal after successful update
-        window.location.reload(); // Refresh to show updated data
+        onClose();
+        window.location.reload();
       }
     } catch (error) {
-      console.error('Error updating category:', error);
       toast.error(error.response?.data?.message || 'Failed to update category');
     } finally {
       setIsSaving(false);
@@ -135,19 +127,6 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
               required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-              rows="3"
             />
           </div>
 

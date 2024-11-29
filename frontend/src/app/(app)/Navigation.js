@@ -1,4 +1,3 @@
-// components/Navigation.js
 import Link from 'next/link';
 import Logo from '@/components/Logo';
 import { useAuth } from '@/hooks/auth';

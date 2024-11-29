@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import MainButton from './MainButton';
 import axios from '@/lib/axios';
-import { toast } from 'react-toastify'; // Import toast
+import { toast } from 'react-toastify';
 
 const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
   const [formData, setFormData] = useState({
@@ -10,7 +10,7 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
     client_email: '',
     client_phone: '',
     client_address: '',
-    payment_method: 'cash', // Default payment method
+    payment_method: 'cash',
   });
 
   const handleChange = (e) => {
@@ -40,9 +40,8 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
 
     try {
       await axios.post('/api/orders', orderData);
-      onSuccess(); // Trigger success callback
+      onSuccess();
     } catch (error) {
-      console.error('Error placing order:', error);
       toast.error('Échec de la commande. Réessayez.', { position: 'top-right' });
     }
   };
@@ -81,7 +80,7 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
               onChange={handleChange}
               className="w-full h-12 px-4 bg-secondary text-text rounded-lg mt-2"
             >
-              <option value="cash">Paiement en espèces</option> {/* Only cash */}
+              <option value="cash">Paiement en espèces</option>
             </select>
           </div>
 

@@ -8,7 +8,6 @@ const fetcher = async (url) => {
     const response = await axios.get(url, { withCredentials: true });
     return response.data.data || response.data;
   } catch (error) {
-    console.error('Fetch Error:', error);
     throw error;
   }
 };
@@ -40,7 +39,6 @@ const CustomersPage = () => {
     );
   }
 
-  // Group orders by customer phone number
   const groupedOrders = orders.reduce((acc, order) => {
     const phone = order.client_phone;
     if (!acc[phone]) {

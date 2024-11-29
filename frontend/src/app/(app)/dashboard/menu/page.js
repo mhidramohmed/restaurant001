@@ -21,9 +21,8 @@ const CategoryBar = () => {
   if (!categories) return <div>Loading...</div>;
 
   const handleCategoryAddSuccess = () => {
-    // toast.success('Category added successfully!');
     setShowAddCategoryModal(false);
-    mutate(); // Refresh categories
+    mutate(); 
   };
 
   return (

@@ -14,7 +14,6 @@ const ConfirmDeleteModal = ({ categoryId, categoryName, onClose }) => {
       
       if (response.data.status) {
         toast.success(response.data.message || 'Menu item updated successfully');
-        // Force reload the page to refresh the category list
         window.location.reload();
       } else {
         throw new Error(response.data.message || 'Failed to delete category');

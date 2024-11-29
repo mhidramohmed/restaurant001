@@ -213,26 +213,41 @@ class MenuItemController extends Controller
     }
 
 
-    public function getDeletedMenuItems(){
+    public function getDeletedMenuItems()
+{
+    \Log::info('Attempting to retrieve deleted menu items');
+    
+    try {
+        $menuItems = MenuItem::onlyTrashed()->get();
 
-        // return('hey');
+        \Log::info('Trashed menu items count: ' . $menuItems->count());
 
+        return response()->json([
+            'data' => $menuItems,
+            'count' => $menuItems->count(),
+            'message' => 'Deleted menu items retrieved successfully'
+        ], 200);
+    } catch (\Exception $e) {
+        \Log::error('Error in getDeletedMenuItems: ' . $e->getMessage());
+        
+        return response()->json([
+            'error' => 'Failed to retrieve deleted menu items',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
 
-        $MenuItems =  MenuItem::onlyTrashed()->get();
+public function restoreMenuItem($id)
+{
+    $MenuItem = MenuItem::onlyTrashed()->find($id);
 
-                // return($MenuItems);
-
-
-        return response()->json(['data' =>$MenuItems ], 200);
+    if (!$MenuItem) {
+        return response()->json(['error' => 'MenuItem not found or already restored'], 404);
     }
 
-    public function restoreMenuItem($id)
-    {
-        // Restore a specific soft-deleted post
-        $MenuItem = MenuItem::onlyTrashed()->findOrFail($id);
-        $MenuItem->restore();
+    $MenuItem->restore();
 
-        return response()->json(['message'=>' Your MenuItem has been restore successfully'], 200);
+    return response()->json(['message' => 'Your MenuItem has been restored successfully'], 200);
+}
 
-    }
 }

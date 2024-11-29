@@ -14,7 +14,6 @@ const fetcher = async (url) => {
     const response = await axios.get(url, { withCredentials: true });
     return response.data.data || response.data;
   } catch (error) {
-    console.error('Fetch Error:', error);
     throw error;
   }
 };
@@ -30,7 +29,9 @@ const Dashboard = () => {
 
     orders.forEach((order) => {
       totalOrders += 1;
-      totalProfit += parseFloat(order.total_price);
+      if (order.payment_status === 'paid') {
+        totalProfit += parseFloat(order.total_price);
+      }
       if (order.status === 'declined') {
         declinedOrders += 1;
       }
@@ -115,7 +116,7 @@ const Dashboard = () => {
       <tbody>
         {/* Sort by timestamp descending and slice top 5 */}
         {orders
-          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) // Ensure latest first
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) 
           .slice(0, 10)
           .map((order) => (
             <tr key={order.id} className="hover:bg-gray-100">

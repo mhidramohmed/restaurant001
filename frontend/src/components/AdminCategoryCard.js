@@ -34,7 +34,7 @@ const AdminCategoryCard = ({ id, name, image }) => {
             className="w-full h-full object-cover"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = 'https://placehold.co/600x400/orange/white'; // Add a placeholder image
+              e.target.src = 'https://placehold.co/600x400/orange/white';
             }}
           />
         </div>

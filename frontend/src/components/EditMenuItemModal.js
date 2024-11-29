@@ -44,10 +44,9 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
           price: item.price || '',
           description: item.description || '',
           category_id: item.category_id || '',
-          image: null // Will be set only if user chooses new image
+          image: null 
         });
         
-        // Handle image preview
         if (item.image) {
           const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
           const imageUrl = item.image.startsWith('http')
@@ -57,7 +56,6 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
         }
         
       } catch (error) {
-        console.error('Error fetching menu item:', error);
         toast.error(
           error.response?.data?.message || 
           error.response?.data?.error || 
@@ -81,7 +79,6 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
       const file = files[0];
       setFormData(prev => ({ ...prev, [name]: file }));
       
-      // Create preview URL for image
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
@@ -141,14 +138,13 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
       const response = await axios.post(`/api/menu-items/${itemId}`, data, {
         headers: { 
           'Content-Type': 'multipart/form-data',
-          'X-HTTP-Method-Override': 'PUT'
+          'X-HTTP-Method-Override': 'PATCH'
         }
       });
       
       toast.success(response.data.message || 'Menu item updated successfully');
       onSuccess();
     } catch (error) {
-      console.error('Error updating menu item:', error);
       const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Failed to update menu item';
       toast.error(errorMessage);
     } finally {

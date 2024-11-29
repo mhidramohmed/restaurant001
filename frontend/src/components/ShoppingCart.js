@@ -5,17 +5,17 @@ import CheckoutForm from './CheckoutForm';
 import { LuShoppingCart, LuTrash2 } from "react-icons/lu";
 import { IoClose } from "react-icons/io5";
 import { useCart } from '@/contexts/CartContext';
-import { toast } from 'react-toastify'; // Import toast
+import { toast } from 'react-toastify';
 
 const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
-  const { items, removeItem, updateQuantity, getTotal, clearCart } = useCart(); // Add clearCart
+  const { items, removeItem, updateQuantity, getTotal, clearCart } = useCart(); 
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   const handleOrderSuccess = () => {
-    toast.success('Commande passée avec succès!', { position: 'top-right' }); // Success toast
-    clearCart(); // Clear cart items
-    setIsCheckoutOpen(false); // Close modal
-    setIsCartVisible(false); // Close cart
+    toast.success('Commande passée avec succès!', { position: 'top-right' });
+    clearCart(); 
+    setIsCheckoutOpen(false); 
+    setIsCartVisible(false);
   };
 
   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -87,6 +87,10 @@ const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
       {/* Total Price and Checkout */}
       <div className="border-t pt-4 mt-auto">
         <div className="flex justify-between my-2 text-text text-lg font-bold">
+          <p>Frais de Livraison</p>
+          <p className="text-xl">15.00 Dhs</p>
+        </div>
+        <div className="flex justify-between my-2 text-text text-lg font-bold">
           <p>Total</p>
           <p className="text-xl">{getTotal()} Dhs</p>
         </div>
@@ -98,11 +102,12 @@ const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
         </MainButton>
       </div>
 
+
       {/* Checkout Form */}
       {isCheckoutOpen && (
         <CheckoutForm
           onClose={() => setIsCheckoutOpen(false)}
-          onSuccess={handleOrderSuccess} // Triggered on success
+          onSuccess={handleOrderSuccess} 
           cartItems={items}
           totalPrice={getTotal()}
         />

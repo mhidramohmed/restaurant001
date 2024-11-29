@@ -1,5 +1,5 @@
 export const metadata = {
-    title: 'Laravel',
+    title: 'Login | ' + process.env.NEXT_PUBLIC_APP_NAME,
 }
 
 const Layout = ({ children }) => {

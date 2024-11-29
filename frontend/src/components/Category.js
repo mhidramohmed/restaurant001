@@ -11,7 +11,6 @@ const Category = ({ categoryId, name, image, isActive, setActiveCategory }) => {
     const targetSection = document.getElementById(`category-${categoryId}`);
     if (targetSection) {
       targetSection.scrollIntoView({ behavior: "smooth" });
-      // Update active category
       setActiveCategory(`category-${categoryId}`);
     }
   };
@@ -20,7 +19,7 @@ const Category = ({ categoryId, name, image, isActive, setActiveCategory }) => {
     <button
       onClick={handleClick}
       data-id={`category-${categoryId}`}
-      className={`flex items-center space-x-4 p-3 border border-primary rounded-full cursor-pointer hover:bg-primary hover:text-background ${
+      className={`flex items-center space-x-4 p-3 border border-primary rounded-full cursor-pointer hover:bg-primary hover:text-background transition-all duration-200 ${
         isActive ? "bg-primary text-background" : "bg-background text-text"
       }`}
     >

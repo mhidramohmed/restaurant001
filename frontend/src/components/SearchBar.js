@@ -3,7 +3,7 @@ import { FiSearch } from 'react-icons/fi';
 
 const SearchBar = ({ setSearchTerm, className='' }) => {
   const handleSearch = (e) => {
-    setSearchTerm(e.target.value.toLowerCase()); // Convert to lowercase for case-insensitive matching
+    setSearchTerm(e.target.value.toLowerCase()); 
   };
 
   return (

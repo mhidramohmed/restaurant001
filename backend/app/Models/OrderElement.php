@@ -14,7 +14,7 @@ class OrderElement extends Model
     use SoftDeletes;
 
 
-    protected $fillable = ['order_id', 'menu_item_id', 'quantity', 'price'];
+    protected $fillable = ['order_id', 'menu_item_id', 'name', 'quantity', 'price'];
 
     // An OrderElement belongs to an Order
     public function order()

@@ -26,7 +26,7 @@ const AddMenuItemModal = ({ categoryId, categoryName, onClose }) => {
     price: '',
     description: '',
     image: null,
-    category_id: categoryId, // Match backend parameter name
+    category_id: categoryId,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -34,7 +34,6 @@ const AddMenuItemModal = ({ categoryId, categoryName, onClose }) => {
     const { name, value, files, type } = e.target;
     let newValue = files ? files[0] : value;
     
-    // Convert price string to number for number input
     if (type === 'number') {
       newValue = value === '' ? '' : parseFloat(value);
     }
@@ -59,14 +58,12 @@ const AddMenuItemModal = ({ categoryId, categoryName, onClose }) => {
       return false;
     }
     
-    // Validate image type
     const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
     if (!allowedTypes.includes(formData.image.type)) {
       toast.error('Invalid image type. Allowed types: jpeg, png, jpg, gif, svg');
       return false;
     }
     
-    // Validate image size (2MB = 2048KB)
     if (formData.image.size > 2048 * 1024) {
       toast.error('Image size must be less than 2MB');
       return false;
