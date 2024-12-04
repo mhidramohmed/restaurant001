@@ -1,30 +1,33 @@
-'use client';
-import { useState } from 'react';
-import MainButton from './MainButton';
-import { FiEye, FiEdit } from "react-icons/fi";
-import { LuTrash2 } from "react-icons/lu";
-import ConfirmDeleteMenuItemModal from './ConfirmDeleteMenuItemModal';
+'use client'
+import { useState } from 'react'
+import MainButton from './MainButton'
+import { FiEye, FiEdit } from "react-icons/fi"
+import { LuTrash2 } from "react-icons/lu"
+import ConfirmDeleteMenuItemModal from './ConfirmDeleteMenuItemModal'
+import Image from 'next/image'
 
 const AdminMenuItemCard = ({ id, image, name, price, description, onEdit }) => {
-  const [showDetails, setShowDetails] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDetails, setShowDetails] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
   
-  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
   const imageUrl = image?.startsWith('http')
     ? image
-    : `${baseURL}/${image.replace(/^\/+/, '')}`;
+    : `${baseURL}/${image.replace(/^\/+/, '')}`
 
   return (
     <>
       <div className="h-[400px] border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden bg-white">
         <div className="h-1/2">
-          <img
+          <Image
             src={imageUrl}
             alt={name}
+            width={300}
+            height={300}
             className="w-full h-full object-cover rounded-t-lg"
             onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = 'https://placehold.co/600x400/orange/white';
+              e.target.onerror = null
+              e.target.src = 'https://placehold.co/600x400/orange/white'
             }}
           />
         </div>
@@ -76,7 +79,7 @@ const AdminMenuItemCard = ({ id, image, name, price, description, onEdit }) => {
         />
       )}
     </>
-  );
-};
+  )
+}
 
-export default AdminMenuItemCard;
+export default AdminMenuItemCard

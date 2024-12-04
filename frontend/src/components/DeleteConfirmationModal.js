@@ -1,6 +1,6 @@
 // components/DeleteConfirmationModal.js
-import React from 'react';
-import MainButton from './MainButton';
+import React from 'react'
+import MainButton from './MainButton'
 
 const DeleteConfirmationModal = ({ onConfirm, onCancel }) => {
   return (
@@ -24,7 +24,7 @@ const DeleteConfirmationModal = ({ onConfirm, onCancel }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DeleteConfirmationModal;
+export default DeleteConfirmationModal

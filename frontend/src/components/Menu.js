@@ -1,15 +1,14 @@
-import CategorySection from "./CategorySection";
-import useSWR from "swr";
-import axios from "@/lib/axios";
-import SkeletonCategory from "./skeleton/SkeletonCategory";
-import SkeletonCard from "./skeleton/SkeletonCard";
+import CategorySection from "./CategorySection"
+import useSWR from "swr"
+import axios from "@/lib/axios"
+import SkeletonCard from "./skeleton/SkeletonCard"
 
-const fetcher = (url) => axios.get(url).then((res) => res.data.data);
+const fetcher = (url) => axios.get(url).then((res) => res.data.data)
 
 export default function Menu({ searchTerm }) {
-  const { data: categories, error } = useSWR("/api/categories", fetcher);
+  const { data: categories, error } = useSWR("/api/categories", fetcher)
 
-  if (error) return <div>Failed to load categories</div>;
+  if (error) return <div>Failed to load categories</div>
 
   if (!categories) {
     return (
@@ -20,7 +19,7 @@ export default function Menu({ searchTerm }) {
             className="px-2 md:px-4 lg:px-6"
           >
             {/* Skeleton category title */}
-            <div className="h-8 bg-gray-300 rounded w-1/3 md:w-1/6 mb-4"></div>
+            <div className="h-8 bg-gray-300 rounded w-1/3 md:w-1/6 mb-4" />
 
             {/* Skeleton cards grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -34,7 +33,7 @@ export default function Menu({ searchTerm }) {
           </div>
         ))}
       </div>
-    );
+    )
   }
 
   return (
@@ -48,5 +47,5 @@ export default function Menu({ searchTerm }) {
         />
       ))}
     </div>
-  );
+  )
 }

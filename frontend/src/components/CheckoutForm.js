@@ -1,8 +1,8 @@
-'use client';
-import { useState } from 'react';
-import MainButton from './MainButton';
-import axios from '@/lib/axios';
-import { toast } from 'react-toastify';
+'use client'
+import { useState } from 'react'
+import MainButton from './MainButton'
+import axios from '@/lib/axios'
+import { toast } from 'react-toastify'
 
 const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
   const [formData, setFormData] = useState({
@@ -11,18 +11,18 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
     client_phone: '',
     client_address: '',
     payment_method: 'cash',
-  });
+  })
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
-    }));
-  };
+    }))
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     const orderData = {
       client_name: formData.client_name,
@@ -36,15 +36,15 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
         quantity: item.quantity,
         price: item.price,
       })),
-    };
+    }
 
     try {
-      await axios.post('/api/orders', orderData);
-      onSuccess();
+      await axios.post('/api/orders', orderData)
+      onSuccess()
     } catch (error) {
-      toast.error('Échec de la commande. Réessayez.', { position: 'top-right' });
+      toast.error('Échec de la commande. Réessayez.', { position: 'top-right' })
     }
-  };
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20 px-4 py-6"> {/* Added py-6 */}
@@ -95,7 +95,7 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CheckoutForm;
+export default CheckoutForm

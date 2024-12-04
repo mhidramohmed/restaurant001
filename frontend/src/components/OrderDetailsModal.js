@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
-import axios from '@/lib/axios'; 
-import TimeAgo from 'timeago-react';
+import React, { useState } from 'react'
+import axios from '@/lib/axios' 
+import TimeAgo from 'timeago-react'
+import Image from 'next/image'
+import placeholder from '@/assets/svg/placeholder.svg'
 
 const OrderDetailsModal = ({ order, onClose, mutate }) => {
-  const [orderStatus, setOrderStatus] = useState(order.order_status);
-  const [paymentStatus, setPaymentStatus] = useState(order.payment_status);
+  const [orderStatus, setOrderStatus] = useState(order.order_status)
+  const [paymentStatus, setPaymentStatus] = useState(order.payment_status)
 
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
 
   const handleSaveChanges = async () => {
-    try {
       await axios.patch(`/api/orders/${order.id}`, 
         { 
           order_status: orderStatus, 
@@ -18,38 +19,36 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
         {
           withCredentials: true
         }
-      );
-      mutate();
-      onClose();
-    } catch (error) {
-    }
-  };
+      )
+      mutate()
+      onClose()
+  }
 
-  if (!order.order_elements) return <div>Loading...</div>;
+  if (!order.order_elements) return <div>Loading...</div>
 
   const getStatusClass = (currentStatus, status) =>
     currentStatus === status
       ? 'bg-opacity-100 text-white'
-      : 'bg-opacity-0 text-gray-600 border';
+      : 'bg-opacity-0 text-gray-600 border'
 
       const getBgColorClass = (status) => {
         switch (status) {
           case 'pending':
-            return 'bg-yellow-500 border-yellow-500';
+            return 'bg-yellow-500 border-yellow-500'
           case 'inprocess': 
-            return 'bg-blue-500 border-blue-500';
+            return 'bg-blue-500 border-blue-500'
           case 'delivered':
-            return 'bg-green-500 border-green-500';
+            return 'bg-green-500 border-green-500'
           case 'declined':
-            return 'bg-red-500 border-red-500';
+            return 'bg-red-500 border-red-500'
           case 'paid':
-            return 'bg-green-500 border-green-500';
+            return 'bg-green-500 border-green-500'
           case 'unpaid':  
-            return 'bg-red-500 border-red-500';
+            return 'bg-red-500 border-red-500'
           default:
-            return 'bg-gray-500 border-gray-500';
+            return 'bg-gray-500 border-gray-500'
         }
-      };
+      }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -143,11 +142,13 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
             {order.order_elements.map((item) => (
               <li key={item.id} className="flex items-center space-x-4">
                 {/* Item Image */}
-                  <img
+                  <Image
                     src={item.menu_item && item.menu_item.image 
                       ? `${baseUrl}${item.menu_item.image}` 
-                      : 'https://placehold.jp/30/99582a/faedcd/150x150.png?text=Trashed'}
+                      : placeholder}
                     alt={item.name}
+                    width={50}
+                    height={50}
                     className="w-16 h-16 rounded-lg object-cover"
                   />
                 {/* Item Details */}
@@ -163,7 +164,7 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
       </div>
     </div>
   </div>
-  );
-};
+  )
+}
 
-export default OrderDetailsModal;
+export default OrderDetailsModal

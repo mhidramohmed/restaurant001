@@ -1,18 +1,18 @@
-'use client';
-import { useState } from 'react';
-import { useCart } from '@/contexts/CartContext';
-import Header from '@/components/Header';
-import CategoryBar from '@/components/CategoryBar';
-import ShoppingCart from '@/components/ShoppingCart';
-import Menu from '@/components/Menu';
-import MainButton from '@/components/MainButton';
-import Footer from '@/components/Footer';
-import { LuShoppingCart } from "react-icons/lu";
+'use client'
+import { useState } from 'react'
+import { useCart } from '@/contexts/CartContext'
+import Header from '@/components/Header'
+import CategoryBar from '@/components/CategoryBar'
+import ShoppingCart from '@/components/ShoppingCart'
+import Menu from '@/components/Menu'
+import MainButton from '@/components/MainButton'
+import Footer from '@/components/Footer'
+import { LuShoppingCart } from "react-icons/lu"
 
 const Home = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const { items, getTotal } = useCart();
-  const [isCartVisible, setIsCartVisible] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('')
+  const { items, getTotal } = useCart()
+  const [isCartVisible, setIsCartVisible] = useState(false)
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -56,7 +56,7 @@ const Home = () => {
         </div>
       </MainButton>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

@@ -1,30 +1,30 @@
-'use client';
-import React from 'react';
-import MainButton from './MainButton';
-import axios from '@/lib/axios';
-import { toast } from 'react-toastify';
+'use client'
+import React from 'react'
+import MainButton from './MainButton'
+import axios from '@/lib/axios'
+import { toast } from 'react-toastify'
 
 const ConfirmDeleteModal = ({ categoryId, categoryName, onClose }) => {
-  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false)
 
   const handleDelete = async () => {
-    setIsDeleting(true);
+    setIsDeleting(true)
     try {
-      const response = await axios.delete(`/api/categories/${categoryId}`);
+      const response = await axios.delete(`/api/categories/${categoryId}`)
       
       if (response.data.status) {
-        toast.success(response.data.message || 'Menu item updated successfully');
-        window.location.reload();
+        toast.success(response.data.message || 'Menu item updated successfully')
+        window.location.reload()
       } else {
-        throw new Error(response.data.message || 'Failed to delete category');
+        throw new Error(response.data.message || 'Failed to delete category')
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to delete category');
+      toast.error(error.response?.data?.message || 'Failed to delete category')
     } finally {
-      setIsDeleting(false);
-      onClose();
+      setIsDeleting(false)
+      onClose()
     }
-  };
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -52,7 +52,7 @@ const ConfirmDeleteModal = ({ categoryId, categoryName, onClose }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ConfirmDeleteModal;
+export default ConfirmDeleteModal

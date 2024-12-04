@@ -1,8 +1,10 @@
-'use client';
-import { useState, useEffect } from 'react';
-import MainButton from './MainButton';
-import axios from '@/lib/axios';
-import { toast } from 'react-toastify';
+'use client'
+import { useState, useEffect } from 'react'
+import MainButton from './MainButton'
+import axios from '@/lib/axios'
+import { toast } from 'react-toastify'
+import Image from 'next/image'
+import placeholder from '@/assets/svg/placeholder.svg'
 
 const Modal = ({ onClose, children }) => {
   return (
@@ -17,8 +19,8 @@ const Modal = ({ onClose, children }) => {
         {children}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -27,17 +29,17 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
     description: '',
     image: null,
     category_id: ''
-  });
-  const [preview, setPreview] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  })
+  const [preview, setPreview] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     const fetchMenuItem = async () => {
-      setIsLoading(true);
+      setIsLoading(true)
       try {
-        const response = await axios.get(`/api/menu-items/${itemId}`);
-        const item = response.data.data;
+        const response = await axios.get(`/api/menu-items/${itemId}`)
+        const item = response.data.data
         
         setFormData({
           name: item.name || '',
@@ -45,14 +47,14 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
           description: item.description || '',
           category_id: item.category_id || '',
           image: null 
-        });
+        })
         
         if (item.image) {
-          const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+          const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
           const imageUrl = item.image.startsWith('http')
             ? item.image
-            : `${baseURL}/${item.image.replace(/^\/+/, '')}`;
-          setPreview(imageUrl);
+            : `${baseURL}/${item.image.replace(/^\/+/, '')}`
+          setPreview(imageUrl)
         }
         
       } catch (error) {
@@ -60,78 +62,78 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
           error.response?.data?.message || 
           error.response?.data?.error || 
           'Failed to load menu item details'
-        );
-        onClose();
+        )
+        onClose()
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
     if (itemId) {
-      fetchMenuItem();
+      fetchMenuItem()
     }
-  }, [itemId]);
+  }, [itemId])
 
   const handleChange = (e) => {
-    const { name, value, files, type } = e.target;
+    const { name, value, files, type } = e.target
     
     if (files) {
-      const file = files[0];
-      setFormData(prev => ({ ...prev, [name]: file }));
+      const file = files[0]
+      setFormData(prev => ({ ...prev, [name]: file }))
       
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onloadend = () => {
-        setPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      let newValue = value;
-      if (type === 'number') {
-        newValue = value === '' ? '' : parseFloat(value);
+        setPreview(reader.result)
       }
-      setFormData(prev => ({ ...prev, [name]: newValue }));
+      reader.readAsDataURL(file)
+    } else {
+      let newValue = value
+      if (type === 'number') {
+        newValue = value === '' ? '' : parseFloat(value)
+      }
+      setFormData(prev => ({ ...prev, [name]: newValue }))
     }
-  };
+  }
 
   const validateForm = () => {
     if (!formData.name.trim()) {
-      toast.error('Name is required');
-      return false;
+      toast.error('Name is required')
+      return false
     }
     if (!formData.price || formData.price <= 0) {
-      toast.error('Price must be a positive number');
-      return false;
+      toast.error('Price must be a positive number')
+      return false
     }
     
     if (formData.image) {
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml']
       if (!allowedTypes.includes(formData.image.type)) {
-        toast.error('Invalid image type. Allowed types: jpeg, png, jpg, gif, svg');
-        return false;
+        toast.error('Invalid image type. Allowed types: jpeg, png, jpg, gif, svg')
+        return false
       }
       
       if (formData.image.size > 2048 * 1024) {
-        toast.error('Image size must be less than 2MB');
-        return false;
+        toast.error('Image size must be less than 2MB')
+        return false
       }
     }
     
-    return true;
-  };
+    return true
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     
-    if (!validateForm() || isSaving) return;
-    setIsSaving(true);
+    if (!validateForm() || isSaving) return
+    setIsSaving(true)
     
-    const data = new FormData();
-    data.append('name', formData.name.trim());
-    data.append('price', formData.price);
-    data.append('description', formData.description.trim());
-    data.append('category_id', formData.category_id);
+    const data = new FormData()
+    data.append('name', formData.name.trim())
+    data.append('price', formData.price)
+    data.append('description', formData.description.trim())
+    data.append('category_id', formData.category_id)
     if (formData.image) {
-      data.append('image', formData.image);
+      data.append('image', formData.image)
     }
 
     try {
@@ -140,26 +142,26 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
           'Content-Type': 'multipart/form-data',
           'X-HTTP-Method-Override': 'PATCH'
         }
-      });
+      })
       
-      toast.success(response.data.message || 'Menu item updated successfully');
-      onSuccess();
+      toast.success(response.data.message || 'Menu item updated successfully')
+      onSuccess()
     } catch (error) {
-      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Failed to update menu item';
-      toast.error(errorMessage);
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Failed to update menu item'
+      toast.error(errorMessage)
     } finally {
-      setIsSaving(false);
+      setIsSaving(false)
     }
-  };
+  }
 
   if (isLoading) {
     return (
       <Modal onClose={onClose}>
         <div className="flex justify-center items-center h-40">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
         </div>
       </Modal>
-    );
+    )
   }
 
   return (
@@ -219,13 +221,15 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
             <div className="flex items-center space-x-4">
               {preview && (
                 <div className="w-20 h-20 rounded-lg overflow-hidden border border-gray-300">
-                  <img
+                  <Image
                     src={preview}
                     alt="Item preview"
+                    width={50}
+                    height={50}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = 'https://placehold.co/600x400/orange/white';
+                      e.target.onerror = null
+                      e.target.src = placeholder
                     }}
                   />
                 </div>
@@ -266,7 +270,7 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
         </div>
       </form>
     </Modal>
-  );
-};
+  )
+}
 
-export default EditMenuItemModal;
+export default EditMenuItemModal

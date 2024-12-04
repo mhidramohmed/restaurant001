@@ -1,19 +1,19 @@
-import { useState } from "react";
-import Card from "./Card";
-import SkeletonCard from "./skeleton/SkeletonCard";
-import MenuItemModal from "./MenuItemModal";
-import useSWR from "swr";
-import axios from "@/lib/axios";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
+import { useState } from "react"
+import Card from "./Card"
+import SkeletonCard from "./skeleton/SkeletonCard"
+import MenuItemModal from "./MenuItemModal"
+import useSWR from "swr"
+import axios from "@/lib/axios"
+import { Swiper, SwiperSlide } from "swiper/react"
+import "swiper/css"
 
-const fetcher = (url) => axios.get(url).then((res) => res.data.data);
+const fetcher = (url) => axios.get(url).then((res) => res.data.data)
 
 const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
-  const { data: items, error } = useSWR("/api/menu-items", fetcher);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const { data: items, error } = useSWR("/api/menu-items", fetcher)
+  const [selectedItem, setSelectedItem] = useState(null)
 
-  if (error) return <div>Failed to load items</div>;
+  if (error) return <div>Failed to load items</div>
 
   if (!items) {
     return (
@@ -22,7 +22,7 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
         className="my-8 px-2 md:px-4 lg:px-6"
       >
         {/* Category title skeleton */}
-        <div className="h-8 bg-gray-300 rounded w-1/3 md:w-1/6 mb-4"></div>
+        <div className="h-8 bg-gray-300 rounded w-1/3 md:w-1/6 mb-4" />
 
         {/* Mobile View Skeleton */}
         <div className="block md:hidden">
@@ -58,22 +58,22 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
           ))}
         </div>
       </section>
-    );
+    )
   }
 
   const categoryItems = items
     .filter((item) => item.category_id === categoryId)
-    .filter((item) => item.name.toLowerCase().startsWith(searchTerm));
+    .filter((item) => item.name.toLowerCase().startsWith(searchTerm))
 
-  if (!categoryItems.length) return null;
+  if (!categoryItems.length) return null
 
   const handleCardClick = (item) => {
-    setSelectedItem(item);
-  };
+    setSelectedItem(item)
+  }
 
   const closeModal = () => {
-    setSelectedItem(null);
-  };
+    setSelectedItem(null)
+  }
 
   return (
     <section
@@ -131,7 +131,7 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
 
       {selectedItem && <MenuItemModal item={selectedItem} onClose={closeModal} />}
     </section>
-  );
-};
+  )
+}
 
-export default CategorySection;
+export default CategorySection

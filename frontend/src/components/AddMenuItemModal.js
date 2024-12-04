@@ -1,8 +1,8 @@
-'use client';
-import { useState } from 'react';
-import MainButton from './MainButton';
-import axios from '@/lib/axios';
-import { toast } from 'react-toastify';
+'use client'
+import { useState } from 'react'
+import MainButton from './MainButton'
+import axios from '@/lib/axios'
+import { toast } from 'react-toastify'
 
 const Modal = ({ onClose, children }) => {
   return (
@@ -17,8 +17,8 @@ const Modal = ({ onClose, children }) => {
         {children}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const AddMenuItemModal = ({ categoryId, categoryName, onClose }) => {
   const [formData, setFormData] = useState({
@@ -27,79 +27,79 @@ const AddMenuItemModal = ({ categoryId, categoryName, onClose }) => {
     description: '',
     image: null,
     category_id: categoryId,
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (e) => {
-    const { name, value, files, type } = e.target;
-    let newValue = files ? files[0] : value;
+    const { name, value, files, type } = e.target
+    let newValue = files ? files[0] : value
     
     if (type === 'number') {
-      newValue = value === '' ? '' : parseFloat(value);
+      newValue = value === '' ? '' : parseFloat(value)
     }
     
     setFormData((prevData) => ({
       ...prevData,
       [name]: newValue,
-    }));
-  };
+    }))
+  }
 
   const validateForm = () => {
     if (!formData.name.trim()) {
-      toast.error('Name is required');
-      return false;
+      toast.error('Name is required')
+      return false
     }
     if (!formData.price || formData.price <= 0) {
-      toast.error('Price must be a positive number');
-      return false;
+      toast.error('Price must be a positive number')
+      return false
     }
     if (!formData.image) {
-      toast.error('Image is required');
-      return false;
+      toast.error('Image is required')
+      return false
     }
     
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml']
     if (!allowedTypes.includes(formData.image.type)) {
-      toast.error('Invalid image type. Allowed types: jpeg, png, jpg, gif, svg');
-      return false;
+      toast.error('Invalid image type. Allowed types: jpeg, png, jpg, gif, svg')
+      return false
     }
     
     if (formData.image.size > 2048 * 1024) {
-      toast.error('Image size must be less than 2MB');
-      return false;
+      toast.error('Image size must be less than 2MB')
+      return false
     }
     
-    return true;
-  };
+    return true
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     
-    if (!validateForm() || isSubmitting) return;
-    setIsSubmitting(true);
+    if (!validateForm() || isSubmitting) return
+    setIsSubmitting(true)
     
-    const data = new FormData();
-    data.append('name', formData.name.trim());
-    data.append('price', formData.price);
-    data.append('description', formData.description.trim());
-    data.append('category_id', formData.category_id);
-    data.append('image', formData.image);
+    const data = new FormData()
+    data.append('name', formData.name.trim())
+    data.append('price', formData.price)
+    data.append('description', formData.description.trim())
+    data.append('category_id', formData.category_id)
+    data.append('image', formData.image)
 
     try {
       const response = await axios.post('/api/menu-items', data, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
-      });
+      })
       
-      toast.success(response.data.message || 'Menu item added successfully');
-      onClose();
+      toast.success(response.data.message || 'Menu item added successfully')
+      onClose()
     } catch (error) {
-      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Failed to add menu item';
-      toast.error(errorMessage);
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Failed to add menu item'
+      toast.error(errorMessage)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
     <Modal onClose={onClose}>
@@ -174,7 +174,7 @@ const AddMenuItemModal = ({ categoryId, categoryName, onClose }) => {
         </div>
       </form>
     </Modal>
-  );
-};
+  )
+}
 
-export default AddMenuItemModal;
+export default AddMenuItemModal

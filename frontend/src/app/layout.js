@@ -1,10 +1,10 @@
 import { Poppins } from 'next/font/google'
 import '@/app/global.css'
 
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
-import { CartProvider } from '@/contexts/CartContext';
+import { CartProvider } from '@/contexts/CartContext'
 
 const poppinsFont = Poppins({
     weight: '500',
