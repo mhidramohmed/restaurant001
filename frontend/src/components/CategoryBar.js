@@ -1,52 +1,52 @@
-"use client";
-import { useState, useEffect } from "react";
-import Category from "./Category";
-import useSWR from "swr";
-import axios from "@/lib/axios";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import SkeletonCategory from "./skeleton/SkeletonCategory";
+"use client"
+import { useState, useEffect } from "react"
+import Category from "./Category"
+import useSWR from "swr"
+import axios from "@/lib/axios"
+import { Swiper, SwiperSlide } from "swiper/react"
+import "swiper/css"
+import SkeletonCategory from "./skeleton/SkeletonCategory"
 import '@/app/global.css'
 
-const fetcher = (url) => axios.get(url).then((res) => res.data.data);
+const fetcher = (url) => axios.get(url).then((res) => res.data.data)
 
 const CategoryBar = () => {
-  const { data: categories, error } = useSWR("/api/categories", fetcher);
-  const [activeCategory, setActiveCategory] = useState(null);
-  const [swiperInstance, setSwiperInstance] = useState(null);
+  const { data: categories, error } = useSWR("/api/categories", fetcher)
+  const [activeCategory, setActiveCategory] = useState(null)
+  const [swiperInstance, setSwiperInstance] = useState(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActiveCategory(entry.target.id);
+            setActiveCategory(entry.target.id)
           }
-        });
+        })
       },
       { threshold: 0.5 }
-    );
+    )
 
-    const sections = document.querySelectorAll("[id^='category-']");
-    sections.forEach((section) => observer.observe(section));
+    const sections = document.querySelectorAll("[id^='category-']")
+    sections.forEach((section) => observer.observe(section))
 
     return () => {
-      sections.forEach((section) => observer.unobserve(section));
-    };
-  }, []);
+      sections.forEach((section) => observer.unobserve(section))
+    }
+  }, [])
 
   useEffect(() => {
     if (swiperInstance && activeCategory && categories) {
       const activeIndex = categories.findIndex(
         (category) => `category-${category.id}` === activeCategory
-      );
+      )
       if (activeIndex !== -1) {
-        swiperInstance.slideTo(activeIndex);
+        swiperInstance.slideTo(activeIndex)
       }
     }
-  }, [swiperInstance, activeCategory, categories]);
+  }, [swiperInstance, activeCategory, categories])
 
-  if (error) return <div>Failed to load categories</div>;
+  if (error) return <div>Failed to load categories</div>
 
   return (
     <Swiper
@@ -86,7 +86,7 @@ const CategoryBar = () => {
             </SwiperSlide>
           ))}
     </Swiper>
-  );
-};
+  )
+}
 
-export default CategoryBar;
+export default CategoryBar

@@ -1,19 +1,20 @@
+import Image from "next/image"
 const Category = ({ categoryId, name, image, isActive, setActiveCategory }) => {
-  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
 
   const imageUrl = image?.startsWith('http')
     ? image
     : image.includes('CategoriesImages')
         ? `${baseURL}/${image.replace(/^\/+/, '')}`
-        : `${baseURL}/CategoriesImages/${image.replace(/^\/+/, '')}`;
+        : `${baseURL}/CategoriesImages/${image.replace(/^\/+/, '')}`
 
   const handleClick = () => {
-    const targetSection = document.getElementById(`category-${categoryId}`);
+    const targetSection = document.getElementById(`category-${categoryId}`)
     if (targetSection) {
-      targetSection.scrollIntoView({ behavior: "smooth" });
-      setActiveCategory(`category-${categoryId}`);
+      targetSection.scrollIntoView({ behavior: "smooth" })
+      setActiveCategory(`category-${categoryId}`)
     }
-  };
+  }
 
   return (
     <button
@@ -24,15 +25,17 @@ const Category = ({ categoryId, name, image, isActive, setActiveCategory }) => {
       }`}
     >
       <div className="w-12 h-12 rounded-full overflow-hidden">
-        <img
+        <Image
           src={imageUrl}
           alt={name}
+          width={150}
+          height={150}
           className="w-full h-full object-cover"
         />
       </div>
       <p className="font-medium pr-2">{name}</p>
     </button>
-  );
-};
+  )
+}
 
-export default Category;
+export default Category

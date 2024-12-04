@@ -1,24 +1,25 @@
-'use client';
-import { useState } from 'react';
-import MainButton from './MainButton';
-import CheckoutForm from './CheckoutForm';
-import { LuShoppingCart, LuTrash2 } from "react-icons/lu";
-import { IoClose } from "react-icons/io5";
-import { useCart } from '@/contexts/CartContext';
-import { toast } from 'react-toastify';
+'use client'
+import Image from 'next/image'
+import { useState } from 'react'
+import MainButton from './MainButton'
+import CheckoutForm from './CheckoutForm'
+import { LuShoppingCart, LuTrash2 } from "react-icons/lu"
+import { IoClose } from "react-icons/io5"
+import { useCart } from '@/contexts/CartContext'
+import { toast } from 'react-toastify'
 
 const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
-  const { items, removeItem, updateQuantity, getTotal, clearCart } = useCart(); 
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const { items, removeItem, updateQuantity, getTotal, clearCart } = useCart() 
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
 
   const handleOrderSuccess = () => {
-    toast.success('Commande passée avec succès!', { position: 'top-right' });
-    clearCart(); 
-    setIsCheckoutOpen(false); 
-    setIsCartVisible(false);
-  };
+    toast.success('Commande passée avec succès!', { position: 'top-right' })
+    clearCart() 
+    setIsCheckoutOpen(false) 
+    setIsCartVisible(false)
+  }
 
-  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
 
   return (
     <div className="flex flex-col h-full">
@@ -47,9 +48,11 @@ const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
             {items.map((item) => (
               <li key={item.id} className="border-b pb-4">
                 <div className="flex items-center gap-4">
-                  <img
+                  <Image
                     src={`${baseURL}/${item.image.replace(/^\/+/, '')}`}
                     alt={item.name}
+                    width={100}
+                    height={100}
                     className="w-16 h-16 object-cover rounded"
                   />
                   <div className="flex-1">
@@ -113,7 +116,7 @@ const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
         />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ShoppingCart;
+export default ShoppingCart

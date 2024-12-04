@@ -1,9 +1,9 @@
-import Link from 'next/link';
-import Logo from '@/components/Logo';
-import { useAuth } from '@/hooks/auth';
+import Link from 'next/link'
+import Logo from '@/components/Logo'
+import { useAuth } from '@/hooks/auth'
 
-const Navigation = ({ user }) => {
-    const { logout } = useAuth();
+const Navigation = () => {
+    const { logout } = useAuth()
 
     return (
         <header className="bg-background border-b border-primary p-4">
@@ -26,7 +26,7 @@ const Navigation = ({ user }) => {
                 </div>
             </div>
         </header>
-    );
-};
+    )
+}
 
-export default Navigation;
+export default Navigation

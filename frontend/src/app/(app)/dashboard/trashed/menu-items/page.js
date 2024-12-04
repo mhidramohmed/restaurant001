@@ -1,31 +1,30 @@
-"use client";
+"use client"
 
-import { useState } from 'react';
-// import MainButton from '@/components/MainButton';
-import useSWR from 'swr';
-import axios from '@/lib/axios';
-import AdminMenuItemCard from '@/components/AdminMenuItemCard'; 
-import { toast } from 'react-toastify';
+
+import useSWR from 'swr'
+import axios from '@/lib/axios'
+import AdminMenuItemCard from '@/components/AdminMenuItemCard' 
+import { toast } from 'react-toastify'
 
 const fetcher = (url) =>
   axios
     .get(url, { withCredentials: true }) 
-    .then((res) => res.data.data);
+    .then((res) => res.data.data)
 
 const DeletedMenuItems = () => {
-  const { data: trashedMenuItems, error, mutate } = useSWR(
+  const { data: trashedMenuItems, error } = useSWR(
     '/menu-items/trashed',
     fetcher
-  );
+  )
 
   // const [isRestoring, setIsRestoring] = useState(false);
 
   if (error) {
-    toast.error('Failed to load trashed menu items');
-    return <div>Failed to load trashed menu items</div>;
+    toast.error('Failed to load trashed menu items')
+    return <div>Failed to load trashed menu items</div>
   }
 
-  if (!trashedMenuItems) return <div>Loading...</div>;
+  if (!trashedMenuItems) return <div>Loading...</div>
 
   // const handleRestoreSuccess = () => {
   //   toast.success('Menu item restored successfully!');
@@ -58,7 +57,7 @@ const DeletedMenuItems = () => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DeletedMenuItems;
+export default DeletedMenuItems

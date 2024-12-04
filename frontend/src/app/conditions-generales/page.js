@@ -1,11 +1,11 @@
-'use client';
+'use client'
 
-import Logo from "@/components/Logo";
-import CircleButton from "@/components/CircleButton";
+import Logo from "@/components/Logo"
+import CircleButton from "@/components/CircleButton"
 
-import Link from "next/link";
+import Link from "next/link"
 
-import { HiOutlinePhone, HiOutlineLocationMarker, HiOutlinePlusSm } from "react-icons/hi";
+import { HiOutlinePhone, HiOutlineLocationMarker, HiOutlinePlusSm } from "react-icons/hi"
 
 
 const TermsPage = () => {
@@ -145,7 +145,7 @@ const TermsPage = () => {
         </div>
       </footer>
     </div>
-  );
-};
+  )
+}
 
-export default TermsPage;
+export default TermsPage

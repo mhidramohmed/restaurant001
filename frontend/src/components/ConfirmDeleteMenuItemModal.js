@@ -1,31 +1,31 @@
-'use client';
-import React from 'react';
-import MainButton from './MainButton';
-import axios from '@/lib/axios';
-import { toast } from 'react-toastify';
+'use client'
+import React from 'react'
+import MainButton from './MainButton'
+import axios from '@/lib/axios'
+import { toast } from 'react-toastify'
 
 const ConfirmDeleteMenuItemModal = ({ itemId, itemName, onClose }) => {
-  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false)
 
   const handleDelete = async () => {
-    setIsDeleting(true);
+    setIsDeleting(true)
     try {
-      const response = await axios.delete(`/api/menu-items/${itemId}`);
+      const response = await axios.delete(`/api/menu-items/${itemId}`)
       
       if (response.data.status) {
-        toast.success('Menu item deleted successfully');
+        toast.success('Menu item deleted successfully')
         // Force reload to refresh the menu items list
-        window.location.reload();
+        window.location.reload()
       } else {
-        throw new Error(response.data.message || 'Failed to delete menu item');
+        throw new Error(response.data.message || 'Failed to delete menu item')
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to delete menu item');
+      toast.error(error.response?.data?.message || 'Failed to delete menu item')
     } finally {
-      setIsDeleting(false);
-      onClose();
+      setIsDeleting(false)
+      onClose()
     }
-  };
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -52,7 +52,7 @@ const ConfirmDeleteMenuItemModal = ({ itemId, itemName, onClose }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ConfirmDeleteMenuItemModal;
+export default ConfirmDeleteMenuItemModal

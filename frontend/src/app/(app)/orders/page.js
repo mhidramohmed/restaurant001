@@ -1,26 +1,20 @@
-'use client';
+'use client'
 
-import useSWR from 'swr';
-import axios from '@/lib/axios';
-import MainButton from '@/components/MainButton';
-import { useAuth } from '@/hooks/auth';
-import { useEffect, useState, useMemo, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Logo from '@/components/Logo';
+import useSWR from 'swr'
+import axios from '@/lib/axios'
+import MainButton from '@/components/MainButton'
+import { useAuth } from '@/hooks/auth'
+import { useEffect, useState, useMemo, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import Logo from '@/components/Logo'
 
-import OrderDetailsModal from '@/components/OrderDetailsModal';
+import OrderDetailsModal from '@/components/OrderDetailsModal'
 
 const fetcher = async (url) => {
-  try {
-    const response = await axios.get(url);
-    console.log('API Response:', response);
-    return response.data.data || response.data;
-  } catch (error) {
-    console.error('Fetch Error:', error);
-    throw error;
-  }
-};
+    const response = await axios.get(url)
+    return response.data.data || response.data
+}
 
 const OrderStatusBadge = ({ status }) => {
   const statusColors = {
@@ -28,7 +22,7 @@ const OrderStatusBadge = ({ status }) => {
     inprocess: 'bg-blue-500',
     delivered: 'bg-green-500',
     declined: 'bg-red-500'
-  };
+  }
 
   return (
     <span
@@ -36,85 +30,84 @@ const OrderStatusBadge = ({ status }) => {
     >
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
-  );
-};
+  )
+}
 
 const Page = () => {
-  const router = useRouter();
-  const { user, logout } = useAuth({ middleware: 'auth' });
+  const router = useRouter()
+  const { user, logout } = useAuth({ middleware: 'auth' })
   const { data: orders, error, mutate } = useSWR(
     user ? '/api/orders' : null,
     fetcher
-  );
+  )
 
   const [filters, setFilters] = useState({
     searchTerm: '',
     statuses: ['pending'],
     paymentStatuses: []
-  });
+  })
 
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const ordersPerPage = 10;
+  const [selectedOrder, setSelectedOrder] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const ordersPerPage = 10
 
   useEffect(() => {
     if (!user) {
-      router.push('/login');
+      router.push('/login')
     } else if (user?.role !== 'user') {
-      router.push('/dashboard');
+      router.push('/dashboard')
     }
-  }, [user, router]);
+  }, [user, router])
 
   const filteredOrders = useMemo(() => {
-    if (!orders) return [];
+    if (!orders) return []
 
     return orders.filter(order => {
       // Search filter
       const matchesSearch = !filters.searchTerm || 
         order.client_name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-        order.id.toString().includes(filters.searchTerm);
+        order.id.toString().includes(filters.searchTerm)
 
       // Status filter
       const matchesStatus = filters.statuses.length === 0 || 
-        filters.statuses.includes(order.order_status);
+        filters.statuses.includes(order.order_status)
 
       // Payment status filter
       const matchesPaymentStatus = filters.paymentStatuses.length === 0 || 
-        filters.paymentStatuses.includes(order.payment_status);
+        filters.paymentStatuses.includes(order.payment_status)
 
-      return matchesSearch && matchesStatus && matchesPaymentStatus;
-    });
+      return matchesSearch && matchesStatus && matchesPaymentStatus
+    })
   }, [
     orders, 
     filters.searchTerm, 
     filters.statuses.join(','), 
     filters.paymentStatuses.join(',')
-  ]);
+  ])
 
   // Pagination
-  const indexOfLastOrder = currentPage * ordersPerPage;
-  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const indexOfLastOrder = currentPage * ordersPerPage
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage
+  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder)
 
-  const pageNumbers = [];
+  const pageNumbers = []
   for (let i = 1; i <= Math.ceil(filteredOrders.length / ordersPerPage); i++) {
-    pageNumbers.push(i);
+    pageNumbers.push(i)
   }
 
   const handleRowClick = useCallback((order) => {
-    setSelectedOrder(order);
-  }, []);
+    setSelectedOrder(order)
+  }, [])
 
   const closeModal = useCallback(() => {
-    setSelectedOrder(null);
-  }, []);
+    setSelectedOrder(null)
+  }, [])
 
   if (error) {
-    console.error('Error details:', error);
-    return <div className="p-6 text-red-600">Failed to load orders: {error.message}</div>;
+    return <div className="p-6 text-red-600">Failed to load orders: {error.message}</div>
   }
 
-  if (!orders) return <div className="p-6">Loading...</div>;
+  if (!orders) return <div className="p-6">Loading...</div>
 
   return (
     <>
@@ -279,7 +272,7 @@ const Page = () => {
         )}
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Page;
+export default Page

@@ -1,15 +1,15 @@
-'use client';
-import Link from 'next/link';
-import Logo from './Logo';
-import MainButton from './MainButton';
-import { FaSignOutAlt } from 'react-icons/fa';
-import { usePathname } from 'next/navigation';
+'use client'
+import Link from 'next/link'
+import Logo from './Logo'
+import MainButton from './MainButton'
+import { FaSignOutAlt } from 'react-icons/fa'
+import { usePathname } from 'next/navigation'
 
-import { useAuth } from '@/hooks/auth';
+import { useAuth } from '@/hooks/auth'
 
 const SideBar = () => {
-  const { logout } = useAuth();
-  const pathname = usePathname();
+  const { logout } = useAuth()
+  const pathname = usePathname()
 
   return (
     <div className="w-64 h-full min-h-screen bg-background shadow-lg flex flex-col">
@@ -78,7 +78,7 @@ const SideBar = () => {
         </MainButton>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SideBar;
+export default SideBar

@@ -1,43 +1,38 @@
-'use client';
+'use client'
 
-import useSWR from 'swr';
-import axios from '@/lib/axios';
-import { toast } from 'react-toastify';
-import MainButton from '@/components/MainButton';
-import { useState } from 'react';
+import useSWR from 'swr'
+import axios from '@/lib/axios'
+import { toast } from 'react-toastify'
+import MainButton from '@/components/MainButton'
 
 const fetcher = async (url) => {
-  try {
-    const response = await axios.get(url, { withCredentials: true });
-    return response.data.data || response.data;
-  } catch (error) {
-    throw error;
-  }
-};
+    const response = await axios.get(url, { withCredentials: true })
+    return response.data.data || response.data
+}
 
 
 const DeletedItemsPage = () => {
-  const { data: deletedCategories, error: categoryError, mutate: mutateCategories } = useSWR('/categories/trash', fetcher);
-  const { data: deletedMenuItems, error: menuError, mutate: mutateMenuItems } = useSWR('/menu-items/trash', fetcher);
+  const { data: deletedCategories, error: categoryError, mutate: mutateCategories } = useSWR('/categories/trash', fetcher)
+  const { data: deletedMenuItems, error: menuError, mutate: mutateMenuItems } = useSWR('/menu-items/trash', fetcher)
 
   const handleRestore = async (type, id) => {
     try {
-      const endpoint = type === 'category' ? `/categories/${id}` : `/menu-items/${id}`;
-      await axios.post(endpoint, {}, { withCredentials: true });
-      toast.success(`${type === 'category' ? 'Category' : 'Menu Item'} restored successfully!`);
-      if (type === 'category') mutateCategories();
-      if (type === 'menuItem') mutateMenuItems();
+      const endpoint = type === 'category' ? `/categories/${id}` : `/menu-items/${id}`
+      await axios.post(endpoint, {}, { withCredentials: true })
+      toast.success(`${type === 'category' ? 'Category' : 'Menu Item'} restored successfully!`)
+      if (type === 'category') mutateCategories()
+      if (type === 'menuItem') mutateMenuItems()
     } catch (error) {
-      toast.error(`Failed to restore ${type === 'category' ? 'Category' : 'Menu Item'}`);
+      toast.error(`Failed to restore ${type === 'category' ? 'Category' : 'Menu Item'}`)
     }
-  };
+  }
 
   if (categoryError || menuError) {
-    return <div className="p-6 text-red-600">Error loading data.</div>;
+    return <div className="p-6 text-red-600">Error loading data.</div>
   }
 
   if (!deletedCategories || !deletedMenuItems) {
-    return <div className="p-6">Loading...</div>;
+    return <div className="p-6">Loading...</div>
   }
 
   return (
@@ -80,7 +75,7 @@ const DeletedItemsPage = () => {
         )}
       </section>
     </div>
-  );
-};
+  )
+}
 
-export default DeletedItemsPage;
+export default DeletedItemsPage

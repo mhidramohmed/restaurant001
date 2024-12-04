@@ -1,20 +1,21 @@
-import React from 'react';
-import { useCart } from '@/contexts/CartContext';
+import React from 'react'
+import { useCart } from '@/contexts/CartContext'
+import Image from 'next/image'
 
-const MenuItemModal = ({ item, onClose, onAddToCart }) => {
-  const { addItem } = useCart();
-  const { id, name, price, image } = item;
+const MenuItemModal = ({ item, onClose }) => {
+  const { addItem } = useCart()
+  const { id, name, price, image } = item
   const handleAddToCart = () => {
     addItem({
       id,
       name,
       price,
       image
-    });
-  };
-  const img = item.image;
-  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
-  const imageUrl =  `${baseURL}/${img.replace(/^\/+/, '')}`;
+    })
+  }
+  const img = item.image
+  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
+  const imageUrl =  `${baseURL}/${img.replace(/^\/+/, '')}`
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-lg max-w-md w-full">
@@ -28,7 +29,7 @@ const MenuItemModal = ({ item, onClose, onAddToCart }) => {
 
         <div className="flex flex-col items-center">
           {/* Image */}
-          <img src={imageUrl} alt={item.name} className="w-full h-64 object-cover rounded-lg mb-4" />
+          <Image src={imageUrl} alt={item.name} width={100} height={300} className="w-full h-64 object-cover rounded-lg mb-4" />
           
           {/* Title and Price */}
           <h3 className="text-3xl font-semibold text-primary mb-2">{item.name}</h3>
@@ -58,7 +59,7 @@ const MenuItemModal = ({ item, onClose, onAddToCart }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default MenuItemModal;
+export default MenuItemModal
