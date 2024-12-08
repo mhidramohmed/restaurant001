@@ -4,7 +4,7 @@ import MainButton from '@/components/MainButton'
 import useSWR from 'swr'
 import axios from '@/lib/axios'
 import AdminCategoryCard from '@/components/AdminCategoryCard'
-import AddCategoryModal from '@/components/addCategoryModal'
+import AddCategoryModal from '@/components/AddCategoryModal'
 import { toast } from 'react-toastify'
 
 const fetcher = (url) => axios.get(url).then((res) => res.data.data)
@@ -17,12 +17,12 @@ const CategoryBar = () => {
     toast.error('Failed to load categories')
     return <div>Failed to load categories</div>
   }
-  
+
   if (!categories) return <div>Loading...</div>
 
   const handleCategoryAddSuccess = () => {
     setShowAddCategoryModal(false)
-    mutate() 
+    mutate()
   }
 
   return (
