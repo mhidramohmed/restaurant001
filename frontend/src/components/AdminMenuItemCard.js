@@ -4,26 +4,26 @@ import MainButton from './MainButton'
 import { FiEye, FiEdit } from "react-icons/fi"
 import { LuTrash2 } from "react-icons/lu"
 import ConfirmDeleteMenuItemModal from './ConfirmDeleteMenuItemModal'
-import Image from 'next/image'
+// import Image from 'next/image'
 
 const AdminMenuItemCard = ({ id, image, name, price, description, onEdit }) => {
   const [showDetails, setShowDetails] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  
-  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
-  const imageUrl = image?.startsWith('http')
-    ? image
-    : `${baseURL}/${image.replace(/^\/+/, '')}`
+
+//   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
+//   const imageUrl = image?.startsWith('http')
+//     ? image
+//     : `${baseURL}/${image.replace(/^\/+/, '')}`
 
   return (
     <>
       <div className="h-[400px] border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden bg-white">
         <div className="h-1/2">
-          <Image
-            src={imageUrl}
+          <img
+            src={image}
             alt={name}
-            width={300}
-            height={300}
+            // width={300}
+            // height={300}
             className="w-full h-full object-cover rounded-t-lg"
             onError={(e) => {
               e.target.onerror = null
@@ -31,7 +31,7 @@ const AdminMenuItemCard = ({ id, image, name, price, description, onEdit }) => {
             }}
           />
         </div>
-        
+
         <div className="h-1/2 p-4 flex flex-col justify-between">
           <div>
             <h3 className="text-lg font-semibold text-text mb-1">{name}</h3>

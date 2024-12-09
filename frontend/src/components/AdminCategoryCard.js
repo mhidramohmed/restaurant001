@@ -9,31 +9,31 @@ import AddMenuItemModal from './AddMenuItemModal'
 import ViewMenuItemsModal from './ViewMenuItemsModal'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
 import EditCategoryModal from './EditCategoryModal'
-import Image from "next/image"
+// import Image from "next/image"
 
 const AdminCategoryCard = ({ id, name, image }) => {
-  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
+//   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
   const [showAddMenuModal, setShowAddMenuModal] = useState(false)
   const [showViewMenuModal, setShowViewMenuModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
 
-  const imageUrl = image?.startsWith('http')
-    ? image
-    : image.includes('CategoriesImages')
-        ? `${baseURL}/${image.replace(/^\/+/, '')}`
-        : `${baseURL}/CategoriesImages/${image.replace(/^\/+/, '')}`
+//   const imageUrl = image?.startsWith('http')
+//     ? image
+//     : image.includes('CategoriesImages')
+//         ? `${baseURL}/${image.replace(/^\/+/, '')}`
+//         : `${baseURL}/CategoriesImages/${image.replace(/^\/+/, '')}`
 
 
   return (
     <>
       <div className="flex flex-col items-center space-y-4 py-6 px-2 border border-primary rounded-lg shadow-lg bg-white transition-transform transform hover:scale-105">
         <div className="w-20 h-20 rounded-full overflow-hidden border border-secondary">
-          <Image
-            src={imageUrl}
+          <img
+            src={image}
             alt={name}
-            width={100}
-            height={100}
+            // width={100}
+            // height={100}
             className="w-full h-full object-cover"
             onError={(e) => {
               e.target.onerror = null

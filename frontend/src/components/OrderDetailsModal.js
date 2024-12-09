@@ -1,21 +1,21 @@
 import React, { useState } from 'react'
-import axios from '@/lib/axios' 
+import axios from '@/lib/axios'
 import TimeAgo from 'timeago-react'
-import Image from 'next/image'
+// import Image from 'next/image'
 import placeholder from '@/assets/svg/placeholder.svg'
 
 const OrderDetailsModal = ({ order, onClose, mutate }) => {
   const [orderStatus, setOrderStatus] = useState(order.order_status)
   const [paymentStatus, setPaymentStatus] = useState(order.payment_status)
 
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+//   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
 
   const handleSaveChanges = async () => {
-      await axios.patch(`/api/orders/${order.id}`, 
-        { 
-          order_status: orderStatus, 
-          payment_status: paymentStatus 
-        }, 
+      await axios.patch(`/api/orders/${order.id}`,
+        {
+          order_status: orderStatus,
+          payment_status: paymentStatus
+        },
         {
           withCredentials: true
         }
@@ -35,7 +35,7 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
         switch (status) {
           case 'pending':
             return 'bg-yellow-500 border-yellow-500'
-          case 'inprocess': 
+          case 'inprocess':
             return 'bg-blue-500 border-blue-500'
           case 'delivered':
             return 'bg-green-500 border-green-500'
@@ -43,7 +43,7 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
             return 'bg-red-500 border-red-500'
           case 'paid':
             return 'bg-green-500 border-green-500'
-          case 'unpaid':  
+          case 'unpaid':
             return 'bg-red-500 border-red-500'
           default:
             return 'bg-gray-500 border-gray-500'
@@ -100,7 +100,7 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
               <div className="mt-4">
                 <p className="text-gray-600 font-medium">Payment Status</p>
                 <div className="flex space-x-2 mt-2">
-                  {['paid', 'unpaid'].map((status) => (  
+                  {['paid', 'unpaid'].map((status) => (
                     <span
                       key={status}
                       className={`cursor-pointer px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ${getBgColorClass(
@@ -118,7 +118,7 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
 
           {/* Action Buttons */}
           <div className="mt-6 flex justify-start space-x-4">
-            
+
             <button
               onClick={handleSaveChanges}
               className="bg-primary text-white px-4 py-2 rounded hover:bg-primary-dark"
@@ -142,13 +142,13 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
             {order.order_elements.map((item) => (
               <li key={item.id} className="flex items-center space-x-4">
                 {/* Item Image */}
-                  <Image
-                    src={item.menu_item && item.menu_item.image 
-                      ? `${baseUrl}${item.menu_item.image}` 
+                  <img
+                    src={item.menu_item && item.menu_item.image
+                      ? item.menu_item.image
                       : placeholder}
                     alt={item.name}
-                    width={50}
-                    height={50}
+                    // width={50}
+                    // height={50}
                     className="w-16 h-16 rounded-lg object-cover"
                   />
                 {/* Item Details */}

@@ -1,4 +1,4 @@
-import Image from "next/image"
+// import Image from "next/image"
 const Category = ({ categoryId, name, image, isActive, setActiveCategory }) => {
 //   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
 
@@ -25,11 +25,11 @@ const Category = ({ categoryId, name, image, isActive, setActiveCategory }) => {
       }`}
     >
       <div className="w-12 h-12 rounded-full overflow-hidden">
-        <Image
+        <img
           src={image}
           alt={name}
-          width={150}
-          height={150}
+          //width={150}
+          //height={150}
           className="w-full h-full object-cover"
         />
       </div>

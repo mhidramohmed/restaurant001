@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import MainButton from './MainButton'
 import axios from '@/lib/axios'
 import { toast } from 'react-toastify'
-import Image from 'next/image'
+// import Image from 'next/image'
 import placeholder from '@/assets/svg/placeholder.svg'
 
 const EditCategoryModal = ({ categoryId, onClose }) => {
@@ -14,30 +14,30 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
   const [preview, setPreview] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
-  
+
   useEffect(() => {
     const fetchCategory = async () => {
       setIsLoading(true)
       try {
         const response = await axios.get(`/api/categories/${categoryId}`)
         const category = response.data.data
-        
+
         setFormData({
           name: category.name || '',
           image: null
         })
-        
+
         if (category.image) {
-          const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
-          const imageUrl = category.image.startsWith('http')
-            ? category.image
-            : `${baseURL}/${category.image.replace(/^\/+/, '')}`
-          setPreview(imageUrl)
+        //   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
+        //   const imageUrl = category.image.startsWith('http')
+        //     ? category.image
+        //     : `${baseURL}/${category.image.replace(/^\/+/, '')}`
+            setPreview(category.image)
         }
       } catch (error) {
         toast.error(
-          error.response?.data?.message || 
-          error.response?.data?.error || 
+          error.response?.data?.message ||
+          error.response?.data?.error ||
           'Failed to load category details'
         )
       } finally {
@@ -52,11 +52,11 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target
-    
+
     if (files) {
       const file = files[0]
       setFormData(prev => ({ ...prev, [name]: file }))
-      
+
       const reader = new FileReader()
       reader.onloadend = () => {
         setPreview(reader.result)
@@ -77,7 +77,7 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
 
     try {
       const response = await axios.post(`/api/categories/${categoryId}`, data, {
-        headers: { 
+        headers: {
           'Content-Type': 'multipart/form-data',
           'X-HTTP-Method-Override': 'PATCH'
         }
@@ -114,9 +114,9 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
         >
           &times;
         </button>
-        
+
         <h2 className="text-lg font-semibold mb-4">Edit Category</h2>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -139,11 +139,11 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
             <div className="flex items-center space-x-4">
             {preview && (
                 <div className="w-20 h-20 rounded-lg overflow-hidden border border-gray-300">
-                  <Image
+                  <img
                     src={preview}
                     alt="Item preview"
-                    width={50}
-                    height={50}
+                    // width={50}
+                    // height={50}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       e.target.onerror = null

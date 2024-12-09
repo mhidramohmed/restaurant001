@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import MainButton from './MainButton'
 import axios from '@/lib/axios'
 import { toast } from 'react-toastify'
-import Image from 'next/image'
+// import Image from 'next/image'
 import placeholder from '@/assets/svg/placeholder.svg'
 
 const Modal = ({ onClose, children }) => {
@@ -40,27 +40,27 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
       try {
         const response = await axios.get(`/api/menu-items/${itemId}`)
         const item = response.data.data
-        
+
         setFormData({
           name: item.name || '',
           price: item.price || '',
           description: item.description || '',
           category_id: item.category_id || '',
-          image: null 
+          image: null
         })
-        
+
         if (item.image) {
-          const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
-          const imageUrl = item.image.startsWith('http')
-            ? item.image
-            : `${baseURL}/${item.image.replace(/^\/+/, '')}`
-          setPreview(imageUrl)
+        //   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
+        //   const imageUrl = item.image.startsWith('http')
+        //     ? item.image
+        //     : `${baseURL}/${item.image.replace(/^\/+/, '')}`
+            setPreview(item.image)
         }
-        
+
       } catch (error) {
         toast.error(
-          error.response?.data?.message || 
-          error.response?.data?.error || 
+          error.response?.data?.message ||
+          error.response?.data?.error ||
           'Failed to load menu item details'
         )
         onClose()
@@ -76,11 +76,11 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
 
   const handleChange = (e) => {
     const { name, value, files, type } = e.target
-    
+
     if (files) {
       const file = files[0]
       setFormData(prev => ({ ...prev, [name]: file }))
-      
+
       const reader = new FileReader()
       reader.onloadend = () => {
         setPreview(reader.result)
@@ -104,29 +104,29 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
       toast.error('Price must be a positive number')
       return false
     }
-    
+
     if (formData.image) {
       const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml']
       if (!allowedTypes.includes(formData.image.type)) {
         toast.error('Invalid image type. Allowed types: jpeg, png, jpg, gif, svg')
         return false
       }
-      
+
       if (formData.image.size > 2048 * 1024) {
         toast.error('Image size must be less than 2MB')
         return false
       }
     }
-    
+
     return true
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (!validateForm() || isSaving) return
     setIsSaving(true)
-    
+
     const data = new FormData()
     data.append('name', formData.name.trim())
     data.append('price', formData.price)
@@ -138,12 +138,12 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
 
     try {
       const response = await axios.post(`/api/menu-items/${itemId}`, data, {
-        headers: { 
+        headers: {
           'Content-Type': 'multipart/form-data',
           'X-HTTP-Method-Override': 'PATCH'
         }
       })
-      
+
       toast.success(response.data.message || 'Menu item updated successfully')
       onSuccess()
     } catch (error) {
@@ -183,7 +183,7 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Price (Dhs)
@@ -199,7 +199,7 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Description
@@ -221,11 +221,11 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
             <div className="flex items-center space-x-4">
               {preview && (
                 <div className="w-20 h-20 rounded-lg overflow-hidden border border-gray-300">
-                  <Image
+                  <img
                     src={preview}
                     alt="Item preview"
-                    width={50}
-                    height={50}
+                    // width={50}
+                    // height={50}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       e.target.onerror = null
@@ -243,13 +243,13 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
               />
             </div>
             <p className="text-sm text-gray-500 mt-1">
-              {preview 
-                ? "Upload new image to replace current one (optional)" 
+              {preview
+                ? "Upload new image to replace current one (optional)"
                 : "Accepted formats: JPEG, PNG, JPG, GIF, SVG. Max size: 2MB"}
             </p>
           </div>
         </div>
-        
+
         <div className="mt-6 flex justify-end space-x-2">
           <MainButton
             type="button"
