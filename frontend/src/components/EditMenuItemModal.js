@@ -22,7 +22,7 @@ const Modal = ({ onClose, children }) => {
   )
 }
 
-const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
+const EditMenuItemModal = ({ categoryId, itemId, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -45,7 +45,7 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
           name: item.name || '',
           price: item.price || '',
           description: item.description || '',
-          category_id: item.category_id || '',
+            category_id: item.category_id || categoryId,
           image: null
         })
 

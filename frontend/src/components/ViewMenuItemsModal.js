@@ -23,13 +23,15 @@ const Modal = ({ onClose, children }) => {
 
 const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
   const [editingItemId, setEditingItemId] = useState(null)
+  const [editingCategoryId, setEditingCategoryId] = useState(null)
 
   const { data: items, error } = useSWR('/api/menu-items', (url) =>
     axios.get(url).then((res) => res.data.data)
   )
 
-  const handleEdit = (itemId) => {
+    const handleEdit = ( categoryId, itemId) => {
     setEditingItemId(itemId)
+    setEditingCategoryId(categoryId)
   }
 
   const handleDelete = async (itemId) => {
@@ -39,7 +41,8 @@ const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
 
   const handleEditComplete = () => {
     setEditingItemId(null)
-    mutate('/api/menu-items') 
+    setEditingCategoryId(null)
+    mutate('/api/menu-items')
   }
 
   if (error) {
@@ -93,6 +96,7 @@ const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
       {editingItemId && (
         <EditMenuItemModal
           itemId={editingItemId}
+          categoryId={editingCategoryId}
           onClose={() => setEditingItemId(null)}
           onSuccess={handleEditComplete}
         />
