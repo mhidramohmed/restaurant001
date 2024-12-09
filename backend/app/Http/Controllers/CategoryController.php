@@ -81,7 +81,7 @@ class CategoryController extends Controller
             }else{
 
                 return response()->json([
-                    'data'=>$category ,
+                    'data'=>CategorieResource::collection($category) ,
 
                     'messsage'=>"u get the data  "
                 ],200);

@@ -114,7 +114,7 @@ class MenuItemController extends Controller
 
             if($menuItem){
                 return response()->json([
-                    'data' => $menuItem
+                    'data' => MenuItemResource::collection($menuItem)
                 ], 200);}
 
         } catch (\Throwable $th) {
@@ -216,7 +216,7 @@ class MenuItemController extends Controller
     public function getDeletedMenuItems()
 {
     \Log::info('Attempting to retrieve deleted menu items');
-    
+
     try {
         $menuItems = MenuItem::onlyTrashed()->get();
 
@@ -229,7 +229,7 @@ class MenuItemController extends Controller
         ], 200);
     } catch (\Exception $e) {
         \Log::error('Error in getDeletedMenuItems: ' . $e->getMessage());
-        
+
         return response()->json([
             'error' => 'Failed to retrieve deleted menu items',
             'message' => $e->getMessage()
