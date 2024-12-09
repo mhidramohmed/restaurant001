@@ -1,6 +1,6 @@
 import Image from "next/image"
 const Category = ({ categoryId, name, image, isActive, setActiveCategory }) => {
-  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
+//   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
 
 //   const imageUrl = image?.startsWith('http')
     // ? image
