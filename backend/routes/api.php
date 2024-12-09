@@ -28,6 +28,9 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 //Routes Categories
 
 // Route::apiResource('categories', CategoryController::class);
+// Route::get('test', function () {
+
+// });
 
 Route::get('/categories', [CategoryController::class,'index']);
 Route::get('/categories/{id}', [CategoryController::class,'show'])->where('id','\d+');

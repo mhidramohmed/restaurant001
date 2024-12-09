@@ -18,7 +18,7 @@ class CategorieResource extends JsonResource
             "id"=>$this->id,
             "name"=>$this->name,
             "description"=>$this->description,
-            "image"=>$this->image
+            "image"=>env("APP_URL").$this->image
         ];
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\MenuItem;
 
 use Illuminate\Http\Request;
+use App\Http\Resources\CategorieResource;
 
 class CategoryController extends Controller
 {
@@ -13,12 +14,14 @@ class CategoryController extends Controller
     {
         try {
 
-            $categories = Category::with("menuItems")->get();
+            // $categories = Category::with("menuItems")->get();
+            $categories = Category::all();
+
             // return $categories;
 
 
             return response()->json([
-                'data'=> ($categories) ,
+                'data'=> CategorieResource::collection($categories) ,
                 'messsage'=>"u get the data  "
             ],200);
         } catch (Exception $e) {
