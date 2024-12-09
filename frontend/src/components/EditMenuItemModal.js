@@ -63,7 +63,7 @@ const EditMenuItemModal = ({ itemId, onClose, onSuccess }) => {
           error.response?.data?.error ||
           'Failed to load menu item details'
         )
-        onClose()
+        // onClose()
       } finally {
         setIsLoading(false)
       }
