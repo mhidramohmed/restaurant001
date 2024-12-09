@@ -114,7 +114,7 @@ class MenuItemController extends Controller
 
             if($menuItem){
                 return response()->json([
-                    'data' => MenuItemResource::collection($menuItem)
+                    'data' => MenuItemResource($menuItem)
                 ], 200);}
 
         } catch (\Throwable $th) {
