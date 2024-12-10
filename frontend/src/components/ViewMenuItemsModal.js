@@ -34,11 +34,6 @@ const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
     setEditingCategoryId(categoryId)
   }
 
-  const handleDelete = async (itemId) => {
-    const updatedItems = items.filter((item) => item.id !== itemId)
-    mutate('/api/menu-items', updatedItems, false)
-  }
-
   const handleEditComplete = () => {
     setEditingItemId(null)
     setEditingCategoryId(null)
@@ -85,7 +80,6 @@ const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
                   key={item.id}
                   {...item}
                   onEdit={handleEdit}
-                  onDelete={handleDelete}
                 />
               ))}
             </div>

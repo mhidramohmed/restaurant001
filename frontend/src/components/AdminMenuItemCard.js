@@ -5,16 +5,9 @@ import { FiEye, FiEdit } from "react-icons/fi"
 import { LuTrash2 } from "react-icons/lu"
 import ConfirmDeleteMenuItemModal from './ConfirmDeleteMenuItemModal'
 
-const AdminMenuItemCard = ({ id, category_id, image, name, price, description, onEdit, onDelete }) => {
+const AdminMenuItemCard = ({ id, category_id, image, name, price, description, onEdit }) => {
     const [showDetails, setShowDetails] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
-
-    const handleDelete = () => {
-        setShowDeleteModal(true)
-        if (onDelete) {
-            onDelete(id)
-        }
-    }
 
     return (
         <>
@@ -60,7 +53,7 @@ const AdminMenuItemCard = ({ id, category_id, image, name, price, description, o
                         </MainButton>
 
                         <MainButton
-                            onClick={handleDelete}
+                            onClick={() => setShowDeleteModal(true)}
                             className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
                             title="Delete Item"
                         >
