@@ -50,6 +50,7 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
         }
       }
 
+        const baseURL = 'http://bonsai-marrakech.com/backend'
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-5xl flex flex-col relative">
@@ -143,9 +144,13 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
               <li key={item.id} className="flex items-center space-x-4">
                 {/* Item Image */}
                   <img
-                    src={item.menu_item && item.menu_item.image
-                      ? item.menu_item.image
-                      : placeholder}
+                    src={
+                      item.menu_item?.image?.startsWith('http')
+                        ? item.menu_item.image
+                        : item.menu_item?.image
+                        ? `${baseURL}${item.menu_item.image}`
+                        : placeholder
+                    }
                     alt={item.name}
                     // width={50}
                     // height={50}
