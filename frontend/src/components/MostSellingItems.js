@@ -35,6 +35,10 @@ const MostSellingItems = () => {
 //   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
   const baseURL = 'http://bonsai-marrakech.com/backend'
 
+    const imageUrl = item.image?.startsWith('http')
+    ? item.image
+    : `${baseURL}${item.image}`
+
   return (
     <div className="flex flex-col w-1/3 bg-white p-4 rounded-lg shadow-md">
       <div className="flex items-center justify-between">
@@ -51,7 +55,7 @@ const MostSellingItems = () => {
                 <div className="flex items-center gap-4">
                   {item.image ? (
                     <img
-                      src={`${baseURL}${item.image}`}
+                      src={imageUrl}
                       alt={item.name || 'Unnamed Item'}
                     //   width={50}
                     //   height={50}
