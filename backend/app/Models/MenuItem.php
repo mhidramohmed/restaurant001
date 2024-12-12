@@ -46,11 +46,11 @@ class MenuItem extends Model
      *
      * Generate a full URL for the image.
      */
-    // public function getImageUrlAttribute()
-    // {
-    //     if ($this->image) {
-    //         return url($this->image); // Assumes images are stored in the "storage/app/public" directory
-    //     }
-    //     return null; // Return null if no image is set
-    // }
+    public function getImageUrlAttribute()
+    {
+        if ($this->image) {
+            return url($this->image); // Assumes images are stored in the "storage/app/public" directory
+        }
+        return null; // Return null if no image is set
+    }
 }
