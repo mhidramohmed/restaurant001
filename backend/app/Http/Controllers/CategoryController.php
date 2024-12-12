@@ -67,9 +67,10 @@ class CategoryController extends Controller
         try {
 
             // return($id);
+
             $category = Category:: find($id);
 
-                        // return($category);
+                      // return($category);
 
 
             if(!$category){
@@ -80,8 +81,11 @@ class CategoryController extends Controller
 
             }else{
 
+                // dd( $category );
+
                 return response()->json([
-                    'data'=>CategorieResource($category) ,
+                    'data'=> new CategorieResource($category) ,
+                    // 'data1'=> CategorieResource($category) ,
 
                     'messsage'=>"u get the data  "
                 ],200);

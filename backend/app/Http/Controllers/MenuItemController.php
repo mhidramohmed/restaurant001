@@ -96,13 +96,15 @@ class MenuItemController extends Controller
      */
     public function show($id)
     {
+        // dd('hhh');
         try {
+        // dd('hhh');
 
             $menuItem = MenuItem::findOrFail($id);
 
             // return ($id);
 
-            // return ($menuItem);
+            // dd ($menuItem);
 
             if(!$menuItem){
                 return response()->json([
@@ -112,10 +114,10 @@ class MenuItemController extends Controller
 
             // return ('hhhh');
 
-            if($menuItem){
+
                 return response()->json([
-                    'data' => MenuItemResource($menuItem)
-                ], 200);}
+                    'data' =>new  MenuItemResource($menuItem)
+                ], 200);
 
         } catch (\Throwable $th) {
 

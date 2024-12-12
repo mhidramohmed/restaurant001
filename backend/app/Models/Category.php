@@ -12,7 +12,12 @@ class Category extends Model
 
     use SoftDeletes;
 
-    protected $fillable = ['name','image','is_deleted'];
+    protected $fillable = ['name','image'];
+
+    // protected $appends = ['image_url'];
+
+    // protected $hidden = ['image'];
+
 
 
 
@@ -21,4 +26,13 @@ class Category extends Model
     {
         return $this->hasMany(MenuItem::class);
     }
+
+
+    // public function getImageUrlAttribute()
+    // {
+    //     if ($this->image) {
+    //         return url($this->image); // Assumes images are stored in the "storage/app/public" directory
+    //     }
+    //     return null; // Return null if no image is set
+    // }
 }
