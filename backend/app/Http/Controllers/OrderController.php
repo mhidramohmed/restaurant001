@@ -17,7 +17,7 @@ class OrderController extends Controller
 {
     try {
         // Eager load 'orderElements' and 'menuItem' relationships
-        $orders = Order::all();
+        $orders = Order::with('orderElements.menuItem')->get();
 
         return response()->json(['data' => $orders], 200);
     } catch (\Throwable $th) {
