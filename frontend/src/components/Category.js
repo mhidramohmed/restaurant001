@@ -11,7 +11,9 @@ const Category = ({ categoryId, name, image, isActive, setActiveCategory }) => {
   const handleClick = () => {
     const targetSection = document.getElementById(`category-${categoryId}`)
     if (targetSection) {
-      targetSection.scrollIntoView({ behavior: "smooth" })
+      const offset = 125; // Adjust this to match the height of your fixed category bar
+      const topPosition = targetSection.getBoundingClientRect().top + window.scrollY - offset
+      window.scrollTo({ top: topPosition, behavior: "smooth" })
       setActiveCategory(`category-${categoryId}`)
     }
   }

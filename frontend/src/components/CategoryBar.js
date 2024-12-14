@@ -16,24 +16,56 @@ const CategoryBar = () => {
   const [swiperInstance, setSwiperInstance] = useState(null)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveCategory(entry.target.id)
-          }
-        })
-      },
-      { threshold: 0.5 }
-    )
+    if (!categories) return
 
-    const sections = document.querySelectorAll("[id^='category-']")
-    sections.forEach((section) => observer.observe(section))
+    const SCROLL_OFFSET = 125
+    const VIEWPORT_PERCENTAGE = 0.3  // Adjustable percentage from top
 
-    return () => {
-      sections.forEach((section) => observer.unobserve(section))
+    const handleScroll = () => {
+      // Get all category sections
+      const sections = document.querySelectorAll("[id^='category-']")
+      
+      // Calculate the reference point in the viewport
+      const viewportReferencePoint = window.innerHeight * VIEWPORT_PERCENTAGE + SCROLL_OFFSET
+
+      // Find the section that is most centered around the reference point
+      let mostCenteredSection = null
+      let minDistance = Infinity
+
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect()
+        const sectionTop = rect.top + window.scrollY
+        const sectionMiddle = sectionTop + rect.height / 2
+
+        // Calculate distance from the reference point
+        const distance = Math.abs(sectionMiddle - (window.scrollY + viewportReferencePoint))
+
+        if (distance < minDistance) {
+          minDistance = distance
+          mostCenteredSection = section
+        }
+      })
+
+      // Update active category if a section is found
+      if (mostCenteredSection) {
+        const newActiveCategory = mostCenteredSection.id
+        if (newActiveCategory !== activeCategory) {
+          setActiveCategory(newActiveCategory)
+        }
+      }
     }
-  }, [])
+
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll)
+    
+    // Initial call to set the first category
+    handleScroll()
+
+    // Clean up
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [categories, activeCategory])
 
   useEffect(() => {
     if (swiperInstance && activeCategory && categories) {
@@ -41,7 +73,7 @@ const CategoryBar = () => {
         (category) => `category-${category.id}` === activeCategory
       )
       if (activeIndex !== -1) {
-        swiperInstance.slideTo(activeIndex)
+        swiperInstance.slideTo(activeIndex, 300, false)
       }
     }
   }, [swiperInstance, activeCategory, categories])
@@ -63,13 +95,13 @@ const CategoryBar = () => {
     >
       {!categories
         ? Array(5).fill(null).map((_, index) => (
-          <SwiperSlide
-            key={`skeleton-${index}`}
-            className="skeleton-category-slide"
-            style={{ width: "auto", flexShrink: 0 }}
-          >
-            <SkeletonCategory />
-          </SwiperSlide>
+            <SwiperSlide
+              key={`skeleton-${index}`}
+              className="skeleton-category-slide"
+              style={{ width: "auto", flexShrink: 0 }}
+            >
+              <SkeletonCategory />
+            </SwiperSlide>
           ))
         : categories.map((category) => (
             <SwiperSlide
