@@ -146,7 +146,7 @@ class MenuItemController extends Controller
 
             $data = $request->validate([
                 'name' => 'sometimes|string',
-                'description' => 'sometimes|string',
+                'description' => 'sometimes',
                 'price' => 'sometimes|numeric',
                 'image'=> 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'category_id' => 'sometimes|exists:categories,id',
