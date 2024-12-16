@@ -159,6 +159,7 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
                 {/* Item Details */}
                 <div>
                   <p className="text-lg font-medium text-primary">{item.name}</p>
+                <p><strong>Category:</strong> {item.menu_item?.category?.name || 'No Category'}</p>
                   <p><strong>Qty:</strong> {item.quantity}</p>
                   <p><strong>Price:</strong> {item.price} Dhs</p>
                 </div>
