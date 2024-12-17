@@ -20,7 +20,7 @@ const Card = ({ image, name, price, id, onDetails }) => {
 //   const imageUrl =  `${baseURL}/${image.replace(/^\/+/, '')}`
 
   return (
-    <div className="h-[350px] border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden">
+    <div className="h-[370px] border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden">
       <div className="h-2/3">
         <img
           src={image}
@@ -32,7 +32,7 @@ const Card = ({ image, name, price, id, onDetails }) => {
       </div>
 
       <div className="h-1/3 p-4 flex flex-col justify-between">
-        <h3 className="text-lg font-semibold text-text">{name}</h3>
+        <h3 className="text-lg font-semibold text-text leading-tight">{name}</h3>
         <div className="flex items-center justify-between mt-2">
           <p className="text-primary font-medium">{price} Dhs</p>
           <div className="flex space-x-2">
