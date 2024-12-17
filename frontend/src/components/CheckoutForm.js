@@ -3,6 +3,7 @@ import { useState } from 'react'
 import MainButton from './MainButton'
 import axios from '@/lib/axios'
 import { toast } from 'react-toastify'
+import logos from '@/assets/img/logos.png'
 
 const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
   const [formData, setFormData] = useState({
@@ -11,16 +12,34 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
     client_phone: '',
     client_address: '',
     payment_method: 'cash',
+    card_details: {
+      card_number: '',
+      card_expiry: '',
+      card_cvv: '',
+    },
   })
 
+  // Handle Input Change
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }))
+
+    if (name.startsWith('card_')) {
+      setFormData((prevData) => ({
+        ...prevData,
+        card_details: {
+          ...prevData.card_details,
+          [name]: value,
+        },
+      }))
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }))
+    }
   }
 
+  // Submit Handler
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -36,6 +55,7 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
         quantity: item.quantity,
         price: item.price,
       })),
+      card_details: formData.payment_method === 'visa' ? formData.card_details : undefined,
     }
 
     try {
@@ -47,7 +67,7 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20 px-4 py-6"> {/* Added py-6 */}
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20 px-4 py-6">
       <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-xl font-bold mb-4 text-text">Valider la commande</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -81,9 +101,66 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
               className="w-full h-12 px-4 bg-secondary text-text rounded-lg mt-2"
             >
               <option value="cash">Paiement en espèces</option>
+              <option value="visa">Paiement par carte </option>
             </select>
           </div>
 
+          {/* Card Details - Conditionally Rendered */}
+          {formData.payment_method === 'visa' && (
+            <div className="space-y-2">
+              <div className="flex justify-center">
+              <img 
+          src={logos.src} 
+          alt="Payment Methods" 
+          className="h-8 w-auto" 
+        />
+              </div>
+              
+              <div>
+                <label className="text-text font-medium">Numéro de Carte</label>
+                <input
+                disabled
+                  type="text"
+                  name="card_number"
+                  placeholder="1234 5678 9123 4567"
+                  value={formData.card_details.card_number}
+                  onChange={handleChange}
+                  required
+                  className="w-full h-12 px-4 bg-secondary text-text rounded-lg"
+                />
+              </div>
+              <div className="flex space-x-2">
+                <div>
+                  <label className="text-text font-medium">Date d'Expiration</label>
+                  <input
+                  disabled
+                    type="text"
+                    name="card_expiry"
+                    placeholder="MM/YY"
+                    value={formData.card_details.card_expiry}
+                    onChange={handleChange}
+                    required
+                    className="w-full h-12 px-4 bg-secondary text-text rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="text-text font-medium">CVV</label>
+                  <input
+                  disabled
+                    type="text"
+                    name="card_cvv"
+                    placeholder="123"
+                    value={formData.card_details.card_cvv}
+                    onChange={handleChange}
+                    required
+                    className="w-full h-12 px-4 bg-secondary text-text rounded-lg"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Action Buttons */}
           <div className="flex justify-end space-x-2">
             <MainButton type="button" onClick={onClose} className="bg-gray-300 text-text">
               Annuler
