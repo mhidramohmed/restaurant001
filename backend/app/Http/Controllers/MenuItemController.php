@@ -46,41 +46,27 @@ class MenuItemController extends Controller
                         // return ($data);
 
 
-            if($request->hasFile('image')){
+            if ($request->has('image')) {
+                // Define the folder path relative to the public storage
+                $destinationPath = 'images/MenuItemsImages';
 
-                $destinationPath = 'MenuItemsImages/';
+                // Generate a unique file name
+                $profileImage = date('YmdHis') . "_" . $request->image->getClientOriginalName();
 
-                $imageName = date('YmdHis') . "." . $request->image->getClientOriginalExtension();
-                $request->image->move($destinationPath, $imageName);
+                // Store the file in the public disk
+                $path = $request->image->storeAs(strtolower($destinationPath), $profileImage, 'public');
 
-                // Store just the filename in the database
-                $data['image'] ="/".$destinationPath.$imageName;
+                // Generate a public URL for the stored file
+                $data['image'] =  $path;
             }
 
-
-            // if ( $request->has('image')) {
-
-            //     $destinationPath = 'MenuItemsImages/';
-
-            //     $profileImage = date('YmdHis') . "." . $request->image->getClientOriginalName();
-
-            //     $request->image->move($destinationPath, $profileImage);
-
-            //     $data['image'] = '/'.$destinationPath.$profileImage;
-            // }
-
-            // return ($data);
-
-
-            MenuItem::create($data);
-
-            // Transform the image path for the response
-            // $menuItem->image = url('MenuItemsImages/' . $menuItem->image);
+            $menuItem=MenuItem::create($data);
 
             return response()->json([
-                'status' => true,
-                'message' => "The menu item has been created successfully",
-                'data' => $data
+                'data'=> new MenuItemResource($menuItem),
+
+                'messsage'=>"Category has been create successfully  "
+
             ], 201);
 
         } catch (Exception $e) {

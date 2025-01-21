@@ -14,17 +14,7 @@ class Order extends Model
     use SoftDeletes;
 
 
-    protected $fillable = [
-        'client_name',
-        'client_email',
-        'client_phone',
-        'client_address',
-        'total_price',
-        'payment_method',
-        'status',
-        'order_status',
-        'payment_status'
-    ];
+    protected $fillable = ['client_name','client_email','client_phone','client_address','total_price','payment_method','status','order_status','payment_status','stripe_session_id'];
 
     // An Order has many OrderElements
     public function orderElements()

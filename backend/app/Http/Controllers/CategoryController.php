@@ -37,20 +37,26 @@ class CategoryController extends Controller
                 'image'=> 'required | image | mimes: jpeg,png,jpg,gif,svg|max:2048'
             ]);
 
-            if ( $request->has('image')) {
+            if ($request->has('image')) {
+                // Define the folder path relative to the public storage
+                $destinationPath = '/images/CategoriesImages';
 
-                $destinationPath = 'CategoriesImages/';
+                // Generate a unique file name
+                $profileImage = date('YmdHis') . "_" . $request->image->getClientOriginalName();
 
-                $profileImage = date('YmdHis') . "." . $request->image->getClientOriginalName();
+                // Store the file in the public disk
+                $path = $request->image->storeAs(strtolower($destinationPath), $profileImage, 'public');
 
-                $request->image->move($destinationPath, $profileImage);
+                // dd($path);
 
-                $data['image'] = '/'.$destinationPath.$profileImage;
+                // Generate a public URL for the stored file
+                $data['image'] =  $path;
             }
 
-            Category::create($data);
+            $category=Category::create($data);
 
             return response()->json([
+                'data'=> new CategorieResource($category),
 
                 'messsage'=>"Category has been create successfully  "
 

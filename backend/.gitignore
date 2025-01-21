@@ -3,6 +3,9 @@
 /public/build
 /public/hot
 /public/storage
+/public/CategoriesImages
+/public/MenuItemsImages
+/public/MenuItemImage
 /storage/*.key
 /vendor
 .env
