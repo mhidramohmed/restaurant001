@@ -20,7 +20,7 @@ class MenuItemResource extends JsonResource
             "description"=>$this->description,
             'price'=>$this->price,
             'category_id'=>$this->category_id,
-            "image"=>url("/storage/".strtolower($this->image)),
+            "image"=>url("/storage/images".strtolower($this->image)),
         ];
     }
 }

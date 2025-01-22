@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MenuItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\MenuItemResource;
 
 class MenuItemController extends Controller
@@ -48,16 +49,17 @@ class MenuItemController extends Controller
 
             if ($request->has('image')) {
                 // Define the folder path relative to the public storage
-                $destinationPath = 'images/MenuItemsImages';
+                $path = 'public/images/MenuItemsImages/';
 
+                Storage::makeDirectory($path);
                 // Generate a unique file name
                 $profileImage = date('YmdHis') . "_" . $request->image->getClientOriginalName();
 
                 // Store the file in the public disk
-                $path = $request->image->storeAs(strtolower($destinationPath), $profileImage, 'public');
+                Storage::putFileAs(strtolower($path), $request->image, $profileImage);
 
                 // Generate a public URL for the stored file
-                $data['image'] =  $path;
+                $data['image'] = '/MenuItemsImages/'. $profileImage;
             }
 
             $menuItem=MenuItem::create($data);
@@ -65,7 +67,7 @@ class MenuItemController extends Controller
             return response()->json([
                 'data'=> new MenuItemResource($menuItem),
 
-                'messsage'=>"Category has been create successfully  "
+                'messsage'=>"MenuItem has been create successfully  "
 
             ], 201);
 

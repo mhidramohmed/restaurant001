@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\MenuItem;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\CategorieResource;
 
 class CategoryController extends Controller
@@ -39,21 +40,22 @@ class CategoryController extends Controller
 
             if ($request->has('image')) {
                 // Define the folder path relative to the public storage
-                $destinationPath = '/images/CategoriesImages';
+
+                $path = 'public/images/CategoriesImages/';
+
+                Storage::makeDirectory($path);
+
 
                 // Generate a unique file name
                 $profileImage = date('YmdHis') . "_" . $request->image->getClientOriginalName();
 
-                // Store the file in the public disk
-                $path = $request->image->storeAs(strtolower($destinationPath), $profileImage, 'public');
-
-                // dd($path);
+                Storage::putFileAs(strtolower($path), $request->image, $profileImage);
 
                 // Generate a public URL for the stored file
-                $data['image'] =  $path;
+                $data['image'] = '/CategoriesImages/'. $profileImage;
             }
 
-            $category=Category::create($data);
+            $category = Category::create($data);
 
             return response()->json([
                 'data'=> new CategorieResource($category),
