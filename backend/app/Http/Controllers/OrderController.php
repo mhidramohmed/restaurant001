@@ -373,7 +373,8 @@ class OrderController extends Controller
         if ($order) {
             $order->update(['payment_status' => 'paid']);
         }
-        return response()->json(['message' => 'Payment successful']);
+            $message = 'Payment successful';
+            return redirect()->away(env('FRONTEND_URL') . '/?message=' . urlencode($message));
     }
 
     public function paymentFail(Request $request)
@@ -383,8 +384,8 @@ class OrderController extends Controller
         // if ($order) {
         //     $order->update(['payment_status' => 'failed']);
         // }
-        return redirect()->away(env('FRONTEND_URL'))
-                     ->withHeaders(['X-Message' => 'Payment failed']);
+            $message = 'Payment Fail';
+            return redirect()->away(env('FRONTEND_URL') . '/?message=' . urlencode($message));
 
         // return response()->json(['message' => 'Payment failed']);
     }
