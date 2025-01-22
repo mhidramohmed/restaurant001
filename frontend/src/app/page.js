@@ -9,10 +9,31 @@ import MainButton from '@/components/MainButton'
 import Footer from '@/components/Footer'
 import { LuShoppingCart } from "react-icons/lu"
 
+
+import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { toast } from 'react-toastify';
+
+
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const { items, getTotal } = useCart()
   const [isCartVisible, setIsCartVisible] = useState(false)
+
+  const searchParams = useSearchParams();
+  const message = searchParams.get('message');
+
+  useEffect(() => {
+    if (message) {
+      const decodedMessage = decodeURIComponent(message);
+
+      if (decodedMessage === 'Payment Fail') {
+        toast.error(decodedMessage);
+      } else if (decodedMessage === 'Payment Success') {
+        toast.success(decodedMessage); 
+      }
+    }
+  }, [message]);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
