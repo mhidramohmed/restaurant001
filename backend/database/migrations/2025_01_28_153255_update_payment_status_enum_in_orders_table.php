@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("ALTER TABLE orders CHANGE payment_status payment_status ENUM('paid', 'unpaid', 'pending') DEFAULT 'unpaid'");
+        DB::statement("ALTER TABLE orders CHANGE payment_status payment_status ENUM('paid', 'unpaid', 'faild') DEFAULT 'unpaid'");
 
     }
 
@@ -20,7 +20,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE orders CHANGE payment_status payment_status ENUM('paid', 'unpaid') DEFAULT 'unpaid'");
+                DB::statement("ALTER TABLE orders CHANGE payment_status payment_status ENUM('paid', 'unpaid') DEFAULT 'unpaid'");
 
     }
 };

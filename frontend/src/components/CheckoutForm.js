@@ -62,8 +62,14 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
             const response = await axios.post('/api/orders', orderData)
             const { data } = response
 
+            // return console.log('Order creation response:', data);
+
+
             if (data.success && data.redirect_url && data.payment_data) {
                 // Create and submit form for CMI payment
+                localStorage.setItem('pendingOrder', JSON.stringify(data.order));
+
+                
                 const form = document.createElement('form')
                 form.method = 'POST'
                 form.action = data.redirect_url
