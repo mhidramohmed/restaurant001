@@ -6,7 +6,6 @@ import CheckoutForm from './CheckoutForm'
 import { LuShoppingCart, LuTrash2 } from "react-icons/lu"
 import { IoClose } from "react-icons/io5"
 import { useCart } from '@/contexts/CartContext'
-import { toast } from 'react-toastify'
 
 const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
   const { items, removeItem, updateQuantity, getTotal, clearCart } = useCart()

@@ -11,31 +11,16 @@ import { LuShoppingCart } from "react-icons/lu"
 
 
 
-import { useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { toast } from 'react-toastify';
+import { useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
+import { toast } from 'react-toastify'
 
 
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState('')
-  const { items, getTotal, clearCart } = useCart()
+  const { items, getTotal, } = useCart()
   const [isCartVisible, setIsCartVisible] = useState(false)
-
-  const searchParams = useSearchParams();
-  const message = searchParams.get('message');
-
-  useEffect(() => {
-    if (message) {
-      const decodedMessage = decodeURIComponent(message);
-
-      if (decodedMessage === 'Payment Fail') {
-        toast.error(decodedMessage);
-      } else if (decodedMessage === 'Payment Success') {
-        toast.success(decodedMessage); 
-        clearCart();
-      }
-    }
-  }, [message]);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -45,6 +30,9 @@ const Home = () => {
         <div className="sticky top-0 z-10 bg-background shadow-md py-4 pl-2 md:px-4">
           <CategoryBar />
         </div>
+        <Suspense fallback={null}>
+          <HandleSearchParams />
+        </Suspense>
         <Menu searchTerm={searchTerm} />
         <Footer />
       </main>
@@ -80,6 +68,28 @@ const Home = () => {
       </MainButton>
     </div>
   )
+}
+
+
+const HandleSearchParams = () => {
+  const { clearCart } = useCart()
+  const searchParams = useSearchParams()
+  const message = searchParams.get('message')
+
+  useEffect(() => {
+    if (message) {
+      const decodedMessage = decodeURIComponent(message)
+
+      if (decodedMessage === 'Payment Fail') {
+        toast.error(decodedMessage)
+      } else if (decodedMessage === 'Payment Success') {
+        toast.success(decodedMessage)
+        clearCart()
+      }
+    }
+  }, [message, clearCart])
+
+  return null // This component does not render anything
 }
 
 export default Home

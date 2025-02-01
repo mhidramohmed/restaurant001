@@ -62,12 +62,11 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
             const response = await axios.post('/api/orders', orderData)
             const { data } = response
 
-            // return console.log('Order creation response:', data);
 
 
             if (data.success && data.redirect_url && data.payment_data) {
                 // Create and submit form for CMI payment
-                localStorage.setItem('pendingOrder', JSON.stringify(data.order));
+                localStorage.setItem('pendingOrder', JSON.stringify(data.order))
 
                 
                 const form = document.createElement('form')
@@ -92,7 +91,6 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
                 toast.success('Commande créée avec succès!', { position: 'top-right' })
             }
         } catch (error) {
-            console.error('Order creation error:', error)
             toast.error('Échec de la commande. Réessayez.', { position: 'top-right' })
         }
 
