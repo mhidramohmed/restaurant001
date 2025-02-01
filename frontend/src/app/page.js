@@ -11,10 +11,11 @@ import { LuShoppingCart } from "react-icons/lu"
 
 
 
-import { useEffect } from 'react'
+import { useEffect, useRef  } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
 
 
 const Home = () => {
@@ -74,20 +75,33 @@ const Home = () => {
 const HandleSearchParams = () => {
   const { clearCart } = useCart()
   const searchParams = useSearchParams()
+  const router = useRouter()
   const message = searchParams.get('message')
+  
+  // Use a ref to track whether the message has been processed already
+  const hasProcessedMessage = useRef(false)
 
   useEffect(() => {
-    if (message) {
+    if (message && !hasProcessedMessage.current) {
       const decodedMessage = decodeURIComponent(message)
 
+      // Show the toast notification
       if (decodedMessage === 'Payment Fail') {
         toast.error(decodedMessage)
       } else if (decodedMessage === 'Payment Success') {
         toast.success(decodedMessage)
         clearCart()
       }
+
+      // Mark the message as processed to avoid showing the toast again
+      hasProcessedMessage.current = true
+
+      // Remove 'message' from URL after processing the message
+      const newParams = new URLSearchParams(searchParams.toString())
+      newParams.delete('message')
+      router.replace(`?${newParams.toString()}`, { scroll: false }) // Update the URL without reloading
     }
-  }, [message, clearCart])
+  }, [message, clearCart, router, searchParams])
 
   return null // This component does not render anything
 }
