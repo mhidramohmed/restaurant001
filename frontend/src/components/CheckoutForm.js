@@ -3,7 +3,7 @@ import { useState } from 'react'
 import MainButton from './MainButton'
 import axios from '@/lib/axios'
 import { toast } from 'react-toastify'
-import logos from '@/assets/img/logos.png'
+// import logos from '@/assets/img/logos.png'
 
 const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
     const [formData, setFormData] = useState({
@@ -88,7 +88,7 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
                 form.submit()
             } else {
                 // Handle successful cash order
-                onSuccess()
+                onSuccess(formData.payment_method)
                 toast.success('Commande créée avec succès!', { position: 'top-right' })
             }
         } catch (error) {

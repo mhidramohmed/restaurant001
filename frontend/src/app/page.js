@@ -10,6 +10,7 @@ import Footer from '@/components/Footer'
 import { LuShoppingCart } from "react-icons/lu"
 
 
+
 import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'react-toastify';
@@ -17,7 +18,7 @@ import { toast } from 'react-toastify';
 
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState('')
-  const { items, getTotal } = useCart()
+  const { items, getTotal, clearCart } = useCart()
   const [isCartVisible, setIsCartVisible] = useState(false)
 
   const searchParams = useSearchParams();
@@ -31,6 +32,7 @@ const Home = () => {
         toast.error(decodedMessage);
       } else if (decodedMessage === 'Payment Success') {
         toast.success(decodedMessage); 
+        clearCart();
       }
     }
   }, [message]);

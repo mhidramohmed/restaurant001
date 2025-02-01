@@ -12,9 +12,11 @@ const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
   const { items, removeItem, updateQuantity, getTotal, clearCart } = useCart()
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
 
-  const handleOrderSuccess = () => {
-    toast.success('Commande passée avec succès!', { position: 'top-right' })
-    clearCart()
+  const handleOrderSuccess = (paymentMethod) => {
+    // Clear cart on successful checkout only when the payment method is cash
+    if (paymentMethod === 'cash') {
+      clearCart() 
+    }
     setIsCheckoutOpen(false)
     setIsCartVisible(false)
   }
@@ -110,7 +112,7 @@ const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
       {isCheckoutOpen && (
         <CheckoutForm
           onClose={() => setIsCheckoutOpen(false)}
-          onSuccess={handleOrderSuccess}
+          onSuccess={(paymentMethod) => handleOrderSuccess(paymentMethod)} // Pass paymentMethod
           cartItems={items}
           totalPrice={getTotal()}
         />
