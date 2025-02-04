@@ -15,6 +15,8 @@ import { useEffect, useRef  } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation';
+
 
 
 const Home = () => {
@@ -72,36 +74,33 @@ const Home = () => {
 //codewithchakir
 
 const HandleSearchParams = () => {
-  const { clearCart } = useCart()
-  const searchParams = useSearchParams()
-  const message = searchParams.get('message')
-  
-  
-  // Use a ref to track whether the message has been processed already
-  const hasProcessedMessage = useRef(false)
+  const { clearCart } = useCart();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const message = searchParams.get('message');
 
   useEffect(() => {
-    if (message && !hasProcessedMessage.current) {
-      const decodedMessage = decodeURIComponent(message)
+    if (!message) return;
 
-      // Show the toast notification
-      if (decodedMessage === 'Payment Fail') {
-        toast.error(decodedMessage)
-      } else if (decodedMessage === 'Payment Success') {
-        toast.success(decodedMessage)
-        clearCart()
-      }
+    // Show toast notification
+    const decodedMessage = decodeURIComponent(message);
 
-      // Mark the message as processed to avoid showing the toast again
-      hasProcessedMessage.current = true
-
-      // Remove 'message' from URL after processing the message
-      const newParams = new URLSearchParams(searchParams.toString())
-      newParams.delete('message')
+    if (decodedMessage === 'Payment Fail') {
+      toast.error(decodedMessage);
+    } else if (decodedMessage === 'Payment Success') {
+      toast.success(decodedMessage);
+      clearCart();
     }
-  }, [message, clearCart, searchParams])
 
-  return null // This component does not render anything
-}
+    // Remove the message param from URL *without causing a re-render loop*
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.delete('message');
+
+    router.replace(`?${newParams.toString()}`, { scroll: false }, { shallow: true });
+
+  }, [message]); // Only trigger effect when message changes
+
+  return null;
+};
 
 export default Home
