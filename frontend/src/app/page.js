@@ -69,7 +69,7 @@ const Home = () => {
     </div>
   )
 }
-
+//codewithchakir
 
 const HandleSearchParams = () => {
   const { clearCart } = useCart()
