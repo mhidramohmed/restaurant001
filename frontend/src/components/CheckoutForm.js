@@ -85,9 +85,8 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
                 // Append form to body and submit
                 document.body.appendChild(form)
                 form.submit()
-            } else {
-                // Handle successful cash order
-                onSuccess(formData.payment_method)
+            } else if (formData.payment_method === 'cash') {
+                    onSuccess('cash')
                 toast.success('Commande créée avec succès!', { position: 'top-right' })
             }
         } catch (error) {

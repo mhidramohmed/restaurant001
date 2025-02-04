@@ -76,6 +76,7 @@ const HandleSearchParams = () => {
   const searchParams = useSearchParams()
   const message = searchParams.get('message')
   
+  
   // Use a ref to track whether the message has been processed already
   const hasProcessedMessage = useRef(false)
 
