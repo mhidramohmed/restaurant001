@@ -11,11 +11,11 @@ import { LuShoppingCart } from "react-icons/lu"
 
 
 
-import { useEffect, useRef  } from 'react'
+import { useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { toast } from 'react-toastify'
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'
 
 
 
@@ -74,33 +74,33 @@ const Home = () => {
 //codewithchakir
 
 const HandleSearchParams = () => {
-  const { clearCart } = useCart();
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const message = searchParams.get('message');
+  const { clearCart } = useCart()
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const message = searchParams.get('message')
 
   useEffect(() => {
-    if (!message) return;
+    if (!message) return
 
     // Show toast notification
-    const decodedMessage = decodeURIComponent(message);
+    const decodedMessage = decodeURIComponent(message)
 
     if (decodedMessage === 'Payment Fail') {
-      toast.error(decodedMessage);
+      toast.error(decodedMessage)
     } else if (decodedMessage === 'Payment Success') {
-      toast.success(decodedMessage);
-      clearCart();
+      toast.success(decodedMessage)
+      clearCart()
     }
 
     // Remove the message param from URL *without causing a re-render loop*
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.delete('message');
+    const newParams = new URLSearchParams(searchParams.toString())
+    newParams.delete('message')
 
-    router.replace(`?${newParams.toString()}`, { scroll: false }, { shallow: true });
+    router.replace(`?${newParams.toString()}`, { scroll: false }, { shallow: true })
 
-  }, [message]); // Only trigger effect when message changes
+  }, [message]) // Only trigger effect when message changes
 
-  return null;
-};
+  return null
+}
 
 export default Home
