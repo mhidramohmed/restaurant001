@@ -167,7 +167,7 @@ class OrderController extends Controller
             $validated = $request->validate([
                 'client_name' => 'required|string|max:255',
                 'client_email' => 'required|email|max:255',
-                'client_phone' => 'required|string|max:20',
+                'client_phone' =>  ['required','string','regex:/^(05|06|07)[0-9]{8}$/',],
                 'client_address' => 'required|string|max:255',
                 'total_price' => 'required|numeric',
                 'payment_method' => 'required|string|in:visa,cash', // Add stripe
@@ -345,7 +345,7 @@ class OrderController extends Controller
         // }
 
 
-        $storeKey = env('CMI_STORE_KEY'); // Ensure this is stored in your .env
+        $storeKey = 'Bonsai2025'; // Ensure this is stored in your .env
         $hashVal = "";
 
         $postParams = $request->except(['hash', 'encoding']);
