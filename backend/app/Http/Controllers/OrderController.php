@@ -211,9 +211,13 @@ class OrderController extends Controller
                 // Prepare payment data
                 $paymentData = [
                     'amount' => $validated['total_price'], // Transaction amount
+                    'BillToCity' => 'Marrakech', // New field
+                    'BillToName' => $validated['client_name'], // New field
+                    'BillToStreet1' => $validated['client_address'],
                     'callbackUrl' => route('payment.callback'), // Callback URL
                     'clientid' => "600005293", // Replace with your actual client ID
                     'currency' => "504", // Currency code
+                    'email' => $validated['client_email'],
                     'failUrl' => route('payment.fail'), // Failure URL
                     'hashAlgorithm' => "ver3", // Hash algorithm
                     'lang' => "fr", // Language
@@ -221,7 +225,8 @@ class OrderController extends Controller
                     'okurl' => route('payment.success'),// Success URL
                     'rnd' => microtime(), // Random value
                     'shopurl' => config('app.url'),
-                    'storetype' => "3D_PAY_HOSTING", // Store type
+                    'storetype' => "3D_PAY_HOSTING",// Store type
+                    'tel' => $validated['client_phone'],
                     'TranType' => "PreAuth", // Transaction type
                 ];
 
@@ -316,27 +321,76 @@ class OrderController extends Controller
 
     public function paymentCallback(Request $request)
     {
-        // Handle payment callback (e.g., verify hash, update order status)
-        $storeKey = "Bonsai2025"; // Replace with your actual store key
-        $hashval = "";
+        // // Handle payment callback (e.g., verify hash, update order status)
+        // $storeKey = "Bonsai2025"; // Replace with your actual store key
+        // $hashval = "";
 
-        foreach ($request->except('HASH') as $key => $value) {
+        // foreach ($request->except('HASH') as $key => $value) {
+        //     $escapedValue = str_replace("|", "\\|", str_replace("\\", "\\\\", $value));
+        //     $hashval .= $escapedValue . "|";
+        // }
+        // $hashval .= $storeKey;
+
+        // $calculatedHashValue = hash('sha512', $hashval);
+        // $actualHash = base64_encode(pack('H*', $calculatedHashValue));
+
+        // if ($request->HASH === $actualHash) {
+        //     $order = Order::find($request->oid);
+        //     if ($order) {
+        //         $order->update(['payment_status' => 'paid']);
+        //     }
+        //     return response()->json(['message' => 'Callback handled successfully']);
+        // } else {
+        //     return response()->json(['error' => 'Invalid hash'], 400);
+        // }
+
+
+        $storeKey = env('CMI_STORE_KEY'); // Ensure this is stored in your .env
+        $hashVal = "";
+
+        $postParams = $request->except(['hash', 'encoding']);
+        ksort($postParams);
+
+        // Create hash string
+        foreach ($postParams as $key => $value) {
             $escapedValue = str_replace("|", "\\|", str_replace("\\", "\\\\", $value));
-            $hashval .= $escapedValue . "|";
+            $hashVal .= $escapedValue . "|";
         }
-        $hashval .= $storeKey;
+        $escapedStoreKey = str_replace("|", "\\|", str_replace("\\", "\\\\", $storeKey));
+        $hashVal .= $escapedStoreKey;
 
-        $calculatedHashValue = hash('sha512', $hashval);
+        $calculatedHashValue = hash('sha512', $hashVal);
         $actualHash = base64_encode(pack('H*', $calculatedHashValue));
 
-        if ($request->HASH === $actualHash) {
-            $order = Order::find($request->oid);
-            if ($order) {
-                $order->update(['payment_status' => 'paid']);
+        $retrievedHash = $request->input("HASH");
+        $orderId = $request->input("oid");
+        $procReturnCode = $request->input("ProcReturnCode");
+        $amount = $request->input("amount");
+
+        // Hash comparison and payment processing
+        if ($retrievedHash === $actualHash) {
+            $order = Order::find($orderId);
+
+            if (!$order) {
+                Log::error("Order not found: ID {$orderId}");
+                return response()->json(['status' => 'FAILURE'], 404);
             }
-            return response()->json(['message' => 'Callback handled successfully']);
+
+            if ($procReturnCode === "00") {
+                if ($order->total_price == $amount) {
+                    $order->update(['payment_status' => 'paid']);
+                    return response("ACTION=POSTAUTH", 200);
+                } else {
+                    Log::warning("Amount mismatch for Order {$orderId}");
+                    return response("FAILURE", 400);
+                }
+            } else {
+                Log::info("Payment failed for Order {$orderId}");
+                return response("APPROVED", 200);
+            }
         } else {
-            return response()->json(['error' => 'Invalid hash'], 400);
+            Log::error("Hash validation failed");
+            return response("FAILURE", 400);
         }
     }
 
