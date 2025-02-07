@@ -19,9 +19,31 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
         },
     })
 
+    const [errors, setErrors] = useState({
+        client_email: '',
+        client_phone: '',
+    })
+
     // Handle Input Change
     const handleChange = (e) => {
         const { name, value } = e.target
+
+        let errorMsg = ''
+
+        if (name === 'client_email') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            errorMsg = emailRegex.test(value) ? '' : 'Email invalide'
+        }
+    
+        if (name === 'client_phone') {
+            const phoneRegex = /^(06|07|05)[0-9]{8}$/
+            errorMsg = phoneRegex.test(value) ? '' : 'Numéro de téléphone invalide'
+        }
+    
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: errorMsg,
+        }))
 
         if (name.startsWith('card_')) {
             setFormData((prevData) => ({
@@ -42,6 +64,12 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
     // Submit Handler
     const handleSubmit = async (e) => {
         e.preventDefault()
+
+
+        if (errors.client_email || errors.client_phone) {
+            toast.error("Corrigez les erreurs avant de soumettre.", { position: "top-right" })
+            return
+        }
 
         const orderData = {
             client_name: formData.client_name,
@@ -92,13 +120,6 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
         } catch (error) {
             toast.error('Échec de la commande. Réessayez.', { position: 'top-right' })
         }
-
-        // try {
-        //   await axios.post('/api/orders', orderData)
-        //   onSuccess()
-        // } catch (error) {
-        //   toast.error('Échec de la commande. Réessayez.', { position: 'top-right' })
-        // }
     }
 
     return (
@@ -121,10 +142,22 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
                                 value={formData[name]}
                                 onChange={handleChange}
                                 required
-                                className="w-full h-12 px-4 bg-secondary text-text rounded-lg"
-                            />
+                                className={`w-full h-12 px-4 bg-secondary text-text rounded-lg ${errors[name] ? 'border-red-500' : ''}`}
+                                />
+                                {errors[name] && <p className="text-red-500 text-sm">{errors[name]}</p>}
                         </div>
                     ))}
+
+                    {/* City just for client to see*/}
+                    <div>
+                        <label className="text-text font-medium">Ville:</label>
+                        <select
+                            name="payment_method"
+                            className="w-full h-12 px-4 bg-secondary text-text rounded-lg mt-2"
+                        >
+                            <option value="marrakech" selected>Marrakech</option>
+                        </select>
+                    </div>
 
                     {/* Payment Method */}
                     <div>
@@ -139,61 +172,6 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
                             <option value="visa">Paiement par carte </option>
                         </select>
                     </div>
-
-                    {/* Card Details - Conditionally Rendered
-          {formData.payment_method === 'visa' && (
-            <div className="space-y-2">
-              <div className="flex justify-center">
-              <img
-          src={logos.src}
-          alt="Payment Methods"
-          className="h-8 w-auto"
-        />
-              </div>
-
-              <div>
-                <label className="text-text font-medium">Numéro de Carte</label>
-                <input
-                disabled
-                  type="text"
-                  name="card_number"
-                  placeholder="1234 5678 9123 4567"
-                  value={formData.card_details.card_number}
-                  onChange={handleChange}
-                  required
-                  className="w-full h-12 px-4 bg-secondary text-text rounded-lg"
-                />
-              </div>
-              <div className="flex space-x-2">
-                <div>
-                  <label className="text-text font-medium">Date d'Expiration</label>
-                  <input
-                  disabled
-                    type="text"
-                    name="card_expiry"
-                    placeholder="MM/YY"
-                    value={formData.card_details.card_expiry}
-                    onChange={handleChange}
-                    required
-                    className="w-full h-12 px-4 bg-secondary text-text rounded-lg"
-                  />
-                </div>
-                <div>
-                  <label className="text-text font-medium">CVV</label>
-                  <input
-                  disabled
-                    type="text"
-                    name="card_cvv"
-                    placeholder="123"
-                    value={formData.card_details.card_cvv}
-                    onChange={handleChange}
-                    required
-                    className="w-full h-12 px-4 bg-secondary text-text rounded-lg"
-                  />
-                </div>
-              </div>
-            </div>
-          )} */}
 
                     {/* Action Buttons */}
                     <div className="flex justify-end space-x-2">
