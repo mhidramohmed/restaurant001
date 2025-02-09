@@ -14,17 +14,6 @@ use Stripe\Exception\ApiErrorException;
 
 class OrderController extends Controller
 {
-
-    private $cmiConfig = [
-        'clientId' => '600005293',
-        'storeKey' => 'Bonsai2025',
-        'paymentUrl' => 'https://testpayment.cmi.co.ma/fim/est3Dgate',
-        'currency' => '504', // Moroccan Dirham
-        'storeType' => '3D_PAY_HOSTING',
-        'tranType' => 'PreAuth',
-        'hashAlgorithm' => 'ver3',
-        'language' => 'fr'
-    ];
     /**
      * Display a listing of the resource.
      */
@@ -204,8 +193,8 @@ class OrderController extends Controller
 
             if ($validated['payment_method'] === 'visa') {
                 // Payment gateway configuration
-                $storeKey = "Bonsai2025"; // Replace with your actual store key
-                $paymentUrl = "https://testpayment.cmi.co.ma/fim/est3Dgate"; // Replace with the actual payment gateway URL
+                $storeKey = env("CMI_STORE_KEY"); // Replace with your actual store key
+                $paymentUrl = env("CMI_PAYMENT_URL"); // Replace with the actual payment gateway URL
 
 
                 // Prepare payment data
@@ -215,7 +204,7 @@ class OrderController extends Controller
                     'BillToName' => $validated['client_name'], // New field
                     'BillToStreet1' => $validated['client_address'],
                     'callbackUrl' => route('payment.callback'), // Callback URL
-                    'clientid' => "600005293", // Replace with your actual client ID
+                    'clientid' => env("CMI_CLIENT_ID"), // Replace with your actual client ID
                     'currency' => "504", // Currency code
                     'email' => $validated['client_email'],
                     'failUrl' => route('payment.fail'), // Failure URL
@@ -345,7 +334,7 @@ class OrderController extends Controller
         // }
 
 
-        $storeKey = 'Bonsai2025'; // Ensure this is stored in your .env
+        $storeKey = env('CMI_STORE_KEY'); // Ensure this is stored in your .env
         $hashVal = "";
 
         $postParams = $request->except(['hash', 'encoding']);
