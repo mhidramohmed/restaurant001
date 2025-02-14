@@ -222,26 +222,40 @@ class OrderController extends Controller
                     'TranType' => "PreAuth", // Transaction type
                 ];
 
-               // Separate payment data for hashing and exclude 'encoding'
-                $hashData = $paymentData;
-                unset($hashData['encoding']); // Remove 'encoding' for hashing
-
-                // Sort the hash data alphabetically by keys
-                ksort($hashData);
-
                 // Generate hash
                 $hashval = "";
-                foreach ($hashData as $key => $value) {
+                foreach ($paymentData as $key => $value) {
                     $escapedValue = str_replace("|", "\\|", str_replace("\\", "\\\\", $value));
-                    $hashval .= $escapedValue . "|";
+                    $lowerParam = strtolower($key);
+
+                    if ($lowerParam != 'hash' && $lowerParam != 'encoding') {
+
+                        $hashval = $hashval . $escapedValue . '|';
+
+                    }   
+                    // $hashval .= $escapedValue . "|";
+
+                    
                 }
                 $hashval .= $storeKey;
+
+
 
                 $calculatedHashValue = hash('sha512', $hashval);
                 $hash = base64_encode(pack('H*', $calculatedHashValue));
 
+                // Log the hash for debugging purposes
+                Log::info("Generated Payment Hash for Order {$order->id}: {$hash}");
+
+
+
                 // Add hash to payment data
                 $paymentData['HASH'] = $hash;
+
+
+                
+
+                // dd($paymentData);
 
 
                 // $hashval = '';
