@@ -4,7 +4,7 @@ import useSWR from 'swr'
 import axios from '@/lib/axios'
 import MainButton from '@/components/MainButton'
 import { useAuth } from '@/hooks/auth'
-import { useEffect, useState, useMemo, useCallback } from 'react'
+import { useEffect, useState, useMemo, useCallback, useRef  } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
@@ -33,13 +33,30 @@ const OrderStatusBadge = ({ status }) => {
   )
 }
 
+
+const notificationSound = '/notification.mp3'
+
 const Page = () => {
   const router = useRouter()
   const { user, logout } = useAuth({ middleware: 'auth' })
   const { data: orders, error, mutate } = useSWR(
     user ? '/api/orders' : null,
-    fetcher
+    fetcher, { refreshInterval: 5000 }
   )
+  const prevOrdersCount = useRef(0)
+
+  const [audio] = useState(new Audio(notificationSound))
+
+  useEffect(() => {
+    if (!orders) return
+
+    // If new orders are added, play the notification sound
+    if (orders.length > prevOrdersCount.current) {
+      audio.play()
+    }
+
+    prevOrdersCount.current = orders.length
+  }, [orders, audio])
 
   const [filters, setFilters] = useState({
     searchTerm: '',
@@ -58,6 +75,7 @@ const Page = () => {
       router.push('/dashboard')
     }
   }, [user, router])
+
 
   const filteredOrders = useMemo(() => {
     if (!orders) return []
