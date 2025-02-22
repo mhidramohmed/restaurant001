@@ -3,7 +3,7 @@
 import useSWR from 'swr'
 import axios from '@/lib/axios'
 import { useAuth } from '@/hooks/auth'
-import { useEffect, useState, useMemo, useCallback } from 'react'
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
 import OrderDetailsModal from '@/components/OrderDetailsModal'
@@ -12,6 +12,8 @@ const fetcher = async (url) => {
     const response = await axios.get(url)
     return response.data.data || response.data
 }
+
+const notificationSound = '/notification.mp3'
 
 const OrderStatusBadge = ({ status }) => {
   const statusColors = {
@@ -35,8 +37,23 @@ const Page = () => {
   const { user } = useAuth({ middleware: 'auth' })
   const { data: orders, error, mutate } = useSWR(
     user ? '/api/orders' : null,
-    fetcher
+    fetcher, { refreshInterval: 5000 }
   )
+
+  const prevOrdersCount = useRef(0)
+
+  const [audio] = useState(new Audio(notificationSound))
+
+  useEffect(() => {
+    if (!orders) return
+
+    // If new orders are added, play the notification sound
+    if (orders.length > prevOrdersCount.current) {
+      audio.play()
+    }
+
+    prevOrdersCount.current = orders.length
+  }, [orders, audio])
 
   const [filters, setFilters] = useState({
     searchTerm: '',
