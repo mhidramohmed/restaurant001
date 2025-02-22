@@ -80,7 +80,7 @@ const Page = () => {
   // Pagination
   const indexOfLastOrder = currentPage * ordersPerPage
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage
-  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder)
+  // const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder)
 
   const pageNumbers = []
   for (let i = 1; i <= Math.ceil(filteredOrders.length / ordersPerPage); i++) {
@@ -95,6 +95,19 @@ const Page = () => {
     setSelectedOrder(null)
   }, [])
 
+  const [sortNewestFirst, setSortNewestFirst] = useState(true);
+
+
+  const sortedOrders = useMemo(() => {
+    return [...filteredOrders].sort((a, b) => 
+      sortNewestFirst ? b.id - a.id : a.id - b.id
+    );
+  }, [filteredOrders, sortNewestFirst]);
+  
+
+  const currentOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+
+
   if (error) {
     return <div className="p-6 text-red-600">Failed to load orders: {error.message}</div>
   }
@@ -108,6 +121,17 @@ const Page = () => {
       <div className="px-3">
         {/* Filtering Section */}
         <div className="mb-6 flex space-x-4">
+
+          {/* Sorting Button */}
+          <button
+            onClick={() => setSortNewestFirst(prev => !prev)}
+            className={`px-3 py-1 rounded-full ${
+              sortNewestFirst ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'
+            }`}
+          >
+            {sortNewestFirst ? 'Newest First' : 'Oldest First'}
+          </button>
+
           
           {/* Order Status Filters */}
           <div className="flex space-x-2">
