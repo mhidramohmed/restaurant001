@@ -112,17 +112,17 @@ const Page = () => {
     setSelectedOrder(null)
   }, [])
 
-  const [sortNewestFirst, setSortNewestFirst] = useState(true);
+  const [sortNewestFirst, setSortNewestFirst] = useState(true)
 
 
   const sortedOrders = useMemo(() => {
     return [...filteredOrders].sort((a, b) => 
       sortNewestFirst ? b.id - a.id : a.id - b.id
-    );
-  }, [filteredOrders, sortNewestFirst]);
+    )
+  }, [filteredOrders, sortNewestFirst])
   
 
-  const currentOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const currentOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder)
 
 
   if (error) {
