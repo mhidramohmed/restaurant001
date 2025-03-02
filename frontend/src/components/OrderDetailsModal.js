@@ -48,6 +48,35 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
     }
   }
 
+  const sendWhatsAppMessage = () => {
+    let clientPhone = order.client_phone.trim() // Remove spaces
+  
+    // Ensure the number is in international format
+    if (clientPhone.startsWith('0')) {
+      clientPhone = '+212' + clientPhone.substring(1)
+    } else if (!clientPhone.startsWith('+')) {
+      clientPhone = '+212' + clientPhone // Default to Morocco if no country code is provided
+    }
+  
+    const isPaid = order.payment_method.toLowerCase() === 'visa' && order.payment_status === 'paid'
+    const paymentMessage = isPaid
+      ? "Your payment has been received. Thanks for choosing Bonsai!"
+      : "You'll pay on delivery. See you soon"
+  
+    const orderDetails = order.order_elements
+      .map(item => `${item.quantity}x ${item.name} - ${item.price} Dhs`)
+      .join('\n')
+  
+    const message = `Hey ${order.client_name},\n\nWe've received your order at Bonsai\n\nHere’s what you got:\n${orderDetails}\n\nTotal: ${order.total_price} Dhs\n\n${paymentMessage}\n\nEnjoy your meal`
+  
+    const encodedMessage = encodeURIComponent(message)
+    window.open(`https://wa.me/${clientPhone}?text=${encodedMessage}`, '_blank')
+  }
+  
+  
+  
+  
+
   const baseURL = 'http://bonsai-marrakech.com/backend'
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -120,6 +149,12 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
             {/* Action Buttons */}
             <div className="mt-6 flex justify-start space-x-4">
               <button
+                onClick={sendWhatsAppMessage}
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+              >
+                WhatsApp Confirmation
+              </button>
+              <button
                 onClick={handleSaveChanges}
                 className="bg-primary text-white px-4 py-2 rounded hover:bg-primary-dark"
               >
@@ -131,6 +166,7 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
               >
                 Close
               </button>
+
             </div>
           </div>
 
