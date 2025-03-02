@@ -3,7 +3,8 @@
 import useSWR from 'swr'
 import axios from '@/lib/axios'
 import { useAuth } from '@/hooks/auth'
-import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
+// import {useRef} from 'react' //in order to use sound notification
 import { useRouter } from 'next/navigation'
 
 import OrderDetailsModal from '@/components/OrderDetailsModal'
