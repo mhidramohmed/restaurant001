@@ -59,19 +59,23 @@ const OrderDetailsModal = ({ order, onClose, mutate }) => {
     }
   
     const isPaid = order.payment_method.toLowerCase() === 'visa' && order.payment_status === 'paid'
-    const paymentMessage = isPaid
-      ? "Your payment has been received. Thanks for choosing Bonsai!"
-      : "You'll pay on delivery. See you soon"
   
     const orderDetails = order.order_elements
-      .map(item => `${item.quantity}x ${item.name} - ${item.price} Dhs`)
+      .map(item => `- ${item.quantity}x ${item.name}`)
       .join('\n')
   
-    const message = `Hey ${order.client_name},\n\nWe've received your order at Bonsai\n\nHere’s what you got:\n${orderDetails}\n\nTotal: ${order.total_price} Dhs\n\n${paymentMessage}\n\nEnjoy your meal`
+    let message = `Bonjour, nous avons bien reçu votre commande comprenant :\n\n${orderDetails}\n\nElle est en cours de préparation. `
+  
+    if (isPaid) {
+      message += `Notre livreur vous contactera dès que possible.\n\nMerci d’avoir choisi Bonsaï.`
+    } else {
+      message += `Notre livreur vous contactera dans quelques minutes.\n\nVous paierez ${order.total_price} Dhs lors de la livraison.\n\nMerci d’avoir choisi Bonsaï.`
+    }
   
     const encodedMessage = encodeURIComponent(message)
     window.open(`https://wa.me/${clientPhone}?text=${encodedMessage}`, '_blank')
   }
+  
   
   
   
