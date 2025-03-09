@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\OrderElementController;
 
@@ -86,5 +87,5 @@ Route::delete('/order-elements/{id}', [OrderElementController::class,'destroy'])
 Route::get('/analytics/menu-items/quantity-sold', [OrderElementController::class,'quantitySoldByMenuItem']);
 
 
-
+Route::resource('discount', DiscountController::class);
 

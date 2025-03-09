@@ -15,7 +15,8 @@ class MenuItemController extends Controller
     public function index()
     {
         try {
-            $menuItem = MenuItem::all();
+            // $menuItem = MenuItem::all();
+            $menuItem = MenuItem::with('category','discounts')->get();
 
             return response()->json([
                 'data' => MenuItemResource::collection($menuItem),

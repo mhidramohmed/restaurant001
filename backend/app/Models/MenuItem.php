@@ -33,6 +33,15 @@ class MenuItem extends Model
         return $this->belongsTo(Category::class);
     }
 
+
+
+    /**
+     * A MenuItem has many Discounts
+     */
+    public function discounts()
+    {
+        return $this->hasMany(Discount::class);
+    }
     /**
      * A MenuItem has many OrderElements
      */
