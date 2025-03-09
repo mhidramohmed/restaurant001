@@ -102,7 +102,7 @@ class DiscountController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Discount $discount)
+    public function update(Request $request,  $id)
     {
         $discount = Discount::find($id);
 
