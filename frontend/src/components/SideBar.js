@@ -56,6 +56,15 @@ const SideBar = () => {
             Orders
           </MainButton>
         </Link>
+        <Link href="/dashboard/discounts">
+          <MainButton
+            className={`w-full text-left border-0 text-text hover:bg-secondary hover:text-primary ${
+              pathname === '/dashboard/discounts' ? 'bg-secondary text-primary' : ''
+            }`}
+          >
+            Discounts
+          </MainButton>
+        </Link>
         {/* <Link href="/dashboard/trashed/menu-items">
           <MainButton
             className={`w-full text-left border-0 text-text hover:bg-secondary hover:text-primary ${

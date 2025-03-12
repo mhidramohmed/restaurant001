@@ -29,7 +29,7 @@ const Home = () => {
       {/* Main Content */}
       <main className="flex-grow w-full sm:w-3/4 bg-background">
         <Header setSearchTerm={setSearchTerm} />
-        <div className="sticky top-0 z-10 bg-background shadow-md py-4 pl-2 md:px-4">
+        <div className="sticky top-0 z-20 bg-background shadow-md py-4 pl-2 md:px-4">
           <CategoryBar />
         </div>
         <Suspense fallback={null}>
@@ -41,7 +41,7 @@ const Home = () => {
 
       {/* Shopping Cart */}
       <aside
-        className={`fixed right-0 top-0 w-full sm:w-1/4 h-full p-4 bg-background shadow-xl overflow-y-auto z-10 transition-all duration-300 ${
+        className={`fixed right-0 top-0 w-full sm:w-1/4 h-full p-4 bg-background shadow-xl overflow-y-auto z-20 transition-all duration-300 ${
           isCartVisible ? 'block' : 'hidden sm:block'
         }`}
       >

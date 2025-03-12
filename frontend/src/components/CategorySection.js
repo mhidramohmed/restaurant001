@@ -108,6 +108,7 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
                 image={item.image}
                 name={item.name}
                 price={item.price}
+                discount={item.discount}
                 onDetails={() => handleCardClick(item)}
               />
             </SwiperSlide>
@@ -124,6 +125,7 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
             image={item.image}
             name={item.name}
             price={item.price}
+            discount={item.discount}
             onDetails={() => handleCardClick(item)}
           />
         ))}
