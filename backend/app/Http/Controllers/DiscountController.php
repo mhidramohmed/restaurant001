@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Discount;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage; // Added missing import
 
 class DiscountController extends Controller
 {
@@ -18,10 +19,7 @@ class DiscountController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
-
-
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -29,34 +27,32 @@ class DiscountController extends Controller
     public function store(Request $request)
     {
         try {
-
-            $request->validate([
+            $validated = $request->validate([
                 'menu_item_id' => 'required|exists:menu_items,id',
-                'image' => 'nullable',
+                'image' => 'nullable|file|image',
                 'discount_percentage' => 'required|numeric',
                 'expires_at' => 'nullable|date',
                 'is_active' => 'nullable|boolean',
             ]);
 
-            if ($request->has('image')) {
-                // Define the folder path relative to the public storage
+            $data = $validated;
 
+            if ($request->hasFile('image')) {
+                // Define the folder path relative to the public storage
                 $path = 'public/images/DiscountImages/';
 
                 Storage::makeDirectory($path);
 
-
                 // Generate a unique file name
-                $profileImage = date('YmdHis') . "_" . $request->image->getClientOriginalName();
+                $profileImage = date('YmdHis') . "_" . $request->file('image')->getClientOriginalName();
 
-                Storage::putFileAs(strtolower($path), $request->image, $profileImage);
+                Storage::putFileAs(strtolower($path), $request->file('image'), $profileImage);
 
                 // Generate a public URL for the stored file
                 $data['image'] = '/DiscountImages/'. $profileImage;
             }
 
-
-            $discount = Discount::create($request->all());
+            $discount = Discount::create($data);
             return response()->json($discount);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
@@ -66,113 +62,109 @@ class DiscountController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show( $id)
+    public function show($id)
     {
         try {
-
-            // return($id);
-
-            $discount = Discount:: find($id);
-
-                      // return($discount);
-
+            $discount = Discount::find($id);
 
             if(!$discount){
                 return response()->json([
-                    'message' => "Your Discount  doesn't exist"
-                ], 200);
+                    'message' => "Your Discount doesn't exist"
+                ], 404); // Changed to 404 for better HTTP semantics
 
-
-            }else{
-
-                // dd( $discount );
-
+            } else {
                 return response()->json([
-                    'data'=> ($discount) ,
-                    'messsage'=>"u get the data  "
-                ],200);
-
+                    'data'=> $discount,
+                    'message'=>"Data retrieved successfully"
+                ], 200);
             }
-
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to fetch discount'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch discount', 'message' => $e->getMessage()], 500);
         }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request,  $id)
+    public function update(Request $request, $id)
     {
-        $discount = Discount::find($id);
+        try {
+            $discount = Discount::find($id);
 
-        if(!$discount){
-            return response()->json([
-                'message'=>"Your Discount whith ID $id doesn't exist"
-            ], 200);
-        }else{
+            if(!$discount){
+                return response()->json([
+                    'message'=>"Your Discount with ID $id doesn't exist"
+                ], 404); // Changed to 404 for better HTTP semantics
+            }
 
-            $data = $request->validate([
+            $validated = $request->validate([
                 'menu_item_id' => 'required|exists:menu_items,id',
-                'image' => 'nullable',
+                'image' => 'nullable|file|image',
                 'discount_percentage' => 'required|numeric',
                 'expires_at' => 'nullable|date',
                 'is_active' => 'nullable|boolean',
             ]);
 
+            $data = $validated;
 
             if($request->hasFile('image')){
-
-                if(!$discount->image){
-
+                // Remove old image if it exists
+                if($discount->image && file_exists(public_path($discount->image))){
+                    unlink(public_path($discount->image));
                 }
 
-                unlink(public_path().'/'.$discount->image);
-
                 $destinationPath = 'DiscountImages/';
-
-                $profileImage = date('YmdHis') . "." . $request->image->getClientOriginalName();
-
-                $request->image->move($destinationPath, $profileImage);
-
+                $profileImage = date('YmdHis') . "." . $request->file('image')->getClientOriginalName();
+                $request->file('image')->move(public_path($destinationPath), $profileImage);
                 $data['image'] = '/'.$destinationPath.$profileImage;
             }
-
 
             $discount->update($data);
 
             return response()->json([
-                'message'=> 'Your Discount has updated successfully'
+                'status' => true,
+                'message'=> 'Your Discount has been updated successfully',
+                'data' => $discount
             ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy( $id)
+    public function destroy($id)
     {
+        try {
+            $discount = Discount::find($id);
 
-      $discount  = Discount::find($id);
+            if(!$discount || $id == ''){
+                return response()->json([
+                    'status'=>false,
+                    "message"=>"Your Discount with ID $id doesn't exist"
+                ], 404); // Changed to 404 for better HTTP semantics
+            }
 
-      if(!$discount || $id ==''){
+            // Remove image if it exists
+            if($discount->image && file_exists(public_path($discount->image))){
+                unlink(public_path($discount->image));
+            }
+
+            $discount->delete();
+
             return response()->json([
-            'status'=>false,
-            "message"=>"Your Discount whith ID $id doesn't exist "
-        ], 200);
-      }else{
-
-        // unlink(public_path().'/'.$discount->image);
-
-        $discount->delete();
-
-        return response()->json([
-            'status'=>true,
-            "message"=>"Your Discount  has deleted successully "
-        ], 200);
-
-      }
-
-
+                'status'=>true,
+                "message"=>"Your Discount has been deleted successfully"
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

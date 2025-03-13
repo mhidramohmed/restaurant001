@@ -16,7 +16,7 @@ class MenuItemController extends Controller
     {
         try {
             // $menuItem = MenuItem::all();
-            $menuItem = MenuItem::with('category','discounts')->get();
+            $menuItem = MenuItem::with('category','discount')->get();
 
             return response()->json([
                 'data' => MenuItemResource::collection($menuItem),
