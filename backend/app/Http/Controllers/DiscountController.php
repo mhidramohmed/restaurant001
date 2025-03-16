@@ -14,7 +14,7 @@ class DiscountController extends Controller
     public function index()
     {
         try {
-            $discounts = Discount::all();
+            $discounts = Discount::with('menu_item')->get();
             return response()->json($discounts);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
@@ -65,7 +65,7 @@ class DiscountController extends Controller
     public function show($id)
     {
         try {
-            $discount = Discount::find($id);
+            $discount = Discount::with('menu_item')->find($id);
 
             if(!$discount){
                 return response()->json([

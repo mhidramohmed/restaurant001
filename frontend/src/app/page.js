@@ -16,6 +16,7 @@ import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
+import DiscountSlider from '@/components/DiscountSlider'
 
 
 
@@ -35,6 +36,7 @@ const Home = () => {
         <Suspense fallback={null}>
           <HandleSearchParams />
         </Suspense>
+        <DiscountSlider />
         <Menu searchTerm={searchTerm} />
         <Footer />
       </main>

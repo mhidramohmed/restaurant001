@@ -25,7 +25,7 @@ const Card = ({ image, name, price, id, discount, onDetails }) => {
       {/* Discount Badge */}
       {discount && discount.is_active && (
         <div className="absolute top-1 right-1 bg-primary text-white px-2 py-1 rounded-lg z-10 font-bold">
-          {discount.discount_percentage}%
+          -{discount.discount_percentage}%
         </div>
       )}
       
@@ -42,7 +42,7 @@ const Card = ({ image, name, price, id, discount, onDetails }) => {
         <div className="flex items-center justify-between mt-2">
           <div>
             {discount && discount.is_active ? (
-              <div className="flex flex-col">
+              <div className="flex gap-2 items-end">
                 <p className="text-primary font-medium">{discount.new_price} Dhs</p>
                 <p className="text-gray-500 line-through text-sm">{price} Dhs</p>
               </div>
