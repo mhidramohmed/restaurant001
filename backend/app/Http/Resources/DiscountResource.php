@@ -19,12 +19,12 @@ class DiscountResource extends JsonResource
             "expires_at" => $this->expires_at,
             "is_active" => $this->is_active,
             "image" => $this->image ? url("/storage/images/" . $this->image) : null, // Discount image
-            "menu_item" => $this->menuItem
+            "menu_item" => $this->menu_item 
                 ? [
-                    "id" => $this->menuItem->id,
-                    "name" => $this->menuItem->name,
+                    "id" => $this->menu_item ->id,
+                    "name" => $this->menu_item ->name,
                     'price'=>$this->price,
-                    "image" => url("/storage/images/" . $this->menuItem->image),
+                    "image" => url("/storage/images/" . $this->menu_item ->image),
                 ]
                 : null,
         ];
