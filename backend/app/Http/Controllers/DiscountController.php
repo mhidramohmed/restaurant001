@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Discount;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage; // Added missing import
+use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\DiscountResource;
 
 class DiscountController extends Controller
 {
@@ -15,7 +16,10 @@ class DiscountController extends Controller
     {
         try {
             $discounts = Discount::with('menu_item')->get();
-            return response()->json($discounts);
+
+            return DiscountResource::collection($discounts);
+
+            // return response()->json($discounts);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -72,13 +76,12 @@ class DiscountController extends Controller
                     'message' => "Your Discount doesn't exist"
                 ], 404); // Changed to 404 for better HTTP semantics
 
-            } else {
-                return response()->json([
-                    'data'=> $discount,
-                    'message'=>"Data retrieved successfully"
-                ], 200);
             }
-        } catch (\Exception $e) {
+
+            return new DiscountResource($discount);
+
+            }
+        catch (\Exception $e) {
             return response()->json(['error' => 'Failed to fetch discount', 'message' => $e->getMessage()], 500);
         }
     }
