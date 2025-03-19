@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 const EditDiscountModal = ({ discount, onClose, onSubmit, menuItems }) => {
   const [formData, setFormData] = useState({
-    menu_item_id: discount.menu_item_id.toString(), // Ensure it's a string
+    menu_item_id: discount.menu_item.id.toString(), // Ensure it's a string
     discount_percentage: discount.discount_percentage,
     expires_at: discount.expires_at,
     is_active: discount.is_active,
@@ -11,7 +11,7 @@ const EditDiscountModal = ({ discount, onClose, onSubmit, menuItems }) => {
 
   useEffect(() => {
     setFormData({
-      menu_item_id: discount.menu_item_id.toString(), // Ensure it's a string
+      menu_item_id: discount.menu_item.id.toString(), // Ensure it's a string
       discount_percentage: discount.discount_percentage,
       expires_at: discount.expires_at,
       is_active: discount.is_active,

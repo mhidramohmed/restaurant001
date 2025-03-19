@@ -15,6 +15,7 @@ class DiscountResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            "id" => $this->id,
             "discount_percentage" => $this->discount_percentage,
             "expires_at" => $this->expires_at,
             "is_active" => $this->is_active,
@@ -23,7 +24,7 @@ class DiscountResource extends JsonResource
                 ? [
                     "id" => $this->menu_item ->id,
                     "name" => $this->menu_item ->name,
-                    'price'=>$this->price,
+                    'price'=>$this->menu_item ->price,
                     "image" => url("/storage/images/" . $this->menu_item ->image),
                 ]
                 : null,

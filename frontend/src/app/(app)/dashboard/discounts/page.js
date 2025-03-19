@@ -73,7 +73,7 @@ const Page = () => {
       // Search filter
       const matchesSearch =
         !filters.searchTerm ||
-        discount.menu_item_id.toString().toLowerCase().includes(filters.searchTerm.toLowerCase())
+        discount.menu_item.name.toLowerCase().includes(filters.searchTerm.toLowerCase())
 
       // Status filter
       const matchesStatus =
@@ -265,7 +265,7 @@ const Page = () => {
               {currentDiscounts.length > 0 ? (
                 currentDiscounts.map((discount) => {
                   const menuItem = menuItems.find(
-                    (item) => item.id === discount.menu_item_id,
+                    (item) => item.id === discount.menu_item.id,
                   )
                   return (
                     <tr
