@@ -25,6 +25,7 @@ class MenuItemResource extends JsonResource
             "description"=>$this->description,
             'price'=>$this->price,
             'category_id'=>$this->category_id,
+            'category'=>$this->category,
             "image"=>url("/storage/images".($this->image)),
             'discount' => $this->discount
                 ? [
