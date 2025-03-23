@@ -12,8 +12,7 @@ const fetcher = (url) =>
     .get(url, { withCredentials: true }) 
     .then((res) => res.data.data)
     .catch(error => {
-      console.error("Error fetching data:", error);
-      throw error;
+      throw error
     })
 
 const Page = () => {
@@ -32,11 +31,11 @@ const Page = () => {
     fetcher
   )
 
-  const [isRestoring, setIsRestoring] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [processingId, setProcessingId] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState(null);
+  const [isRestoring, setIsRestoring] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [processingId, setProcessingId] = useState(null)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState(null)
 
   if (error) {
     toast.error(`Failed to load trashed ${activeSection.replace('-', ' ')}`)
@@ -46,50 +45,50 @@ const Page = () => {
   if (!trashedItems) return <div>Loading...</div>
 
   const handleRestoreItem = (itemId) => {
-    setIsRestoring(true);
-    setProcessingId(itemId);
+    setIsRestoring(true)
+    setProcessingId(itemId)
     
     // Different API patterns for menu items vs categories
     const endpoint = activeSection === 'menu-items' 
       ? `/api/menu-items/${itemId}/restore` 
-      : `/api/categories/${itemId}/restore`;
+      : `/api/categories/${itemId}/restore`
     
     axios
       .post(endpoint, {}, { withCredentials: true })
       .then(() => {
-        toast.success(`${activeSection === 'menu-items' ? 'Menu item' : 'Category'} restored successfully!`);
-        mutate(); 
+        toast.success(`${activeSection === 'menu-items' ? 'Menu item' : 'Category'} restored successfully!`)
+        mutate()
       })
       .catch(() => toast.error(`Failed to restore ${activeSection === 'menu-items' ? 'menu item' : 'category'}`))
       .finally(() => {
-        setIsRestoring(false);
-        setProcessingId(null);
-      });
-  };
+        setIsRestoring(false)
+        setProcessingId(null)
+      })
+  }
 
   const openDeleteModal = (itemId) => {
-    setItemToDelete(itemId);
-    setShowDeleteModal(true);
-  };
+    setItemToDelete(itemId)
+    setShowDeleteModal(true)
+  }
 
   const closeDeleteModal = () => {
-    setShowDeleteModal(false);
-    setItemToDelete(null);
-  };
+    setShowDeleteModal(false)
+    setItemToDelete(null)
+  }
 
   const handleDeleteItem = () => {
-    if (!itemToDelete) return;
+    if (!itemToDelete) return
     
-    setIsDeleting(true);
-    setProcessingId(itemToDelete);
+    setIsDeleting(true)
+    setProcessingId(itemToDelete)
     
     // Handle the fact that permanent delete might not be implemented for categories yet
     const endpoint = activeSection === 'menu-items'
       ? `/api/menu-items/${itemToDelete}/force`
-      : `/api/categories/${itemToDelete}/force`; 
+      : `/api/categories/${itemToDelete}/force`
     
     // For categories, you need to add a permanentlyDeleteCategory method in your CategoryController
-    const method = activeSection === 'menu-items' ? 'delete' : 'delete';
+    const method = activeSection === 'menu-items' ? 'delete' : 'delete'
     
     axios({
       method: method,
@@ -97,20 +96,20 @@ const Page = () => {
       withCredentials: true
     })
       .then(() => {
-        toast.success(`${activeSection === 'menu-items' ? 'Menu item' : 'Category'} permanently deleted!`);
-        mutate(); 
-        closeDeleteModal();
+        toast.success(`${activeSection === 'menu-items' ? 'Menu item' : 'Category'} permanently deleted!`)
+        mutate()
+        closeDeleteModal()
       })
       .catch(() => toast.error(`Failed to permanently delete ${activeSection === 'menu-items' ? 'menu item' : 'category'}`))
       .finally(() => {
-        setIsDeleting(false);
-        setProcessingId(null);
-      });
-  };
+        setIsDeleting(false)
+        setProcessingId(null)
+      })
+  }
 
   const handleSectionChange = (section) => {
-    setActiveSection(section);
-  };
+    setActiveSection(section)
+  }
 
   return (
     <div>

@@ -1,6 +1,6 @@
 import React from 'react'
-import { FiRefreshCcw, FiTrash2 } from "react-icons/fi";
-import { PiDotsThreeOutlineFill } from "react-icons/pi";
+import { FiRefreshCcw, FiTrash2 } from "react-icons/fi"
+import { PiDotsThreeOutlineFill } from "react-icons/pi"
 import MainButton from './MainButton'
 
 const TrashedCategoryCard = ({

@@ -1,9 +1,9 @@
-import React from 'react';
-import { FiRefreshCcw, FiTrash2 } from "react-icons/fi";
-import { PiDotsThreeOutlineFill } from "react-icons/pi";
+import React from 'react'
+import { FiRefreshCcw, FiTrash2 } from "react-icons/fi"
+import { PiDotsThreeOutlineFill } from "react-icons/pi"
 
 const TrashedMenuItemCard = ({ id, name, image, category, onRestore, onDelete, isRestoring, isDeleting, processingId }) => {
-  const isProcessingThis = processingId === id;
+  const isProcessingThis = processingId === id
 
   return (
     <div className="h-[370px] border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden relative">
@@ -41,7 +41,7 @@ const TrashedMenuItemCard = ({ id, name, image, category, onRestore, onDelete, i
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default TrashedMenuItemCard;
+export default TrashedMenuItemCard
