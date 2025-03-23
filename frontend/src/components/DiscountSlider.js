@@ -34,8 +34,10 @@ const DiscountSlider = () => {
     )
   }
 
-  const activeDiscounts = discounts.filter(discount => discount.is_active)
-  if (!activeDiscounts.length) return null
+  // Filter out discounts that are inactive or missing a menu_item
+  const validDiscounts = discounts.filter(discount => discount.is_active && discount.menu_item)
+
+  if (!validDiscounts.length) return null
 
   return (
     <div className="my-8 px-2 md:px-4 lg:px-6">
@@ -53,16 +55,17 @@ const DiscountSlider = () => {
         autoplay={{ delay: 3500, disableOnInteraction: false }}
         className="h-52"
       >
-        {activeDiscounts.map((discount) => {
-          const discountedPrice = (discount.menu_item.price * (1 - discount.discount_percentage / 100)).toFixed(2)
-          
+        {validDiscounts.map((discount) => {
+          const menuItem = discount.menu_item
+          const discountedPrice = (menuItem.price * (1 - discount.discount_percentage / 100)).toFixed(2)
+
           const handleAddToCart = () => {
             addItem({
-              id: discount.menu_item.id,
-              name: discount.menu_item.name,
+              id: menuItem.id,
+              name: menuItem.name,
               price: discountedPrice,
-              originalPrice: discount.menu_item.price,
-              image: discount.menu_item.image,
+              originalPrice: menuItem.price,
+              image: menuItem.image,
               discount
             })
           }
@@ -72,9 +75,7 @@ const DiscountSlider = () => {
               <div 
                 className="relative h-52 w-full rounded-lg overflow-hidden bg-gray-300 shadow-md p-4 flex flex-col justify-end"
                 style={{
-                    backgroundImage: discount.image 
-                    ? `url(${discount.image})`
-                    : (discount.menu_item ? `url(${discount.menu_item.image})` : 'none'),
+                    backgroundImage: discount.image ? `url(${discount.image})` : `url(${menuItem.image})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                 }}
@@ -89,15 +90,11 @@ const DiscountSlider = () => {
 
                 {/* Text content */}
                 <div className="relative text-left text-white">
-                  <p className="text-lg font-semibold">
-                    {discount.menu_item ? discount.menu_item.name : 'Offre Spéciale'}
-                  </p>
+                  <p className="text-lg font-semibold">{menuItem.name}</p>
 
                   {/* Price & Button side by side */}
                   <div className="flex justify-between items-center mt-2">
-                    {discount.menu_item?.price && (
-                      <p className="text-yellow-400 text-lg font-bold">{discountedPrice} Dhs</p>
-                    )}
+                    <p className="text-yellow-400 text-lg font-bold">{discountedPrice} Dhs</p>
                     <MainButton onClick={handleAddToCart} className="bg-primary text-white flex items-center">
                       <LuShoppingCart />
                     </MainButton>

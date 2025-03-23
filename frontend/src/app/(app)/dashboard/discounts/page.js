@@ -66,10 +66,19 @@ const Page = () => {
     }
   }, [user, router])
 
-  const filteredDiscounts = useMemo(() => {
+  // Filter out discounts with null menu_item before applying other filters
+  const validDiscounts = useMemo(() => {
     if (!discounts) return []
+    
+    return discounts.filter(discount => 
+      discount.menu_item && discount.menu_item.id
+    )
+  }, [discounts])
 
-    return discounts.filter((discount) => {
+  const filteredDiscounts = useMemo(() => {
+    if (!validDiscounts) return []
+
+    return validDiscounts.filter((discount) => {
       // Search filter
       const matchesSearch =
         !filters.searchTerm ||
@@ -82,7 +91,7 @@ const Page = () => {
 
       return matchesSearch && matchesStatus
     })
-  }, [discounts, filters.searchTerm, filters.statuses.join(',')])
+  }, [validDiscounts, filters.searchTerm, filters.statuses.join(',')])
 
   const [sortNewestFirst, setSortNewestFirst] = useState(true)
 
