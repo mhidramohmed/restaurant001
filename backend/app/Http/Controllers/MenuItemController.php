@@ -204,19 +204,18 @@ class MenuItemController extends Controller
     }
 
 
+
     public function getDeletedMenuItems()
 {
     \Log::info('Attempting to retrieve deleted menu items');
 
     try {
-        $menuItems = MenuItem::onlyTrashed()->get();
+        $menuItems = MenuItem::with('category')->onlyTrashed()->get();
 
-        \Log::info('Trashed menu items count: ' . $menuItems->count());
 
         return response()->json([
-            'data' => $menuItems,
-            'count' => $menuItems->count(),
-            'message' => 'Deleted menu items retrieved successfully'
+            'data' => MenuItemResource::collection($menuItems),
+            'message' => 'u get the data'
         ], 200);
     } catch (\Exception $e) {
         \Log::error('Error in getDeletedMenuItems: ' . $e->getMessage());
@@ -239,6 +238,36 @@ public function restoreMenuItem($id)
     $MenuItem->restore();
 
     return response()->json(['message' => 'Your MenuItem has been restored successfully'], 200);
+}
+
+public function permanentlyDeleteMenuItem($id)
+{
+    try {
+        $menuItem = MenuItem::onlyTrashed()->find($id);
+
+        if (!$menuItem) {
+            return response()->json(['error' => 'Trashed menu item not found'], 404);
+        }
+
+        // If you need to delete the associated image file
+        if ($menuItem->image && file_exists(public_path().'/'.$menuItem->image)) {
+            unlink(public_path().'/'.$menuItem->image);
+        }
+
+        // Permanently delete the record
+        $menuItem->forceDelete();
+
+        return response()->json([
+            'message' => 'Menu item permanently deleted successfully'
+        ], 200);
+    } catch (\Exception $e) {
+        \Log::error('Error in permanentlyDeleteMenuItem: ' . $e->getMessage());
+
+        return response()->json([
+            'error' => 'Failed to permanently delete menu item',
+            'message' => $e->getMessage()
+        ], 500);
+    }
 }
 
 }

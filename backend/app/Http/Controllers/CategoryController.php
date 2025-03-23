@@ -180,10 +180,10 @@ class CategoryController extends Controller
 
         $categories =  Category::onlyTrashed()->get();
 
-                // return($categories);
 
-
-        return response()->json(['data' =>$categories ], 200);
+        return response()->json([
+            'data' => CategorieResource::collection($categories )
+        ], 200);
     }
 
     public function restoreCategory($id)
@@ -195,4 +195,23 @@ class CategoryController extends Controller
         return response()->json(['message'=>' Your Category has been restore successfully'], 200);
 
     }
+
+    public function permanentlyDeleteCategory($id)
+{
+    // Permanently delete a soft-deleted category
+    $category = Category::onlyTrashed()->findOrFail($id);
+    
+    // Delete the image file if it exists
+    if ($category->image) {
+        $imagePath = public_path() . '/' . $category->image;
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+    }
+    
+    // Force delete the category
+    $category->forceDelete();
+
+    return response()->json(['message' => 'Category permanently deleted'], 200);
+}
 }

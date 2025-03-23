@@ -30,11 +30,12 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 Route::get('/categories', [CategoryController::class,'index']);
 Route::get('/categories/{id}', [CategoryController::class,'show'])->where('id','\d+');
-Route::get('/categories/trash', [CategoryController::class,'getDeletedCategories']);
+Route::get('/categories/trashed', [CategoryController::class,'getDeletedCategories']);
 
 
 Route::post('/categories', [CategoryController::class,'store']);
-Route::post('/categories/{id}', [CategoryController::class,'restoreCategory']);
+Route::post('/categories/{id}/restore', [CategoryController::class,'restoreCategory']);
+Route::delete('/categories/{id}/force', [CategoryController::class, 'permanentlyDeleteCategory']);
 
 
 Route::patch('/categories/{id}', [CategoryController::class,'update'])->where('id','\d+');
@@ -52,6 +53,7 @@ Route::get('/menu-items/{id}', [MenuItemController::class,'show'])->where('id','
 
 Route::post('/menu-items', [MenuItemController::class,'store']);
 Route::post('/menu-items/{id}/restore', [MenuItemController::class, 'restoreMenuItem']);
+Route::delete('/menu-items/{id}/force', [MenuItemController::class, 'permanentlyDeleteMenuItem']);
 
 
 Route::patch('/menu-items/{id}', [MenuItemController::class,'update'])->where('id','\d+');
