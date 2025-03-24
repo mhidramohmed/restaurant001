@@ -111,15 +111,22 @@ class DiscountController extends Controller
             $data = $validated;
 
             if($request->hasFile('image')){
-                // Remove old image if it exists
-                if($discount->image && file_exists(public_path($discount->image))){
-                    unlink(public_path($discount->image));
+                // Define the folder path
+                $path = 'public/images/DiscountImages/';
+                
+                // Delete old image if it exists (adjust path to match your storage structure)
+                if($discount->image) {
+                    Storage::delete('public/images' . $discount->image);
                 }
-
-                $destinationPath = 'DiscountImages/';
-                $profileImage = date('YmdHis') . "." . $request->file('image')->getClientOriginalName();
-                $request->file('image')->move(public_path($destinationPath), $profileImage);
-                $data['image'] = '/'.$destinationPath.$profileImage;
+                
+                // Generate a unique file name
+                $profileImage = date('YmdHis') . "_" . $request->file('image')->getClientOriginalName();
+                
+                // Store the new image
+                Storage::putFileAs(strtolower($path), $request->file('image'), $profileImage);
+                
+                // Set the database value to be consistent with the store method
+                $data['image'] = '/DiscountImages/'. $profileImage;
             }
 
             $discount->update($data);
