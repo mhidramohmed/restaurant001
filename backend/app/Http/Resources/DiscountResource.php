@@ -20,14 +20,14 @@ class DiscountResource extends JsonResource
             "expires_at" => $this->expires_at,
             "is_active" => $this->is_active,
             "image" => $this->image ? url("/storage/images/" . $this->image) : null, // Discount image
-            "menu_item" => $this->menu_item 
-                ? [
-                    "id" => $this->menu_item ->id,
-                    "name" => $this->menu_item ->name,
-                    'price'=>$this->menu_item ->price,
-                    "image" => url("/storage/images/" . $this->menu_item ->image),
-                ]
-                : null,
+            "menuItems" => $this->menuItems->map(function ($menuItems) {
+                return [
+                    "id" => $menuItems->id,
+                    "name" => $menuItems->name,
+                    "price" => $menuItems->price,
+                    "image" => url("/storage/images/" . $menuItems->image),
+                ];
+            })->all(),
         ];
     }
 }

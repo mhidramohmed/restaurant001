@@ -22,8 +22,9 @@ class Discount extends Model
         'is_active' => 'boolean',
     ];
 
-    public function menu_item()
+    public function menuItems()
     {
-        return $this->belongsTo(MenuItem::class);
+        return $this->hasMany(MenuItem::class);
     }
+
 }

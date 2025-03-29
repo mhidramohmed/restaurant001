@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Discount;
+use App\Models\MenuItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\DiscountResource;
@@ -15,7 +16,7 @@ class DiscountController extends Controller
     public function index()
     {
         try {
-            $discounts = Discount::with('menu_item')->get();
+            $discounts = Discount::with('menuItems')->get();
 
             return DiscountResource::collection($discounts);
 
@@ -32,11 +33,13 @@ class DiscountController extends Controller
     {
         try {
             $validated = $request->validate([
-                'menu_item_id' => 'required|exists:menu_items,id',
+                // 'menu_item_id' => 'required|exists:menu_items,id',
                 'image' => 'nullable|file|image',
                 'discount_percentage' => 'required|numeric',
                 'expires_at' => 'nullable|date',
                 'is_active' => 'nullable|boolean',
+                'menuItems' => 'required|array', // Array of menu item IDs
+                'menuItems.*' => 'exists:menu_items,id', // Validate each ID exists
             ]);
 
             $data = $validated;
@@ -57,7 +60,17 @@ class DiscountController extends Controller
             }
 
             $discount = Discount::create($data);
-            return response()->json($discount);
+
+            // Associate the discount with menu items if provided
+            if ($request->has('menuItems')) {
+                MenuItem::whereIn('id', $validated['menuItems'])->update(['discount_id' => $discount->id]);
+            }
+
+            return response()->json([
+                        'status' => true,
+                        'message' => 'Discount created successfully!',
+                        'data' => new DiscountResource($discount)
+                    ], 201);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -69,7 +82,7 @@ class DiscountController extends Controller
     public function show($id)
     {
         try {
-            $discount = Discount::with('menu_item')->find($id);
+            $discount = Discount::with('menuItems')->find($id);
 
             if(!$discount){
                 return response()->json([
@@ -101,11 +114,13 @@ class DiscountController extends Controller
             }
 
             $validated = $request->validate([
-                'menu_item_id' => 'required|exists:menu_items,id',
+                // 'menu_item_id' => 'required|exists:menu_items,id',
                 'image' => 'nullable|file|image',
                 'discount_percentage' => 'required|numeric',
                 'expires_at' => 'nullable|date',
                 'is_active' => 'nullable|boolean',
+                'menuItems' => 'nullable|array', // Array of menu item IDs
+                'menuItems.*' => 'exists:menu_items,id', // Validate each ID exists
             ]);
 
             $data = $validated;
@@ -113,23 +128,37 @@ class DiscountController extends Controller
             if($request->hasFile('image')){
                 // Define the folder path
                 $path = 'public/images/DiscountImages/';
-                
+
                 // Delete old image if it exists (adjust path to match your storage structure)
                 if($discount->image) {
                     Storage::delete('public/images' . $discount->image);
                 }
-                
+
                 // Generate a unique file name
                 $profileImage = date('YmdHis') . "_" . $request->file('image')->getClientOriginalName();
-                
+
                 // Store the new image
                 Storage::putFileAs(strtolower($path), $request->file('image'), $profileImage);
-                
+
                 // Set the database value to be consistent with the store method
                 $data['image'] = '/DiscountImages/'. $profileImage;
             }
 
             $discount->update($data);
+
+            if ($request->has('menuItems')) {
+                // First, disassociate all menu items from this discount
+                $discount->menuItems()->update(['discount_id' => null]); // Remove the discount association from all menu items
+
+                // Now, associate the new menu items
+                foreach ($request->menuItems as $menuItemId) {
+                    $menuItem = MenuItem::find($menuItemId);
+                    if ($menuItem) {
+                        $menuItem->discount_id = $discount->id; // Assign the discount_id to the menu item
+                        $menuItem->save(); // Save the changes
+                    }
+                }
+            }
 
             return response()->json([
                 'status' => true,

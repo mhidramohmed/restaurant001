@@ -39,12 +39,9 @@ class MenuItem extends Model
      * A MenuItem has many Discounts
      */
     public function discount()
-{
-    return $this->hasOne(Discount::class)
-                ->where('is_active', true)
-                ->where('expires_at', '>', now())
-                ->latest();
-}
+    {
+        return $this->belongsTo(Discount::class);
+    }
     /**
      * A MenuItem has many OrderElements
      */
