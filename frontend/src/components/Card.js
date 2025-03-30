@@ -34,6 +34,7 @@ const Card = ({ image, name, price, id, discount, onDetails }) => {
           src={image}
           alt={name}
           className="w-full h-full object-cover rounded-t-lg"
+          loading="lazy"
         />
       </div>
 

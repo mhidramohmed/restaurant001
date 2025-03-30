@@ -66,32 +66,34 @@ const Page = () => {
     }
   }, [user, router])
 
-  // Filter out discounts with null menu_item before applying other filters
-  const validDiscounts = useMemo(() => {
-    if (!discounts) return []
-    
-    return discounts.filter(discount => 
-      discount.menu_item && discount.menu_item.id
-    )
-  }, [discounts])
+  // Filter out discounts with no menu items before applying other filters
+const validDiscounts = useMemo(() => {
+  if (!discounts) return []
+  
+  return discounts.filter(discount => 
+    discount.menuItems && discount.menuItems.length > 0
+  )
+}, [discounts])
 
-  const filteredDiscounts = useMemo(() => {
-    if (!validDiscounts) return []
+const filteredDiscounts = useMemo(() => {
+  if (!validDiscounts) return []
 
-    return validDiscounts.filter((discount) => {
-      // Search filter
-      const matchesSearch =
-        !filters.searchTerm ||
-        discount.menu_item.name.toLowerCase().includes(filters.searchTerm.toLowerCase())
+  return validDiscounts.filter((discount) => {
+    // Search filter
+    const matchesSearch =
+      !filters.searchTerm ||
+      discount.menuItems.some(item => 
+        item.name.toLowerCase().includes(filters.searchTerm.toLowerCase())
+      )
 
-      // Status filter
-      const matchesStatus =
-        filters.statuses.length === 0 ||
-        filters.statuses.includes(discount.is_active ? 'active' : 'inactive')
+    // Status filter
+    const matchesStatus =
+      filters.statuses.length === 0 ||
+      filters.statuses.includes(discount.is_active ? 'active' : 'inactive')
 
-      return matchesSearch && matchesStatus
-    })
-  }, [validDiscounts, filters.searchTerm, filters.statuses.join(',')])
+    return matchesSearch && matchesStatus
+  })
+}, [validDiscounts, filters.searchTerm, filters.statuses.join(',')])
 
   const [sortNewestFirst, setSortNewestFirst] = useState(true)
 
@@ -258,69 +260,66 @@ const Page = () => {
         </div>
 
         {/* Discounts Table */}
-        <div className="overflow-x-auto rounded-lg shadow-lg">
-          <table className="min-w-full bg-background border border-gray-200">
-            <thead>
-              <tr className="bg-primary text-secondary">
-                <th className="py-4 px-6 text-left font-semibold">ID</th>
-                <th className="py-4 px-6 text-left font-semibold">Menu Item</th>
-                <th className="py-4 px-6 text-left font-semibold">Discount Percentage</th>
-                <th className="py-4 px-6 text-left font-semibold">Expires At</th>
-                <th className="py-4 px-6 text-left font-semibold">Status</th>
-                <th className="py-4 px-6 text-left font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentDiscounts.length > 0 ? (
-                currentDiscounts.map((discount) => {
-                  const menuItem = menuItems.find(
-                    (item) => item.id === discount.menu_item.id,
-                  )
-                  return (
-                    <tr
-                      key={discount.id}
-                      className="hover:bg-secondary cursor-pointer transition-colors duration-150"
-                    >
-                      <td className="py-4 px-6 text-text">{discount.id}</td>
-                      <td className="py-4 px-6 text-text">
-                        {menuItem ? menuItem.name : 'N/A'}
-                      </td>
-                      <td className="py-4 px-6 text-text">
-                        {discount.discount_percentage}%
-                      </td>
-                      <td className="py-4 px-6 text-text">
-                      {formatDate(discount.expires_at)}
-                      </td>
-                      <td className="py-4 px-6">
-                        <DiscountStatusBadge isActive={discount.is_active} />
-                      </td>
-                      <td className="py-4 px-6">
-                        <button
-                          onClick={() => handleRowClick(discount)}
-                          className="text-blue-500 hover:text-blue-700 mr-2"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteClick(discount.id)}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  )
-                })
-              ) : (
-                <tr>
-                  <td colSpan="6" className="py-4 px-6 text-center text-text">
-                    No discounts found matching your filters.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+<div className="overflow-x-auto rounded-lg shadow-lg">
+  <table className="min-w-full bg-background border border-gray-200">
+    <thead>
+      <tr className="bg-primary text-secondary">
+        <th className="py-4 px-6 text-left font-semibold">ID</th>
+        <th className="py-4 px-6 text-left font-semibold">Menu Items</th>
+        <th className="py-4 px-6 text-left font-semibold">Discount Percentage</th>
+        <th className="py-4 px-6 text-left font-semibold">Expires At</th>
+        <th className="py-4 px-6 text-left font-semibold">Status</th>
+        <th className="py-4 px-6 text-left font-semibold">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {currentDiscounts.length > 0 ? (
+        currentDiscounts.map((discount) => (
+          <tr
+            key={discount.id}
+            className="hover:bg-secondary cursor-pointer transition-colors duration-150"
+          >
+            <td className="py-4 px-6 text-text">{discount.id}</td>
+            <td className="py-4 px-6 text-text">
+              {discount.menuItems && discount.menuItems.length > 0 
+                ? discount.menuItems.map(item => item.name).join(', ')
+                : 'No items'}
+            </td>
+            <td className="py-4 px-6 text-text">
+              {discount.discount_percentage}%
+            </td>
+            <td className="py-4 px-6 text-text">
+              {formatDate(discount.expires_at)}
+            </td>
+            <td className="py-4 px-6">
+              <DiscountStatusBadge isActive={discount.is_active} />
+            </td>
+            <td className="py-4 px-6">
+              <button
+                onClick={() => handleRowClick(discount)}
+                className="text-blue-500 hover:text-blue-700 mr-2"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDeleteClick(discount.id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td colSpan="6" className="py-4 px-6 text-center text-text">
+            No discounts found matching your filters.
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
 
         {/* Pagination */}
         {sortedDiscounts.length > discountsPerPage && (

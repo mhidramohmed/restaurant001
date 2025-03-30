@@ -2,20 +2,20 @@ import { useState, useEffect } from 'react'
 
 const EditDiscountModal = ({ discount, onClose, onSubmit, menuItems }) => {
   const [formData, setFormData] = useState({
-    menu_item_id: discount.menu_item.id.toString(), // Ensure it's a string
     discount_percentage: discount.discount_percentage,
     expires_at: discount.expires_at,
     is_active: discount.is_active,
     image: null,
+    menuItems: discount.menuItems ? discount.menuItems.map(item => item.id.toString()) : [],
   })
 
   useEffect(() => {
     setFormData({
-      menu_item_id: discount.menu_item.id.toString(), // Ensure it's a string
       discount_percentage: discount.discount_percentage,
       expires_at: discount.expires_at,
       is_active: discount.is_active,
       image: null,
+      menuItems: discount.menuItems ? discount.menuItems.map(item => item.id.toString()) : [],
     })
   }, [discount])
 
@@ -28,12 +28,16 @@ const EditDiscountModal = ({ discount, onClose, onSubmit, menuItems }) => {
     setFormData((prev) => ({ ...prev, image: e.target.files[0] }))
   }
 
+  const handleMenuItemsChange = (e) => {
+    // Get all selected options
+    const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value)
+    setFormData(prev => ({ ...prev, menuItems: selectedOptions }))
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     const data = new FormData()
-  
-    // Convert menu_item_id to number if it's a string
-    data.append('menu_item_id', parseInt(formData.menu_item_id, 10))
+    
     data.append('discount_percentage', formData.discount_percentage)
     
     // Only append expires_at if it's not empty
@@ -47,6 +51,11 @@ const EditDiscountModal = ({ discount, onClose, onSubmit, menuItems }) => {
     if (formData.image instanceof File) {
       data.append('image', formData.image)
     }
+    
+    // Append menu items as an array
+    formData.menuItems.forEach((itemId, index) => {
+      data.append(`menuItems[${index}]`, itemId)
+    })
   
     // Add method spoofing for Laravel to recognize this as a PUT request
     data.append('_method', 'PUT')
@@ -60,21 +69,23 @@ const EditDiscountModal = ({ discount, onClose, onSubmit, menuItems }) => {
         <h2 className="text-xl font-bold mb-4">Edit Discount</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Menu Item</label>
+            <label className="block text-sm font-medium mb-2">Menu Items</label>
             <select
-              name="menu_item_id"
-              value={formData.menu_item_id}
-              onChange={handleChange}
+              name="menuItems"
+              multiple
+              value={formData.menuItems}
+              onChange={handleMenuItemsChange}
               className="w-full p-2 border border-gray-300 rounded"
               required
+              size="4"
             >
-              <option value="">Select a Menu Item</option>
               {menuItems.map((item) => (
                 <option key={item.id} value={item.id.toString()}>
                   {item.name}
                 </option>
               ))}
             </select>
+            <p className="text-xs text-gray-600 mt-1">Hold Ctrl/Cmd to select multiple items</p>
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">Discount Percentage</label>

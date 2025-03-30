@@ -2,11 +2,11 @@ import { useState } from 'react'
 
 const AddDiscountModal = ({ onClose, onSubmit, menuItems }) => {
   const [formData, setFormData] = useState({
-    menu_item_id: '',
     discount_percentage: '',
     expires_at: '',
     is_active: true,
     image: null,
+    menuItems: [], // Changed to array of menu item IDs
   })
 
   const handleChange = (e) => {
@@ -18,12 +18,17 @@ const AddDiscountModal = ({ onClose, onSubmit, menuItems }) => {
     setFormData((prev) => ({ ...prev, image: e.target.files[0] }))
   }
 
+  const handleMenuItemsChange = (e) => {
+    // Get all selected options
+    const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value)
+    setFormData(prev => ({ ...prev, menuItems: selectedOptions }))
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     const data = new FormData()
   
-    // Append all fields to FormData
-    data.append('menu_item_id', formData.menu_item_id)
+    // Append discount details to FormData
     data.append('discount_percentage', formData.discount_percentage)
     
     // Only append expires_at if it's not empty
@@ -37,6 +42,11 @@ const AddDiscountModal = ({ onClose, onSubmit, menuItems }) => {
     if (formData.image instanceof File) {
       data.append('image', formData.image)
     }
+    
+    // Append menu items as an array
+    formData.menuItems.forEach((itemId, index) => {
+      data.append(`menuItems[${index}]`, itemId)
+    })
   
     // Log FormData for debugging
     for (let [key, value] of data.entries()) {
@@ -52,21 +62,23 @@ const AddDiscountModal = ({ onClose, onSubmit, menuItems }) => {
         <h2 className="text-xl font-bold mb-4">Add New Discount</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Menu Item</label>
+            <label className="block text-sm font-medium mb-2">Menu Items</label>
             <select
-              name="menu_item_id"
-              value={formData.menu_item_id}
-              onChange={handleChange}
+              name="menuItems"
+              multiple
+              value={formData.menuItems}
+              onChange={handleMenuItemsChange}
               className="w-full p-2 border border-gray-300 rounded"
               required
+              size="4"
             >
-              <option value="">Select a Menu Item</option>
               {menuItems.map((item) => (
                 <option key={item.id} value={item.id.toString()}>
                   {item.name}
                 </option>
               ))}
             </select>
+            <p className="text-xs text-gray-600 mt-1">Hold Ctrl/Cmd to select multiple items</p>
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">Discount Percentage</label>

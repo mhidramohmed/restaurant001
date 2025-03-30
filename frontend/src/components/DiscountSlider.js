@@ -34,8 +34,10 @@ const DiscountSlider = () => {
     )
   }
 
-  // Filter out discounts that are inactive or missing a menu_item
-  const validDiscounts = discounts.filter(discount => discount.is_active && discount.menu_item)
+  // Filter out discounts that are inactive or have no menu items
+  const validDiscounts = discounts.filter(discount => 
+    discount.is_active && discount.menuItems && discount.menuItems.length > 0
+  )
 
   if (!validDiscounts.length) return null
 
@@ -55,55 +57,57 @@ const DiscountSlider = () => {
         autoplay={{ delay: 3500, disableOnInteraction: false }}
         className="h-52"
       >
-        {validDiscounts.map((discount) => {
-          const menuItem = discount.menu_item
-          const discountedPrice = (menuItem.price * (1 - discount.discount_percentage / 100)).toFixed(2)
+        {validDiscounts.flatMap((discount) => 
+          // Map each discount's menu items to slides
+          discount.menuItems.map((menuItem) => {
+            const discountedPrice = (menuItem.price * (1 - discount.discount_percentage / 100)).toFixed(2)
 
-          const handleAddToCart = () => {
-            addItem({
-              id: menuItem.id,
-              name: menuItem.name,
-              price: discountedPrice,
-              originalPrice: menuItem.price,
-              image: menuItem.image,
-              discount
-            })
-          }
+            const handleAddToCart = () => {
+              addItem({
+                id: menuItem.id,
+                name: menuItem.name,
+                price: discountedPrice,
+                originalPrice: menuItem.price,
+                image: menuItem.image,
+                discount
+              })
+            }
 
-          return (
-            <SwiperSlide key={discount.id}>
-              <div 
-                className="relative h-52 w-full rounded-lg overflow-hidden bg-gray-300 shadow-md p-4 flex flex-col justify-end"
-                style={{
+            return (
+              <SwiperSlide key={`${discount.id}-${menuItem.id}`}>
+                <div 
+                  className="relative h-52 w-full rounded-lg overflow-hidden bg-gray-300 shadow-md p-4 flex flex-col justify-end"
+                  style={{
                     backgroundImage: discount.image ? `url(${discount.image})` : `url(${menuItem.image})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                }}
-              >
-                {/* Discount badge */}
-                <div className="absolute top-2 left-2 bg-primary text-white font-semibold px-3 py-2 rounded-md text-sm shadow-md">
-                  -{discount.discount_percentage}%
-                </div>
+                  }}
+                >
+                  {/* Discount badge */}
+                  <div className="absolute top-2 left-2 bg-primary text-white font-semibold px-3 py-2 rounded-md text-sm shadow-md">
+                    -{discount.discount_percentage}%
+                  </div>
 
-                {/* Gradient overlay */}
-                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/80 to-transparent"></div>
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/80 to-transparent"></div>
 
-                {/* Text content */}
-                <div className="relative text-left text-white">
-                  <p className="text-lg font-semibold">{menuItem.name}</p>
+                  {/* Text content */}
+                  <div className="relative text-left text-white">
+                    <p className="text-lg font-semibold">{menuItem.name}</p>
 
-                  {/* Price & Button side by side */}
-                  <div className="flex justify-between items-center mt-2">
-                    <p className="text-yellow-400 text-lg font-bold">{discountedPrice} Dhs</p>
-                    <MainButton onClick={handleAddToCart} className="bg-primary text-white flex items-center">
-                      <LuShoppingCart />
-                    </MainButton>
+                    {/* Price & Button side by side */}
+                    <div className="flex justify-between items-center mt-2">
+                      <p className="text-yellow-400 text-lg font-bold">{discountedPrice} Dhs</p>
+                      <MainButton onClick={handleAddToCart} className="bg-primary text-white flex items-center">
+                        <LuShoppingCart />
+                      </MainButton>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          )
-        })}
+              </SwiperSlide>
+            )
+          })
+        )}
       </Swiper>
     </div>
   )

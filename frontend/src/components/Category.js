@@ -33,6 +33,7 @@ const Category = ({ categoryId, name, image, isActive, setActiveCategory }) => {
           //width={150}
           //height={150}
           className="w-full h-full object-cover"
+          loading="lazy"
         />
       </div>
       <p className="font-medium pr-2">{name}</p>
