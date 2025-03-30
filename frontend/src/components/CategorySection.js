@@ -6,12 +6,14 @@ import useSWR from "swr"
 import axios from "@/lib/axios"
 import { Swiper, SwiperSlide } from "swiper/react"
 import "swiper/css"
+import { useMediaQuery } from "@/hooks/use-media-query"
 
 const fetcher = (url) => axios.get(url).then((res) => res.data.data)
 
 const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
   const { data: items, error } = useSWR("/api/menu-items", fetcher)
   const [selectedItem, setSelectedItem] = useState(null)
+  const isDesktop = useMediaQuery('(min-width: 768px)')
 
   if (error) return <div>Failed to load items</div>
 
@@ -24,8 +26,15 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
         {/* Category title skeleton */}
         <div className="h-8 bg-gray-300 rounded w-1/3 md:w-1/6 mb-4" />
 
-        {/* Mobile View Skeleton */}
-        <div className="block md:hidden">
+        {isDesktop ? (
+          // Desktop View Skeleton
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array(4).fill(null).map((_, index) => (
+              <SkeletonCard key={`skeleton-${index}`} />
+            ))}
+          </div>
+        ) : (
+          // Mobile View Skeleton
           <Swiper
             breakpoints={{
               0: {
@@ -49,14 +58,7 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
               </SwiperSlide>
             ))}
           </Swiper>
-        </div>
-
-        {/* Desktop View Skeleton */}
-        <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {Array(4).fill(null).map((_, index) => (
-            <SkeletonCard key={`skeleton-${index}`} />
-          ))}
-        </div>
+        )}
       </section>
     )
   }
@@ -82,8 +84,23 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
     >
       <h2 className="text-3xl font-bold text-primary mb-4">{categoryName}</h2>
 
-      {/* Mobile View */}
-      <div className="block md:hidden">
+      {isDesktop ? (
+        // Desktop View
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {categoryItems.map((item) => (
+            <Card
+              key={item.id}
+              id={item.id}
+              image={item.image}
+              name={item.name}
+              price={item.price}
+              discount={item.discount}
+              onDetails={() => handleCardClick(item)}
+            />
+          ))}
+        </div>
+      ) : (
+        // Mobile View
         <Swiper
           breakpoints={{
             0: {
@@ -114,22 +131,7 @@ const CategorySection = ({ categoryName, categoryId, searchTerm }) => {
             </SwiperSlide>
           ))}
         </Swiper>
-      </div>
-
-      {/* Desktop View */}
-      <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {categoryItems.map((item) => (
-          <Card
-            key={item.id}
-            id={item.id}
-            image={item.image}
-            name={item.name}
-            price={item.price}
-            discount={item.discount}
-            onDetails={() => handleCardClick(item)}
-          />
-        ))}
-      </div>
+      )}
 
       {selectedItem && <MenuItemModal item={selectedItem} onClose={closeModal} />}
     </section>
