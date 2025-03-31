@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import { useMediaQuery } from "@/hooks/use-media-query"
-import { ChevronLeft, ChevronRight, Check, Settings, ChevronDown } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Settings, ChevronDown } from 'lucide-react'
 
 const OrderStatusBadge = ({ status }) => {
   const statusColors = {
@@ -204,7 +204,7 @@ const ResponsiveOrdersTable = ({
   
   return (
     <div className="space-y-4">
-      <div className="flex flex-row justify-between items-start items-center gap-3">
+      <div className="flex flex-row justify-between items-center gap-3">
         {/* Column selector */}
         <div className="relative">
           <button
@@ -282,15 +282,15 @@ const ResponsiveOrdersTable = ({
             <div className="flex space-x-1">
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                 // For showing correct pagination numbers with ellipsis
-                let pageNum;
+                let pageNum
                 if (totalPages <= 5) {
-                  pageNum = i + 1;
+                  pageNum = i + 1
                 } else if (currentPage <= 3) {
-                  pageNum = i + 1;
+                  pageNum = i + 1
                 } else if (currentPage >= totalPages - 2) {
-                  pageNum = totalPages - 4 + i;
+                  pageNum = totalPages - 4 + i
                 } else {
-                  pageNum = currentPage - 2 + i;
+                  pageNum = currentPage - 2 + i
                 }
                 
                 return (
@@ -305,7 +305,7 @@ const ResponsiveOrdersTable = ({
                   >
                     {pageNum}
                   </button>
-                );
+                )
               })}
             </div>
             

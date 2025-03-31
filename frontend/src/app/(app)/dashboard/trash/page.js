@@ -113,7 +113,7 @@ const Page = () => {
 
   return (
     <div>
-      <header className="bg-background pb-4 px-6">
+      <header className="bg-background pb-2 px-6">
         <div className="flex justify-between items-center mb-4 gap-4">
           <h1 className="text-2xl font-bold">Trash</h1>
 

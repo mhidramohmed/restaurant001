@@ -79,24 +79,24 @@ const Page = () => {
       // Date filter
       let matchesDate = true
       if (filters.dateRange) {
-        const orderDate = new Date(order.created_at);
-        const now = new Date();
+        const orderDate = new Date(order.created_at)
+        const now = new Date()
         
         switch(filters.dateRange) {
           case 'last24h':
-            matchesDate = (now - orderDate) <= 24 * 60 * 60 * 1000;
-            break;
+            matchesDate = (now - orderDate) <= 24 * 60 * 60 * 1000
+            break
           case 'last3d':
-            matchesDate = (now - orderDate) <= 3 * 24 * 60 * 60 * 1000;
-            break;
+            matchesDate = (now - orderDate) <= 3 * 24 * 60 * 60 * 1000
+            break
           case 'last7d':
-            matchesDate = (now - orderDate) <= 7 * 24 * 60 * 60 * 1000;
-            break;
+            matchesDate = (now - orderDate) <= 7 * 24 * 60 * 60 * 1000
+            break
           case 'last30d':
-            matchesDate = (now - orderDate) <= 30 * 24 * 60 * 60 * 1000;
-            break;
+            matchesDate = (now - orderDate) <= 30 * 24 * 60 * 60 * 1000
+            break
           default:
-            matchesDate = true;
+            matchesDate = true
         }
       }
 
