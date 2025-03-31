@@ -10,27 +10,11 @@ import Link from 'next/link'
 import Logo from '@/components/Logo'
 import OrdersFilterBar from '@/components/OrdersFilterBar'
 import OrderDetailsModal from '@/components/OrderDetailsModal'
+import ResponsiveOrdersTable from '@/components/ResponsiveOrdersTable'
 
 const fetcher = async (url) => {
     const response = await axios.get(url)
     return response.data.data || response.data
-}
-
-const OrderStatusBadge = ({ status }) => {
-  const statusColors = {
-    pending: 'bg-yellow-500',
-    inprocess: 'bg-blue-500',
-    delivered: 'bg-green-500',
-    declined: 'bg-red-500'
-  }
-
-  return (
-    <span
-      className={`px-2 py-1 rounded-full text-white ${statusColors[status] || 'bg-gray-500'}`}
-    >
-      {status.charAt(0).toUpperCase() + status.slice(1)}
-    </span>
-  )
 }
 
 const notificationSound = '/notification.mp3'
@@ -65,8 +49,7 @@ const Page = () => {
   })
 
   const [selectedOrder, setSelectedOrder] = useState(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const ordersPerPage = 10
+  const [sortNewestFirst, setSortNewestFirst] = useState(true)
 
   useEffect(() => {
     if (!user) {
@@ -112,7 +95,6 @@ const Page = () => {
           case 'last30d':
             matchesDate = (now - orderDate) <= 30 * 24 * 60 * 60 * 1000;
             break;
-          // The 'custom' option would need additional UI and state for date ranges
           default:
             matchesDate = true;
         }
@@ -128,14 +110,11 @@ const Page = () => {
     filters.dateRange
   ])
 
-  // Pagination
-  const indexOfLastOrder = currentPage * ordersPerPage
-  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage
-  
-  const pageNumbers = []
-  for (let i = 1; i <= Math.ceil(filteredOrders.length / ordersPerPage); i++) {
-    pageNumbers.push(i)
-  }
+  const sortedOrders = useMemo(() => {
+    return [...filteredOrders].sort((a, b) => 
+      sortNewestFirst ? b.id - a.id : a.id - b.id
+    )
+  }, [filteredOrders, sortNewestFirst])
 
   const handleRowClick = useCallback((order) => {
     setSelectedOrder(order)
@@ -144,16 +123,6 @@ const Page = () => {
   const closeModal = useCallback(() => {
     setSelectedOrder(null)
   }, [])
-
-  const [sortNewestFirst, setSortNewestFirst] = useState(true)
-
-  const sortedOrders = useMemo(() => {
-    return [...filteredOrders].sort((a, b) => 
-      sortNewestFirst ? b.id - a.id : a.id - b.id
-    )
-  }, [filteredOrders, sortNewestFirst])
-
-  const currentOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder)
 
   if (error) {
     return <div className="p-6 text-red-600">Failed to load orders: {error.message}</div>
@@ -191,74 +160,12 @@ const Page = () => {
           setSortNewestFirst={setSortNewestFirst}
         />
 
-        {/* Orders Table */}
-        <div className="overflow-x-auto rounded-lg shadow-lg">
-          <table className="min-w-full bg-background border border-gray-200">
-            <thead>
-              <tr className="bg-primary text-secondary">
-                <th className="py-4 px-6 text-left font-semibold">Order ID</th>
-                <th className="py-4 px-6 text-left font-semibold">Client Name</th>
-                <th className="py-4 px-6 text-left font-semibold">Client Address</th>
-                <th className="py-4 px-6 text-left font-semibold">Order Status</th>
-                <th className="py-4 px-6 text-left font-semibold">Payment Method</th>
-                <th className="py-4 px-6 text-left font-semibold">Payment Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentOrders.length > 0 ? (
-                currentOrders.map((order) => (
-                  <tr
-                    key={order.id}
-                    className="hover:bg-secondary cursor-pointer transition-colors duration-150"
-                    onClick={() => handleRowClick(order)}
-                  >
-                    <td className="py-4 px-6 text-text">{order.id}</td>
-                    <td className="py-4 px-6 text-text">{order.client_name}</td>
-                    <td className="py-4 px-6 text-text">{order.client_address}</td>
-                    <td className="py-4 px-6">
-                      <OrderStatusBadge status={order.order_status} />
-                    </td>
-                    <td className="py-4 px-6">{order.payment_method}</td>
-                    <td className="py-4 px-6">
-                      <span
-                        className={`px-2 py-1 rounded-full text-white ${
-                          order.payment_status === 'paid' ? 'bg-green-500' : 'bg-red-500'
-                        }`}
-                      >
-                        {order.payment_status === 'paid' ? 'Paid' : 'Unpaid'}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" className="py-4 px-6 text-center text-text">
-                    No orders found matching your filters.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination */}
-        {filteredOrders.length > ordersPerPage && (
-          <div className="flex justify-center mt-4 space-x-2">
-            {pageNumbers.map(number => (
-              <button
-                key={number}
-                onClick={() => setCurrentPage(number)}
-                className={`px-4 py-2 rounded ${
-                  currentPage === number 
-                    ? 'bg-primary text-white' 
-                    : 'bg-gray-200 text-gray-700'
-                }`}
-              >
-                {number}
-              </button>
-            ))}
-          </div>
-        )}
+        {/* Enhanced Responsive Orders Table */}
+        <ResponsiveOrdersTable 
+          orders={sortedOrders}
+          onRowClick={handleRowClick}
+          emptyMessage="No orders found matching your filters."
+        />
 
         {/* Order Details Modal */}
         {selectedOrder && (
