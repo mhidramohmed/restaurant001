@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import MenuItemSelector from './MenuItemSelector'
 
 const EditDiscountModal = ({ discount, onClose, onSubmit, menuItems }) => {
   const [formData, setFormData] = useState({
@@ -28,10 +29,8 @@ const EditDiscountModal = ({ discount, onClose, onSubmit, menuItems }) => {
     setFormData((prev) => ({ ...prev, image: e.target.files[0] }))
   }
 
-  const handleMenuItemsChange = (e) => {
-    // Get all selected options
-    const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value)
-    setFormData(prev => ({ ...prev, menuItems: selectedOptions }))
+  const handleMenuItemsChange = (selectedItems) => {
+    setFormData(prev => ({ ...prev, menuItems: selectedItems }))
   }
 
   const handleSubmit = (e) => {
@@ -70,22 +69,11 @@ const EditDiscountModal = ({ discount, onClose, onSubmit, menuItems }) => {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">Menu Items</label>
-            <select
-              name="menuItems"
-              multiple
-              value={formData.menuItems}
+            <MenuItemSelector 
+              selectedItems={formData.menuItems}
+              menuItems={menuItems}
               onChange={handleMenuItemsChange}
-              className="w-full p-2 border border-gray-300 rounded"
-              required
-              size="4"
-            >
-              {menuItems.map((item) => (
-                <option key={item.id} value={item.id.toString()}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-            <p className="text-xs text-gray-600 mt-1">Hold Ctrl/Cmd to select multiple items</p>
+            />
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">Discount Percentage</label>
