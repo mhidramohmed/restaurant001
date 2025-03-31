@@ -4,11 +4,11 @@ import useSWR from 'swr'
 import axios from '@/lib/axios'
 import MainButton from '@/components/MainButton'
 import { useAuth } from '@/hooks/auth'
-import { useEffect, useState, useMemo, useCallback, useRef  } from 'react'
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
-
+import OrdersFilterBar from '@/components/OrdersFilterBar'
 import OrderDetailsModal from '@/components/OrderDetailsModal'
 
 const fetcher = async (url) => {
@@ -32,7 +32,6 @@ const OrderStatusBadge = ({ status }) => {
     </span>
   )
 }
-
 
 const notificationSound = '/notification.mp3'
 
@@ -61,7 +60,8 @@ const Page = () => {
   const [filters, setFilters] = useState({
     searchTerm: '',
     statuses: ['pending'],
-    paymentStatuses: []
+    paymentStatuses: [],
+    dateRange: null
   })
 
   const [selectedOrder, setSelectedOrder] = useState(null)
@@ -75,7 +75,6 @@ const Page = () => {
       router.push('/dashboard')
     }
   }, [user, router])
-
 
   const filteredOrders = useMemo(() => {
     if (!orders) return []
@@ -93,21 +92,46 @@ const Page = () => {
       // Payment status filter
       const matchesPaymentStatus = filters.paymentStatuses.length === 0 || 
         filters.paymentStatuses.includes(order.payment_status)
+        
+      // Date filter
+      let matchesDate = true
+      if (filters.dateRange) {
+        const orderDate = new Date(order.created_at);
+        const now = new Date();
+        
+        switch(filters.dateRange) {
+          case 'last24h':
+            matchesDate = (now - orderDate) <= 24 * 60 * 60 * 1000;
+            break;
+          case 'last3d':
+            matchesDate = (now - orderDate) <= 3 * 24 * 60 * 60 * 1000;
+            break;
+          case 'last7d':
+            matchesDate = (now - orderDate) <= 7 * 24 * 60 * 60 * 1000;
+            break;
+          case 'last30d':
+            matchesDate = (now - orderDate) <= 30 * 24 * 60 * 60 * 1000;
+            break;
+          // The 'custom' option would need additional UI and state for date ranges
+          default:
+            matchesDate = true;
+        }
+      }
 
-      return matchesSearch && matchesStatus && matchesPaymentStatus
+      return matchesSearch && matchesStatus && matchesPaymentStatus && matchesDate
     })
   }, [
     orders, 
     filters.searchTerm, 
     filters.statuses.join(','), 
-    filters.paymentStatuses.join(',')
+    filters.paymentStatuses.join(','),
+    filters.dateRange
   ])
 
   // Pagination
   const indexOfLastOrder = currentPage * ordersPerPage
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage
-  // const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder)
-
+  
   const pageNumbers = []
   for (let i = 1; i <= Math.ceil(filteredOrders.length / ordersPerPage); i++) {
     pageNumbers.push(i)
@@ -124,15 +148,12 @@ const Page = () => {
   const [sortNewestFirst, setSortNewestFirst] = useState(true)
 
   const sortedOrders = useMemo(() => {
-  return [...filteredOrders].sort((a, b) => 
-    sortNewestFirst ? b.id - a.id : a.id - b.id
-  )
-}, [filteredOrders, sortNewestFirst])
+    return [...filteredOrders].sort((a, b) => 
+      sortNewestFirst ? b.id - a.id : a.id - b.id
+    )
+  }, [filteredOrders, sortNewestFirst])
 
-  
-
-const currentOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder)
-
+  const currentOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder)
 
   if (error) {
     return <div className="p-6 text-red-600">Failed to load orders: {error.message}</div>
@@ -163,77 +184,12 @@ const currentOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder)
 
       <div className="p-6">
         {/* Filtering Section */}
-        <div className="mb-6 flex space-x-4">
-
-          {/* Sorting Button */}
-          <button
-            onClick={() => setSortNewestFirst(prev => !prev)}
-            className={`px-3 py-1 rounded-full ${
-              sortNewestFirst ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'
-            }`}
-          >
-            {sortNewestFirst ? 'Newest First' : 'Oldest First'}
-          </button>
-
-          
-          {/* Order Status Filters */}
-          <div className="flex space-x-2">
-            {['pending', 'inprocess', 'delivered', 'declined'].map(status => (
-              <button
-                key={status}
-                onClick={() => 
-                  setFilters(prev => ({
-                    ...prev,
-                    statuses: prev.statuses.includes(status)
-                      ? prev.statuses.filter(s => s !== status)
-                      : [...prev.statuses, status]
-                  }))
-                }
-                className={`px-3 py-1 rounded-full ${
-                  filters.statuses.includes(status) 
-                    ? 'bg-primary text-white' 
-                    : 'bg-gray-200 text-gray-700'
-                }`}
-              >
-                {status.charAt(0).toUpperCase() + status.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          {/* Payment Status Filters */}
-          <div className="flex space-x-2">
-            {['paid', 'unpaid'].map(paymentStatus => (
-              <button
-                key={paymentStatus}
-                onClick={() => 
-                  setFilters(prev => ({
-                    ...prev,
-                    paymentStatuses: prev.paymentStatuses.includes(paymentStatus)
-                      ? prev.paymentStatuses.filter(s => s !== paymentStatus)
-                      : [...prev.paymentStatuses, paymentStatus]
-                  }))
-                }
-                className={`px-3 py-1 rounded-full ${
-                  filters.paymentStatuses.includes(paymentStatus) 
-                    ? 'bg-green-500 text-white' 
-                    : 'bg-gray-200 text-gray-700'
-                }`}
-              >
-                {paymentStatus.charAt(0).toUpperCase() + paymentStatus.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          {/* Search Input */}
-          <input
-            type="text"
-            placeholder="Search orders by name or ID..."
-            value={filters.searchTerm}
-            onChange={(e) => setFilters(prev => ({...prev, searchTerm: e.target.value}))}
-            className="w-full h-12 pl-10 pr-4 py-2 bg-secondary text-text rounded-lg focus:outline-none focus:ring-0"
-          />
-
-        </div>
+        <OrdersFilterBar 
+          filters={filters}
+          setFilters={setFilters}
+          sortNewestFirst={sortNewestFirst}
+          setSortNewestFirst={setSortNewestFirst}
+        />
 
         {/* Orders Table */}
         <div className="overflow-x-auto rounded-lg shadow-lg">
