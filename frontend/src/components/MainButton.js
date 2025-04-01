@@ -1,4 +1,4 @@
-"use client";
+"use client"
 const MainButton = ({ type = 'button', className = '', children, ...props }) => {
   return (
     <button
@@ -8,7 +8,7 @@ const MainButton = ({ type = 'button', className = '', children, ...props }) => 
     >
       {children}
     </button>
-  );
-};
+  )
+}
 
-export default MainButton;
+export default MainButton

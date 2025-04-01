@@ -2,25 +2,37 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Category extends Model
 {
     use HasFactory;
 
-    use HasFactory;
+    use SoftDeletes;
 
-    protected $fillable = ['name','image', 'description'];
+    protected $fillable = ['name','image'];
 
-    // public function getImageAttribute($value){
-    //     $actual_link = (isset($_SERVER['HTTPS']) ? 'https' :'http') . '://'.$_SERVER['HTTP_HOST'] . '/';
-    //     return ($value == null?'' : $actual_link .  'CategoriesImages/' . $value);
-    // }
+    // protected $appends = ['image_url'];
+
+    // protected $hidden = ['image'];
+
+
+
 
     // A Category has many Menu Items
     public function menuItems()
     {
         return $this->hasMany(MenuItem::class);
     }
+
+
+    // public function getImageUrlAttribute()
+    // {
+    //     if ($this->image) {
+    //         return url($this->image); // Assumes images are stored in the "storage/app/public" directory
+    //     }
+    //     return null; // Return null if no image is set
+    // }
 }

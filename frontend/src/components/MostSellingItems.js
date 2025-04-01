@@ -1,47 +1,39 @@
-'use client';
-import { useState } from 'react';
-import axios from '@/lib/axios';
-import useSWR from 'swr';
-import { LuShoppingCart } from 'react-icons/lu'; // You can choose the icon you want
-import MainButton from './MainButton';
+'use client'
+import axios from '@/lib/axios'
+import useSWR from 'swr'
+// import Image from 'next/image'
 
-// Axios fetcher function
 const fetcher = async (url) => {
-    try {
-      const response = await axios.get(url, { withCredentials: true });
-      return response.data.data || response.data;
-    } catch (error) {
-      console.error('Fetch Error:', error);
-      throw error;
-    }
-  };
+    const response = await axios.get(url, { withCredentials: true })
+    return response.data.data || response.data
+}
 
 const MostSellingItems = () => {
-    const { data: data, error, isLoading } = useSWR('/api/order-elements', fetcher);
+  const { data: data, error, isLoading } = useSWR('/api/order-elements', fetcher)
 
-  if (error) return <div>Error loading items</div>;
+  if (error) return <div>Error loading items</div>
 
   if (!data || isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
-  // Aggregate quantities by menu_item_id
-  const itemSales = {};
+  const itemSales = {}
   data.forEach((element) => {
-    const { menu_item_id, quantity, menu_item } = element;
+    const { menu_item_id, quantity, menu_item } = element
+    if (!menu_item) return
+
     if (!itemSales[menu_item_id]) {
-      itemSales[menu_item_id] = { ...menu_item, totalQuantity: 0 };
+      itemSales[menu_item_id] = { ...menu_item, totalQuantity: 0 }
     }
-    itemSales[menu_item_id].totalQuantity += quantity;
-  });
+    itemSales[menu_item_id].totalQuantity += quantity
+  })
 
-  // Sort items by total quantity sold
-  const sortedItems = Object.values(itemSales).sort((a, b) => b.totalQuantity - a.totalQuantity);
+  const sortedItems = Object.values(itemSales).sort((a, b) => b.totalQuantity - a.totalQuantity)
 
-  // Limit to 5 items
-  const limitedItems = sortedItems.slice(0, 5);
+  const limitedItems = sortedItems.slice(0, 5)
 
-  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+//   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
+  const baseURL = 'http://bonsai-marrakech.com/backend'
 
   return (
     <div className="flex flex-col w-1/3 bg-white p-4 rounded-lg shadow-md">
@@ -57,13 +49,23 @@ const MostSellingItems = () => {
             {limitedItems.map((item) => (
               <li key={item.id} className="border-t pt-4">
                 <div className="flex items-center gap-4">
-                  <img
-                    src={`${baseURL}/${item.image.replace(/^\/+/, '')}`}
-                    alt={item.name}
-                    className="w-16 h-16 object-cover rounded"
-                  />
+                  {item.image ? (
+                    <img
+                      src={item.image?.startsWith('http')
+                        ? item.image
+                        : `${baseURL}${item.image}`}
+                      alt={item.name || 'Unnamed Item'}
+                    //   width={50}
+                    //   height={50}
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-gray-200 flex items-center justify-center rounded">
+                      <span className="text-sm text-gray-500">No Image</span>
+                    </div>
+                  )}
                   <div className="flex-1">
-                    <h3 className="font-medium text-text">{item.name}</h3>
+                    <h3 className="font-medium text-text">{item.name || 'Unnamed Item'}</h3>
                     <div className="flex items-center gap-2 mt-2">
                       <p className="text-text">Sold: {item.totalQuantity}</p>
                     </div>
@@ -75,7 +77,7 @@ const MostSellingItems = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default MostSellingItems;
+export default MostSellingItems

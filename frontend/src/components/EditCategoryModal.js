@@ -1,105 +1,99 @@
-'use client';
-import { useState, useEffect } from 'react';
-import MainButton from './MainButton';
-import axios from '@/lib/axios';
-import { toast } from 'react-toastify';
+'use client'
+import { useState, useEffect } from 'react'
+import MainButton from './MainButton'
+import axios from '@/lib/axios'
+import { toast } from 'react-toastify'
+// import Image from 'next/image'
+import placeholder from '@/assets/svg/placeholder.svg'
 
 const EditCategoryModal = ({ categoryId, onClose }) => {
   const [formData, setFormData] = useState({
     name: '',
-    description: '',
     image: null
-  });
-  const [preview, setPreview] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  
+  })
+  const [preview, setPreview] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+
   useEffect(() => {
     const fetchCategory = async () => {
-      setIsLoading(true);
+      setIsLoading(true)
       try {
-        const response = await axios.get(`/api/categories/${categoryId}`);
-        // Updated to match the actual API response structure
-        const category = response.data.data.category;
-        
+        const response = await axios.get(`/api/categories/${categoryId}`)
+        const category = response.data.data
+
         setFormData({
           name: category.name || '',
-          description: category.description || '',
           image: null
-        });
-        
-        // Handle image preview
+        })
+
         if (category.image) {
-          // Check if image is a full URL or just a path
-          setPreview(category.image.startsWith('http')
-            ? category.image
-            : `${process.env.NEXT_PUBLIC_BACKEND_URL}/${category.image}`
-          );
+        //   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
+        //   const imageUrl = category.image.startsWith('http')
+        //     ? category.image
+        //     : `${baseURL}/${category.image.replace(/^\/+/, '')}`
+            setPreview(category.image)
         }
       } catch (error) {
-        console.error('Error fetching category:', error);
         toast.error(
-          error.response?.data?.message || 
-          error.response?.data?.error || 
+          error.response?.data?.message ||
+          error.response?.data?.error ||
           'Failed to load category details'
-        );
+        )
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
     if (categoryId) {
-      fetchCategory();
+      fetchCategory()
     }
-  }, [categoryId]);
+  }, [categoryId])
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    
+    const { name, value, files } = e.target
+
     if (files) {
-      const file = files[0];
-      setFormData(prev => ({ ...prev, [name]: file }));
-      
-      // Create preview URL for image
-      const reader = new FileReader();
+      const file = files[0]
+      setFormData(prev => ({ ...prev, [name]: file }))
+
+      const reader = new FileReader()
       reader.onloadend = () => {
-        setPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+        setPreview(reader.result)
+      }
+      reader.readAsDataURL(file)
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData(prev => ({ ...prev, [name]: value }))
     }
-  };
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSaving(true);
+    e.preventDefault()
+    setIsSaving(true)
 
-    const data = new FormData();
-    if (formData.name) data.append('name', formData.name);
-    if (formData.description) data.append('description', formData.description);
-    if (formData.image) data.append('image', formData.image);
+    const data = new FormData()
+    if (formData.name) data.append('name', formData.name)
+    if (formData.image) data.append('image', formData.image)
 
     try {
       const response = await axios.post(`/api/categories/${categoryId}`, data, {
-        headers: { 
+        headers: {
           'Content-Type': 'multipart/form-data',
-          'X-HTTP-Method-Override': 'PUT'
+          'X-HTTP-Method-Override': 'PATCH'
         }
-      });
+      })
 
       if (response.data.message) {
-        toast.success(response.data.message);
-        onClose(); // Close modal after successful update
-        window.location.reload(); // Refresh to show updated data
+        toast.success(response.data.message)
+        onClose()
+        window.location.reload()
       }
     } catch (error) {
-      console.error('Error updating category:', error);
-      toast.error(error.response?.data?.message || 'Failed to update category');
+      toast.error(error.response?.data?.message || 'Failed to update category')
     } finally {
-      setIsSaving(false);
+      setIsSaving(false)
     }
-  };
+  }
 
   if (isLoading) {
     return (
@@ -108,7 +102,7 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
           Loading category details...
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -120,9 +114,9 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
         >
           &times;
         </button>
-        
+
         <h2 className="text-lg font-semibold mb-4">Edit Category</h2>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -140,19 +134,6 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-              rows="3"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
               Category Image
             </label>
             <div className="flex items-center space-x-4">
@@ -161,10 +142,12 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
                   <img
                     src={preview}
                     alt="Item preview"
+                    // width={50}
+                    // height={50}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = 'https://placehold.co/600x400/orange/white';
+                      e.target.onerror = null
+                      e.target.src = placeholder
                     }}
                   />
                 </div>
@@ -199,7 +182,7 @@ const EditCategoryModal = ({ categoryId, onClose }) => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default EditCategoryModal;
+export default EditCategoryModal

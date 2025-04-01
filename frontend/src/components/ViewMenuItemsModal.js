@@ -1,9 +1,9 @@
-'use client';
-import { useState } from 'react';
-import AdminMenuItemCard from './AdminMenuItemCard';
-import useSWR, { mutate } from 'swr';
-import axios from '@/lib/axios';
-import EditMenuItemModal from './EditMenuItemModal';
+'use client'
+import { useState } from 'react'
+import AdminMenuItemCard from './AdminMenuItemCard'
+import useSWR, { mutate } from 'swr'
+import axios from '@/lib/axios'
+import EditMenuItemModal from './EditMenuItemModal'
 
 const Modal = ({ onClose, children }) => {
   return (
@@ -18,52 +18,47 @@ const Modal = ({ onClose, children }) => {
         {children}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
-  const [editingItemId, setEditingItemId] = useState(null);
+  const [editingItemId, setEditingItemId] = useState(null)
+  const [editingCategoryId, setEditingCategoryId] = useState(null)
 
-  // Fetch menu items using SWR
   const { data: items, error } = useSWR('/api/menu-items', (url) =>
     axios.get(url).then((res) => res.data.data)
-  );
+  )
 
-  const handleEdit = (itemId) => {
-    setEditingItemId(itemId);
-  };
-
-  const handleDelete = async (itemId) => {
-    // Optimistically update the UI
-    const updatedItems = items.filter((item) => item.id !== itemId);
-    mutate('/api/menu-items', updatedItems, false);
-  };
+    const handleEdit = ( categoryId, itemId) => {
+    setEditingItemId(itemId)
+    setEditingCategoryId(categoryId)
+  }
 
   const handleEditComplete = () => {
-    setEditingItemId(null);
-    mutate('/api/menu-items'); // Refresh the data
-  };
+    setEditingItemId(null)
+    setEditingCategoryId(null)
+    mutate('/api/menu-items')
+  }
 
   if (error) {
     return (
       <Modal onClose={onClose}>
         <div className="text-red-500">Failed to load items</div>
       </Modal>
-    );
+    )
   }
 
   if (!items) {
     return (
       <Modal onClose={onClose}>
         <div className="flex justify-center items-center h-40">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
         </div>
       </Modal>
-    );
+    )
   }
 
-  // Filter items based on categoryId
-  const categoryItems = items.filter((item) => item.category_id === categoryId);
+  const categoryItems = items.filter((item) => item.category_id === categoryId)
 
   return (
     <Modal onClose={onClose}>
@@ -85,7 +80,6 @@ const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
                   key={item.id}
                   {...item}
                   onEdit={handleEdit}
-                  onDelete={handleDelete}
                 />
               ))}
             </div>
@@ -96,12 +90,13 @@ const ViewMenuItemsModal = ({ categoryId, categoryName, onClose }) => {
       {editingItemId && (
         <EditMenuItemModal
           itemId={editingItemId}
+          categoryId={editingCategoryId}
           onClose={() => setEditingItemId(null)}
           onSuccess={handleEditComplete}
         />
       )}
     </Modal>
-  );
-};
+  )
+}
 
-export default ViewMenuItemsModal;
+export default ViewMenuItemsModal

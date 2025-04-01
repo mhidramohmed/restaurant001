@@ -1,27 +1,22 @@
-'use client';
-import { LuTrash2 } from "react-icons/lu";
-import { HiOutlinePlusSm } from "react-icons/hi";
-import { FaList } from "react-icons/fa";
-import { FiEdit } from "react-icons/fi";
-import { useState } from 'react';
-import MainButton from './MainButton';
-import AddMenuItemModal from './AddMenuItemModal';
-import ViewMenuItemsModal from './ViewMenuItemsModal';
-import ConfirmDeleteModal from './ConfirmDeleteModal';
-import EditCategoryModal from './EditCategoryModal';
+'use client'
+import { LuTrash2 } from "react-icons/lu"
+import { HiOutlinePlusSm } from "react-icons/hi"
+import { FaList } from "react-icons/fa"
+import { FiEdit } from "react-icons/fi"
+import { useState } from 'react'
+import MainButton from './MainButton'
+import AddMenuItemModal from './AddMenuItemModal'
+import ViewMenuItemsModal from './ViewMenuItemsModal'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
+import EditCategoryModal from './EditCategoryModal'
+// import Image from "next/image"
 
 const AdminCategoryCard = ({ id, name, image }) => {
-  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
-  const [showAddMenuModal, setShowAddMenuModal] = useState(false);
-  const [showViewMenuModal, setShowViewMenuModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [showAddMenuModal, setShowAddMenuModal] = useState(false)
+  const [showViewMenuModal, setShowViewMenuModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
 
-  const imageUrl = image?.startsWith('http')
-    ? image
-    : image.includes('CategoriesImages')
-        ? `${baseURL}/${image.replace(/^\/+/, '')}`
-        : `${baseURL}/CategoriesImages/${image.replace(/^\/+/, '')}`;
 
 
   return (
@@ -29,51 +24,54 @@ const AdminCategoryCard = ({ id, name, image }) => {
       <div className="flex flex-col items-center space-y-4 py-6 px-2 border border-primary rounded-lg shadow-lg bg-white transition-transform transform hover:scale-105">
         <div className="w-20 h-20 rounded-full overflow-hidden border border-secondary">
           <img
-            src={imageUrl}
+            src={image}
             alt={name}
+            // width={100}
+            // height={100}
             className="w-full h-full object-cover"
             onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = 'https://placehold.co/600x400/orange/white'; // Add a placeholder image
+              e.target.onerror = null
+              e.target.src = 'https://placehold.co/600x400/orange/white'
             }}
           />
         </div>
 
         <h3 className="text-lg font-semibold text-text text-center">{name}</h3>
 
-        <div className="flex justify-evenly w-full gap-2">
-          <MainButton
-            onClick={() => setShowAddMenuModal(true)}
-            className="bg-primary text-white p-2 rounded-full shadow hover:bg-primary/90 transition-colors"
-            title="Add Menu Item"
-          >
-            <HiOutlinePlusSm className="text-xl" />
-          </MainButton>
+        <div className="flex flex-wrap justify-center w-full gap-2">
+  <MainButton
+    onClick={() => setShowAddMenuModal(true)}
+    className="bg-primary text-white p-2 rounded-full shadow hover:bg-primary/90 transition-colors min-w-[40px]"
+    title="Add Menu Item"
+  >
+    <HiOutlinePlusSm className="text-xl" />
+  </MainButton>
 
-          <MainButton
-            onClick={() => setShowViewMenuModal(true)}
-            className="bg-secondary text-white p-2 rounded-full shadow hover:bg-secondary/90 transition-colors"
-            title="View Menu Items"
-          >
-            <FaList className="text-xl" />
-          </MainButton>
+  <MainButton
+    onClick={() => setShowViewMenuModal(true)}
+    className="bg-secondary text-white p-2 rounded-full shadow hover:bg-secondary/90 transition-colors min-w-[40px]"
+    title="View Menu Items"
+  >
+    <FaList className="text-xl" />
+  </MainButton>
 
-          <MainButton
-            onClick={() => setShowEditModal(true)}
-            className="bg-gray-500 text-white p-2 rounded-full shadow hover:bg-gray-600 transition-colors"
-            title="Edit Category"
-          >
-            <FiEdit className="text-xl" />
-          </MainButton>
+  <MainButton
+    onClick={() => setShowEditModal(true)}
+    className="bg-gray-500 text-white p-2 rounded-full shadow hover:bg-gray-600 transition-colors min-w-[40px]"
+    title="Edit Category"
+  >
+    <FiEdit className="text-xl" />
+  </MainButton>
 
-          <MainButton
-            onClick={() => setShowDeleteModal(true)}
-            className="bg-red-500 text-white p-2 rounded-full shadow hover:bg-red-600 transition-colors"
-            title="Delete Category"
-          >
-            <LuTrash2 className="text-xl" />
-          </MainButton>
-        </div>
+  <MainButton
+    onClick={() => setShowDeleteModal(true)}
+    className="bg-red-500 text-white p-2 rounded-full shadow hover:bg-red-600 transition-colors min-w-[40px]"
+    title="Delete Category"
+  >
+    <LuTrash2 className="text-xl" />
+  </MainButton>
+</div>
+
       </div>
 
       {showAddMenuModal && (
@@ -104,7 +102,7 @@ const AdminCategoryCard = ({ id, name, image }) => {
         />
       )}
     </>
-  );
-};
+  )
+}
 
-export default AdminCategoryCard;
+export default AdminCategoryCard

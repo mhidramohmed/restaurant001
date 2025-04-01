@@ -1,47 +1,44 @@
-'use client';
+'use client'
 
-import useSWR from 'swr';
-import axios from '@/lib/axios';
-import { LuShoppingCart } from 'react-icons/lu';
-import { MdAttachMoney } from 'react-icons/md';
-import { AiOutlineLoading } from 'react-icons/ai';
-import { IoWarningOutline } from 'react-icons/io5';
+import useSWR from 'swr'
+import axios from '@/lib/axios'
+import { LuShoppingCart } from 'react-icons/lu'
+import { MdAttachMoney } from 'react-icons/md'
+import { AiOutlineLoading } from 'react-icons/ai'
+import { IoWarningOutline } from 'react-icons/io5'
 
-import MostSellingItems from '@/components/MostSellingItems';
+import MostSellingItems from '@/components/MostSellingItems'
 
 const fetcher = async (url) => {
-  try {
-    const response = await axios.get(url, { withCredentials: true });
-    return response.data.data || response.data;
-  } catch (error) {
-    console.error('Fetch Error:', error);
-    throw error;
-  }
-};
+    const response = await axios.get(url, { withCredentials: true })
+    return response.data.data || response.data
+}
 
 const Dashboard = () => {
-  const { data: orders, error, isLoading } = useSWR('/api/orders', fetcher);
+  const { data: orders, error, isLoading } = useSWR('/api/orders', fetcher)
   // const { data: mostSellingProducts, error: productsError, isLoading: isLoadingProducts } = useSWR('/api/most-selling-products', fetcher);
 
   const calculateStats = (orders = []) => {
-    let totalOrders = 0;
-    let totalProfit = 0;
-    let declinedOrders = 0;
+    let totalOrders = 0
+    let totalProfit = 0
+    let declinedOrders = 0
 
     orders.forEach((order) => {
-      totalOrders += 1;
-      totalProfit += parseFloat(order.total_price);
-      if (order.status === 'declined') {
-        declinedOrders += 1;
+      totalOrders += 1
+      if (order.payment_status === 'paid') {
+        totalProfit += parseFloat(order.total_price)
       }
-    });
+      if (order.order_status === 'declined') {
+        declinedOrders += 1
+      }
+    })
 
-    return { totalOrders, totalProfit, declinedOrders };
-  };
+    return { totalOrders, totalProfit, declinedOrders }
+  }
 
   const stats = orders
     ? calculateStats(orders)
-    : { totalOrders: 0, totalProfit: 0, declinedOrders: 0 };
+    : { totalOrders: 0, totalProfit: 0, declinedOrders: 0 }
 
   if (isLoading) {
     return (
@@ -49,7 +46,7 @@ const Dashboard = () => {
         <AiOutlineLoading className="animate-spin text-3xl mx-auto" />
         <p>Loading...</p>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -57,7 +54,7 @@ const Dashboard = () => {
       <div className="text-center text-red-500">
         <p>Error loading data.</p>
       </div>
-    );
+    )
   }
 
   return (
@@ -115,7 +112,7 @@ const Dashboard = () => {
       <tbody>
         {/* Sort by timestamp descending and slice top 5 */}
         {orders
-          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) // Ensure latest first
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) 
           .slice(0, 10)
           .map((order) => (
             <tr key={order.id} className="hover:bg-gray-100">
@@ -139,7 +136,7 @@ const Dashboard = () => {
         <MostSellingItems />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

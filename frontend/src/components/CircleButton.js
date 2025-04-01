@@ -1,4 +1,4 @@
-const CircleButton = ({ body, icon, href }) => (
+const CircleButton = ({ icon, href }) => (
   <div className="relative group">
     <a href={href} target="_blank" rel="noopener noreferrer">
       {/* Button size is smaller on small devices and normal on medium+ */}
@@ -17,6 +17,6 @@ const CircleButton = ({ body, icon, href }) => (
       </a>
     )} */}
   </div>
-);
+)
 
-export default CircleButton;
+export default CircleButton

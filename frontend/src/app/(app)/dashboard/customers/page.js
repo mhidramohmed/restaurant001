@@ -1,27 +1,22 @@
-'use client';
+'use client'
 
-import useSWR from 'swr';
-import axios from '@/lib/axios';
+import useSWR from 'swr'
+import axios from '@/lib/axios'
 
 const fetcher = async (url) => {
-  try {
-    const response = await axios.get(url, { withCredentials: true });
-    return response.data.data || response.data;
-  } catch (error) {
-    console.error('Fetch Error:', error);
-    throw error;
-  }
-};
+    const response = await axios.get(url, { withCredentials: true })
+    return response.data.data || response.data
+}
 
 const CustomersPage = () => {
-  const { data: orders, error, isLoading } = useSWR('/api/orders', fetcher);
+  const { data: orders, error, isLoading } = useSWR('/api/orders', fetcher)
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-6">
         <p>Loading...</p>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -29,7 +24,7 @@ const CustomersPage = () => {
       <div className="flex items-center justify-center p-6">
         <p>Error loading customer data.</p>
       </div>
-    );
+    )
   }
 
   if (!orders || orders.length === 0) {
@@ -37,12 +32,11 @@ const CustomersPage = () => {
       <div className="flex items-center justify-center p-6">
         <p>No orders available.</p>
       </div>
-    );
+    )
   }
 
-  // Group orders by customer phone number
   const groupedOrders = orders.reduce((acc, order) => {
-    const phone = order.client_phone;
+    const phone = order.client_phone
     if (!acc[phone]) {
       acc[phone] = {
         client_name: order.client_name,
@@ -51,14 +45,14 @@ const CustomersPage = () => {
         client_email: order.client_email,
         total_spent: 0,
         orders: [],
-      };
+      }
     }
-    acc[phone].total_spent += parseFloat(order.total_price);
-    acc[phone].orders.push(order);
-    return acc;
-  }, {});
+    acc[phone].total_spent += parseFloat(order.total_price)
+    acc[phone].orders.push(order)
+    return acc
+  }, {})
 
-  const customers = Object.values(groupedOrders);
+  const customers = Object.values(groupedOrders)
 
   return (
     <div className="p-6">
@@ -102,7 +96,7 @@ const CustomersPage = () => {
         </table>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CustomersPage;
+export default CustomersPage

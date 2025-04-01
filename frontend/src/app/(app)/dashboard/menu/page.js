@@ -1,30 +1,29 @@
-"use client";
-import { useState } from 'react';
-import MainButton from '@/components/MainButton';
-import useSWR from 'swr';
-import axios from '@/lib/axios';
-import AdminCategoryCard from '@/components/AdminCategoryCard';
-import AddCategoryModal from '@/components/addCategoryModal';
-import { toast } from 'react-toastify';
+"use client"
+import { useState } from 'react'
+import MainButton from '@/components/MainButton'
+import useSWR from 'swr'
+import axios from '@/lib/axios'
+import AdminCategoryCard from '@/components/AdminCategoryCard'
+import AddCategoryModal from '@/components/AddCategoryModal'
+import { toast } from 'react-toastify'
 
-const fetcher = (url) => axios.get(url).then((res) => res.data.data);
+const fetcher = (url) => axios.get(url).then((res) => res.data.data)
 
 const CategoryBar = () => {
-  const { data: categories, error, mutate } = useSWR('/api/categories', fetcher);
-  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+  const { data: categories, error, mutate } = useSWR('/api/categories', fetcher)
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false)
 
   if (error) {
-    toast.error('Failed to load categories');
-    return <div>Failed to load categories</div>;
+    toast.error('Failed to load categories')
+    return <div>Failed to load categories</div>
   }
-  
-  if (!categories) return <div>Loading...</div>;
+
+  if (!categories) return <div>Loading...</div>
 
   const handleCategoryAddSuccess = () => {
-    // toast.success('Category added successfully!');
-    setShowAddCategoryModal(false);
-    mutate(); // Refresh categories
-  };
+    setShowAddCategoryModal(false)
+    mutate()
+  }
 
   return (
     <div>
@@ -56,7 +55,7 @@ const CategoryBar = () => {
         />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default CategoryBar;
+export default CategoryBar

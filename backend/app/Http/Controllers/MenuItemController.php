@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MenuItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\MenuItemResource;
 
 class MenuItemController extends Controller
@@ -14,7 +15,8 @@ class MenuItemController extends Controller
     public function index()
     {
         try {
-            $menuItem = MenuItem::all();
+            // $menuItem = MenuItem::all();
+            $menuItem = MenuItem::with('category','discount')->get();
 
             return response()->json([
                 'data' => MenuItemResource::collection($menuItem),
@@ -46,41 +48,28 @@ class MenuItemController extends Controller
                         // return ($data);
 
 
-            if($request->hasFile('image')){
+            if ($request->has('image')) {
+                // Define the folder path relative to the public storage
+                $path = 'public/images/MenuItemsImages/';
 
-                $destinationPath = 'MenuItemsImages/';
+                Storage::makeDirectory($path);
+                // Generate a unique file name
+                $profileImage = date('YmdHis') . "_" . $request->image->getClientOriginalName();
 
-                $imageName = date('YmdHis') . "." . $request->image->getClientOriginalExtension();
-                $request->image->move($destinationPath, $imageName);
+                // Store the file in the public disk
+                Storage::putFileAs(strtolower($path), $request->image, $profileImage);
 
-                // Store just the filename in the database
-                $data['image'] ="/".$destinationPath.$imageName;
+                // Generate a public URL for the stored file
+                $data['image'] = '/MenuItemsImages/'. $profileImage;
             }
 
-
-            // if ( $request->has('image')) {
-
-            //     $destinationPath = 'MenuItemsImages/';
-
-            //     $profileImage = date('YmdHis') . "." . $request->image->getClientOriginalName();
-
-            //     $request->image->move($destinationPath, $profileImage);
-
-            //     $data['image'] = '/'.$destinationPath.$profileImage;
-            // }
-
-            // return ($data);
-
-
-            MenuItem::create($data);
-
-            // Transform the image path for the response
-            // $menuItem->image = url('MenuItemsImages/' . $menuItem->image);
+            $menuItem=MenuItem::create($data);
 
             return response()->json([
-                'status' => true,
-                'message' => "The menu item has been created successfully",
-                'data' => $data
+                'data'=> new MenuItemResource($menuItem),
+
+                'messsage'=>"MenuItem has been create successfully  "
+
             ], 201);
 
         } catch (Exception $e) {
@@ -96,26 +85,33 @@ class MenuItemController extends Controller
      */
     public function show($id)
     {
+        // dd('hhh');
         try {
+        // dd('hhh');
 
             $menuItem = MenuItem::findOrFail($id);
 
             // return ($id);
 
-            // return ($menuItem);
+            // dd ($menuItem);
 
             if(!$menuItem){
                 return response()->json([
                     'message' => "Your MenuItem  doesn't exist"
-                ], 404);
+                ], 200);
             }
 
             // return ('hhhh');
 
-            if($menuItem){
+
                 return response()->json([
+<<<<<<< HEAD
                     'data' => $menuItem
                 ], 200);}
+=======
+                    'data' =>new  MenuItemResource($menuItem)
+                ], 200);
+>>>>>>> a229d2f2cdf62430b052bc53cde95a32d092e440
 
         } catch (\Throwable $th) {
 
@@ -138,13 +134,13 @@ class MenuItemController extends Controller
                 return response()->json([
                     'status' => false,
                     'message'=>"Your MenuItem doen't exist "
-                ], 404);
+                ], 200);
 
             }else{
 
             $data = $request->validate([
                 'name' => 'sometimes|string',
-                'description' => 'sometimes|string',
+                'description' => 'sometimes|string|nullable',
                 'price' => 'sometimes|numeric',
                 'image'=> 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'category_id' => 'sometimes|exists:categories,id',
@@ -184,27 +180,32 @@ class MenuItemController extends Controller
     public function destroy( $id)
     {
         try {
-                        $menuItem = MenuItem::find($id);
-// return($menuItem);
-
+            $menuItem = MenuItem::find($id);
             if(!$menuItem){
 
-                return response()->json([
-                    'status' => false,
-                    'message'=>"Your MenuItem doen't exist "
-                ], 404);
+            return response()->json([
+                'status' => false,
+                'message'=>"Your MenuItem doen't exist "
+            ], 200);
 
             }else{
 
-                unlink(public_path().'/'.$menuItem->image);
+            // unlink(public_path().'/'.$menuItem->image);
 
 
             $menuItem->delete();
 
+<<<<<<< HEAD
                 return response()->json([
                     'status' => true,
                     'message'=>"Your MenuItem has been delete successfully "
                 ], 200);
+=======
+            return response()->json([
+                'status' => true,
+                'message'=>"Your MenuItem has been deleted successfully "
+            ], 200);
+>>>>>>> a229d2f2cdf62430b052bc53cde95a32d092e440
 
 
             }
@@ -213,4 +214,72 @@ class MenuItemController extends Controller
             return response()->json(['error' => 'Failed to update manu_ithem'], 500);
         }
     }
+
+
+
+    public function getDeletedMenuItems()
+{
+    \Log::info('Attempting to retrieve deleted menu items');
+
+    try {
+        $menuItems = MenuItem::with('category')->onlyTrashed()->get();
+
+
+        return response()->json([
+            'data' => MenuItemResource::collection($menuItems),
+            'message' => 'u get the data'
+        ], 200);
+    } catch (\Exception $e) {
+        \Log::error('Error in getDeletedMenuItems: ' . $e->getMessage());
+
+        return response()->json([
+            'error' => 'Failed to retrieve deleted menu items',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
+
+public function restoreMenuItem($id)
+{
+    $MenuItem = MenuItem::onlyTrashed()->find($id);
+
+    if (!$MenuItem) {
+        return response()->json(['error' => 'MenuItem not found or already restored'], 404);
+    }
+
+    $MenuItem->restore();
+
+    return response()->json(['message' => 'Your MenuItem has been restored successfully'], 200);
+}
+
+public function permanentlyDeleteMenuItem($id)
+{
+    try {
+        $menuItem = MenuItem::onlyTrashed()->find($id);
+
+        if (!$menuItem) {
+            return response()->json(['error' => 'Trashed menu item not found'], 404);
+        }
+
+        // If you need to delete the associated image file
+        if ($menuItem->image && file_exists(public_path().'/'.$menuItem->image)) {
+            unlink(public_path().'/'.$menuItem->image);
+        }
+
+        // Permanently delete the record
+        $menuItem->forceDelete();
+
+        return response()->json([
+            'message' => 'Menu item permanently deleted successfully'
+        ], 200);
+    } catch (\Exception $e) {
+        \Log::error('Error in permanentlyDeleteMenuItem: ' . $e->getMessage());
+
+        return response()->json([
+            'error' => 'Failed to permanently delete menu item',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
+
 }

@@ -4,21 +4,17 @@ namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'client_name',
-        'client_email',
-        'client_phone',
-        'client_address',
-        'total_price',
-        'payment_method',
-        'status'
-    ];
+    use SoftDeletes;
+
+
+    protected $fillable = ['client_name','client_email','client_phone','client_address','total_price','payment_method','status','order_status','payment_status','stripe_session_id'];
 
     // An Order has many OrderElements
     public function orderElements()

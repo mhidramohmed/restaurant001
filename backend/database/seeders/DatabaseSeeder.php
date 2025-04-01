@@ -19,17 +19,24 @@ class DatabaseSeeder extends Seeder
 
         \App\Models\User::factory()->create([
             'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'password' => bcrypt('adminpassword'),
+            'email' => 'Admin@bonsai-marrakech.com',
+            'password' => bcrypt('Admin@bonsai11'),
             'role' => 'admin',
             'remember_token' => Str::random(10)
 
         ]);
 
+//         Admin : Admin@bonsai-marrakech.com
+// Password : Admin@bonsai11
+
+
+// Restaurant@bonsai-marrakech.com
+// Password : Bonsai@22restaurant
+
         \App\Models\User::factory()->create([
             'name' => 'User',
-            'email' => 'user@example.com',
-            'password' => bcrypt('userpassword'),
+            'email' => 'Restaurant@bonsai-marrakech.com',
+            'password' => bcrypt('Bonsai@22restaurant'),
             'role' => 'user',
             'remember_token' => Str::random(10)
 

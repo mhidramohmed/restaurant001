@@ -4,13 +4,17 @@ namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OrderElement extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['order_id', 'menu_item_id', 'quantity', 'price'];
+    use SoftDeletes;
+
+
+    protected $fillable = ['order_id', 'menu_item_id', 'name', 'quantity', 'price'];
 
     // An OrderElement belongs to an Order
     public function order()
@@ -35,5 +39,5 @@ class OrderElement extends Model
     }
 
 
-    
+
 }

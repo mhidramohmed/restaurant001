@@ -1,8 +1,8 @@
-'use client';
-import { useState } from 'react';
-import MainButton from './MainButton';
-import axios from '@/lib/axios';
-import { toast } from 'react-toastify';
+'use client'
+import { useState } from 'react'
+import MainButton from './MainButton'
+import axios from '@/lib/axios'
+import { toast } from 'react-toastify'
 
 const Modal = ({ onClose, children }) => {
   return (
@@ -17,52 +17,52 @@ const Modal = ({ onClose, children }) => {
         {children}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const AddCategoryModal = ({ onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     name: '',
     image: null,
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    const newValue = files ? files[0] : value;
+    const { name, value, files } = e.target
+    const newValue = files ? files[0] : value
     
     setFormData((prevData) => ({
       ...prevData,
       [name]: newValue,
-    }));
-  };
+    }))
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     
-    if (isSubmitting) return;
-    setIsSubmitting(true);
+    if (isSubmitting) return
+    setIsSubmitting(true)
     
     
-    const data = new FormData();
-    data.append('name', formData.name);
+    const data = new FormData()
+    data.append('name', formData.name)
     if (formData.image) {
-      data.append('image', formData.image);
+      data.append('image', formData.image)
     }
 
     try {
-      const response = await axios.post('/api/categories', data, {
+      await axios.post('/api/categories', data, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
-      });
+      })
       
-      onSuccess();
+      onSuccess()
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to add category');
+      toast.error(error.response?.data?.message || 'Failed to add category')
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
     <Modal onClose={onClose}>
@@ -108,7 +108,7 @@ const AddCategoryModal = ({ onClose, onSuccess }) => {
         </div>
       </form>
     </Modal>
-  );
-};
+  )
+}
 
-export default AddCategoryModal;
+export default AddCategoryModal

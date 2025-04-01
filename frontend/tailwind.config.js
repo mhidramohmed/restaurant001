@@ -8,15 +8,15 @@ module.exports = {
                 light: '#b37347',     // lighter shade
                 dark: '#7a4621'       // darker shade
             },
-            secondary: '#fcf0d2',     // secondary color
-            background: '#ffffff',   // background color 
+            secondary: '#faedcd',     // secondary color
+            background: '#ffffff',   // background color
             text: {
                 DEFAULT: '#432818',   // primary text color
                 light: '#6b5641'      // lighter text shade
             }
             },
         },
-    
+
     },
     plugins: [require('@tailwindcss/forms')],
 }

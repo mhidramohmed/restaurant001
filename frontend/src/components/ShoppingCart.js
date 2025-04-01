@@ -1,24 +1,26 @@
-'use client';
-import { useState } from 'react';
-import MainButton from './MainButton';
-import CheckoutForm from './CheckoutForm';
-import { LuShoppingCart, LuTrash2 } from "react-icons/lu";
-import { IoClose } from "react-icons/io5";
-import { useCart } from '@/contexts/CartContext';
-import { toast } from 'react-toastify'; // Import toast
+'use client'
+// import Image from 'next/image'
+import { useState } from 'react'
+import MainButton from './MainButton'
+import CheckoutForm from './CheckoutForm'
+import { LuShoppingCart, LuTrash2 } from "react-icons/lu"
+import { IoClose } from "react-icons/io5"
+import { useCart } from '@/contexts/CartContext'
 
 const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
-  const { items, removeItem, updateQuantity, getTotal, clearCart } = useCart(); // Add clearCart
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const { items, removeItem, updateQuantity, getTotal, clearCart } = useCart()
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
 
-  const handleOrderSuccess = () => {
-    toast.success('Commande passée avec succès!', { position: 'top-right' }); // Success toast
-    clearCart(); // Clear cart items
-    setIsCheckoutOpen(false); // Close modal
-    setIsCartVisible(false); // Close cart
-  };
+  const handleOrderSuccess = (paymentMethod) => {
+    // Clear cart on successful checkout only when the payment method is cash
+    if (paymentMethod === 'cash') {
+      clearCart() 
+    }
+    setIsCheckoutOpen(false)
+    setIsCartVisible(false)
+  }
 
-  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+//   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
 
   return (
     <div className="flex flex-col h-full">
@@ -48,8 +50,10 @@ const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
               <li key={item.id} className="border-b pb-4">
                 <div className="flex items-center gap-4">
                   <img
-                    src={`${baseURL}/${item.image.replace(/^\/+/, '')}`}
+                    src={item.image}
                     alt={item.name}
+                    // width={100}
+                    // height={100}
                     className="w-16 h-16 object-cover rounded"
                   />
                   <div className="flex-1">
@@ -87,6 +91,10 @@ const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
       {/* Total Price and Checkout */}
       <div className="border-t pt-4 mt-auto">
         <div className="flex justify-between my-2 text-text text-lg font-bold">
+          <p>Frais de Livraison</p>
+          <p className="text-xl">15.00 Dhs</p>
+        </div>
+        <div className="flex justify-between my-2 text-text text-lg font-bold">
           <p>Total</p>
           <p className="text-xl">{getTotal()} Dhs</p>
         </div>
@@ -98,17 +106,18 @@ const ShoppingCart = ({ isCartVisible, setIsCartVisible }) => {
         </MainButton>
       </div>
 
+
       {/* Checkout Form */}
       {isCheckoutOpen && (
         <CheckoutForm
           onClose={() => setIsCheckoutOpen(false)}
-          onSuccess={handleOrderSuccess} // Triggered on success
+          onSuccess={(paymentMethod) => handleOrderSuccess(paymentMethod)} // Pass paymentMethod
           cartItems={items}
           totalPrice={getTotal()}
         />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ShoppingCart;
+export default ShoppingCart
