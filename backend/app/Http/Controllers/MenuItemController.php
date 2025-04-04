@@ -6,6 +6,7 @@ use App\Models\MenuItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\MenuItemResource;
+use Illuminate\Support\Str;
 
 class MenuItemController extends Controller
 {
@@ -45,7 +46,7 @@ class MenuItemController extends Controller
                 'category_id' => 'required|exists:categories,id',
             ]);
 
-                        // return ($data);
+                    ;
 
 
             if ($request->has('image')) {
@@ -54,7 +55,13 @@ class MenuItemController extends Controller
 
                 Storage::makeDirectory($path);
                 // Generate a unique file name
-                $profileImage = date('YmdHis') . "_" . $request->image->getClientOriginalName();
+                // Get original name and sanitize it
+                $originalName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
+                $extension = $request->image->getClientOriginalExtension();
+
+                // Generate a clean file name
+                $sanitizedFileName = Str::slug($originalName) . '.' . $extension;
+                $profileImage = date('YmdHis') . "_" . $sanitizedFileName;
 
                 // Store the file in the public disk
                 Storage::putFileAs(strtolower($path), $request->image, $profileImage);
@@ -141,21 +148,26 @@ class MenuItemController extends Controller
                 'category_id' => 'sometimes|exists:categories,id',
             ]);
 
-                if($request->has('image')){
+                if ($request->has('image')) {
+                // Define the folder path relative to the public storage
+                $path = 'public/images/MenuItemsImages/';
 
+                Storage::makeDirectory($path);
+                // Generate a unique file name
+                // Get original name and sanitize it
+                $originalName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
+                $extension = $request->image->getClientOriginalExtension();
 
-                    unlink(public_path().'/'.$menuItem->image);
+                // Generate a clean file name
+                $sanitizedFileName = Str::slug($originalName) . '.' . $extension;
+                $profileImage = date('YmdHis') . "_" . $sanitizedFileName;
 
+                // Store the file in the public disk
+                Storage::putFileAs(strtolower($path), $request->image, $profileImage);
 
-                    $destinationPath = 'MenuItemsImages/';
-
-                    $profileImage = date('YmdHis') . "." . $request->image->getClientOriginalName();
-
-                    $request->image->move($destinationPath, $profileImage);
-
-                    $data['image'] = '/'.$destinationPath.$profileImage;
-
-                }
+                // Generate a public URL for the stored file
+                $data['image'] = '/MenuItemsImages/'. $profileImage;
+            }
 
                 $menuItem->update($data);
 

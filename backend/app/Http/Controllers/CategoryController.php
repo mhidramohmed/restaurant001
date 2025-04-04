@@ -121,21 +121,26 @@ class CategoryController extends Controller
             ]);
 
 
-            if($request->hasFile('image')){
+            
 
-                if(!$category->image){
+            if ($request->has('image')) {
+                // Define the folder path relative to the public storage
 
-                }
+                $path = 'public/images/CategoriesImages/';
 
-                unlink(public_path().'/'.$category->image);
+                Storage::makeDirectory($path);
 
-                $destinationPath = 'CategoriesImages/';
 
-                $profileImage = date('YmdHis') . "." . $request->image->getClientOriginalName();
+                // Generate a unique file name
+                $profileImage = date('YmdHis') . "_" . $request->image->getClientOriginalName();
 
-                $request->image->move($destinationPath, $profileImage);
+                Storage::putFileAs(strtolower($path), $request->image, $profileImage);
 
-                $data['image'] = '/'.$destinationPath.$profileImage;
+
+
+
+                // Generate a public URL for the stored file
+                $data['image'] = '/CategoriesImages/'. $profileImage;
             }
 
 
@@ -200,7 +205,7 @@ class CategoryController extends Controller
 {
     // Permanently delete a soft-deleted category
     $category = Category::onlyTrashed()->findOrFail($id);
-    
+
     // Delete the image file if it exists
     if ($category->image) {
         $imagePath = public_path() . '/' . $category->image;
@@ -208,7 +213,7 @@ class CategoryController extends Controller
             unlink($imagePath);
         }
     }
-    
+
     // Force delete the category
     $category->forceDelete();
 
