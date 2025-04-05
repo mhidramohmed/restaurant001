@@ -36,7 +36,13 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
         }
     
         if (name === 'client_phone') {
-            const phoneRegex = /^(06|07|05)[0-9]{8}$/
+            // New international phone regex
+            // Accepts:
+            // - Optional plus sign at the beginning
+            // - Optional country code (1-3 digits)
+            // - Main phone number (at least 6 digits)
+            // - Total length between 7 and 15 digits
+            const phoneRegex = /^(\+?\d{1,3})?[ -]?\d{6,14}$/
             errorMsg = phoneRegex.test(value) ? '' : 'Numéro de téléphone invalide'
         }
     
