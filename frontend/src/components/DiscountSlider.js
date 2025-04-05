@@ -7,7 +7,6 @@ import "swiper/css"
 import "swiper/css/pagination"
 import "swiper/css/autoplay"
 
-import MenuItemModal from "./MenuItemModal"
 import Card from "./Card"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { LuX } from "react-icons/lu"
@@ -152,7 +151,7 @@ const DiscountSlider = () => {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {selectedDiscount.menuItems.map((item) => {
-                      const discountedPrice = (item.price * (1 - selectedDiscount.discount_percentage / 100)).toFixed(2);
+                      const discountedPrice = (item.price * (1 - selectedDiscount.discount_percentage / 100)).toFixed(2)
                       const itemWithDiscount = {
                         ...item,
                         discount: {
@@ -162,7 +161,7 @@ const DiscountSlider = () => {
                           expires_at: selectedDiscount.expires_at || null, // Pass if available
                           is_active: selectedDiscount.is_active || true // Pass if available, default to true
                         }
-                      };
+                      }
                       
                       return (
                         <Card
@@ -173,7 +172,7 @@ const DiscountSlider = () => {
                           price={item.price}
                           discount={itemWithDiscount.discount}
                         />
-                      );
+                      )
                     })}
                   </div>
                 </>
