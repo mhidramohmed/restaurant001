@@ -7,6 +7,7 @@ use App\Models\MenuItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\DiscountResource;
+use Illuminate\Support\Str;
 
 class DiscountController extends Controller
 {
