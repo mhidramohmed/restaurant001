@@ -55,9 +55,11 @@ const Card = ({ image, name, price, id, discount, onDetails }) => {
             <MainButton onClick={handleAddToCart} className="bg-primary text-white">
               <LuShoppingCart />
             </MainButton>
-            <MainButton onClick={onDetails} className="bg-secondary text-text">
+            {onDetails ? ( <MainButton onClick={onDetails} className="bg-secondary text-text">
               <FiEye className="text-xl" />
-            </MainButton>
+            </MainButton>) : null}
+          
+           
           </div>
         </div>
       </div>
