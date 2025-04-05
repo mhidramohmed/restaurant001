@@ -50,8 +50,13 @@ class DiscountController extends Controller
 
                 Storage::makeDirectory($path);
 
-                // Generate a unique file name
-                $profileImage = date('YmdHis') . "_" . $request->file('image')->getClientOriginalName();
+                // Get original name and sanitize it
+                $originalName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
+                $extension = $request->image->getClientOriginalExtension();
+
+                // Generate a clean file name
+                $sanitizedFileName = Str::slug($originalName) . '.' . $extension;
+                $profileImage = date('YmdHis') . "_" . $sanitizedFileName;
 
                 Storage::putFileAs(strtolower($path), $request->file('image'), $profileImage);
 
@@ -134,8 +139,13 @@ class DiscountController extends Controller
                     Storage::delete('public/images' . $discount->image);
                 }
 
-                // Generate a unique file name
-                $profileImage = date('YmdHis') . "_" . $request->file('image')->getClientOriginalName();
+                // Get original name and sanitize it
+                $originalName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
+                $extension = $request->image->getClientOriginalExtension();
+
+                // Generate a clean file name
+                $sanitizedFileName = Str::slug($originalName) . '.' . $extension;
+                $profileImage = date('YmdHis') . "_" . $sanitizedFileName;
 
                 // Store the new image
                 Storage::putFileAs(strtolower($path), $request->file('image'), $profileImage);
