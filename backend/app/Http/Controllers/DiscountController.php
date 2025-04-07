@@ -33,8 +33,10 @@ class DiscountController extends Controller
     public function store(Request $request)
     {
         try {
+
+
+
             $validated = $request->validate([
-                // 'menu_item_id' => 'required|exists:menu_items,id',
                 'image' => 'nullable|file|image',
                 'discount_percentage' => 'required|numeric',
                 'expires_at' => 'nullable|date',
@@ -47,22 +49,32 @@ class DiscountController extends Controller
 
             if ($request->hasFile('image')) {
                 // Define the folder path relative to the public storage
-                $path = 'DiscountImages/';
+                // $path = 'DiscountImages/';
 
-                storage_path('app/public/images', $path);
+                // $urlpath =storage_path('app/public/images', $path);
 
-                // Get original name and sanitize it
-                $originalName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
-                $extension = $request->image->getClientOriginalExtension();
+                // // Get original name and sanitize it
+                // $originalName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
+                // $extension = $request->image->getClientOriginalExtension();
 
-                // Generate a clean file name
-                $sanitizedFileName = Str::slug($originalName) . '.' . $extension;
-                $profileImage = date('YmdHis') . "_" . $sanitizedFileName;
+                // // Generate a clean file name
+                // $sanitizedFileName = Str::slug($originalName) . '.' . $extension;
+                // $profileImage = date('YmdHis') . "_" . $sanitizedFileName;
 
-                Storage::putFileAs(strtolower($path), $request->file('image'), $profileImage);
+                // Storage::putFileAs(strtolower($path), $request->file('image'), $profileImage);
+
+                $filename = date('YmdHis') . '_' . Str::slug(pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $request->image->getClientOriginalExtension();
+
+
+                $request->file('image')->storeAs('public/images/DiscountImages', $filename);
+
+                // Store the file in the public disk
+                // Storage::putFileAs(strtolower($path), $request->image, $profileImage);
+
+                // dd($filename);
 
                 // Generate a public URL for the stored file
-                $data['image'] = '/DiscountImages/'. $profileImage;
+                $data['image'] = '/DiscountImages/'. $filename;
             }
 
             $discount = Discount::create($data);
