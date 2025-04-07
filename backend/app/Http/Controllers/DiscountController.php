@@ -47,9 +47,9 @@ class DiscountController extends Controller
 
             if ($request->hasFile('image')) {
                 // Define the folder path relative to the public storage
-                $path = 'public/images/DiscountImages/';
+                $path = 'DiscountImages/';
 
-                Storage::makeDirectory($path);
+                storage_path('app/public/images', $path);
 
                 // Get original name and sanitize it
                 $originalName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
