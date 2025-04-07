@@ -71,28 +71,35 @@ const OrderDetailsModal = ({ order, onClose, mutate, open = true }) => {
 
   const sendWhatsAppMessage = () => {
     let clientPhone = order.client_phone.trim() // Remove spaces
-  
-    // Ensure the number is in international format
-    if (clientPhone.startsWith('0')) {
+    
+    // Check if the phone number already has a country code
+    if (clientPhone.startsWith('+')) {
+      // Already has international format with + sign, leave it as is
+    } else if (clientPhone.startsWith('00')) {
+      // Convert 00 international format to + format
+      clientPhone = '+' + clientPhone.substring(2)
+    } else if (clientPhone.startsWith('0')) {
+      // Assume Moroccan number if it starts with 0
       clientPhone = '+212' + clientPhone.substring(1)
-    } else if (!clientPhone.startsWith('+')) {
-      clientPhone = '+212' + clientPhone // Default to Morocco if no country code is provided
+    } else {
+      // If no country code and doesn't start with 0, assume it's already a Moroccan number without the leading 0
+      clientPhone = '+212' + clientPhone
     }
   
     const isPaid = order.payment_method.toLowerCase() === 'visa' && order.payment_status === 'paid'
-  
+    
     const orderDetails = order.order_elements
       .map(item => `- ${item.quantity}x ${item.name}`)
       .join('\n')
-  
+    
     let message = `Bonjour, nous avons bien reçu votre commande comprenant :\n\n${orderDetails}\n\nElle est en cours de préparation. `
-  
+    
     if (isPaid) {
       message += `Notre livreur vous contactera dès que possible.\n\nMerci d'avoir choisi Bonsaï.`
     } else {
       message += `Notre livreur vous contactera dans quelques minutes.\n\nVous paierez ${order.total_price} Dhs lors de la livraison.\n\nMerci d'avoir choisi Bonsaï.`
     }
-  
+    
     const encodedMessage = encodeURIComponent(message)
     window.open(`https://wa.me/${clientPhone}?text=${encodedMessage}`, '_blank')
   }
