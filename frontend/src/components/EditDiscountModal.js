@@ -126,7 +126,7 @@ const EditDiscountModal = ({ discount, onClose, onSubmit, menuItems }) => {
                 />
                 <div className="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
                 <div
-                  className={`dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition-transform duration-200 ${
+                  className={`dot absolute w-6 h-6 rounded-full shadow -left-1 -top-1 transition-transform duration-200 ${
                     formData.is_active ? 'transform translate-x-6 bg-green-500' : 'bg-gray-500'
                   }`}
                 ></div>

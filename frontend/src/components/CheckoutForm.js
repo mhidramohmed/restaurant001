@@ -42,7 +42,7 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
             // - Optional country code (1-3 digits)
             // - Main phone number (at least 6 digits)
             // - Total length between 7 and 15 digits
-            const phoneRegex = /^(\+?\d{1,3})?[ -]?\d{6,14}$/
+            const phoneRegex = /^(\+?\d{1,3})?[ -]?\d{1,4}([ -]?\d{1,4}){1,4}$/;
             errorMsg = phoneRegex.test(value) ? '' : 'Numéro de téléphone invalide'
         }
     
