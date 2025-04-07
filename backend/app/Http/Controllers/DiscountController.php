@@ -47,22 +47,28 @@ class DiscountController extends Controller
 
             if ($request->hasFile('image')) {
                 // Define the folder path relative to the public storage
-                $path = 'public/images/DiscountImages/';
+                // $path = 'public/images/DiscountImages/';
 
-                Storage::makeDirectory($path);
+                // Storage::makeDirectory($path);
 
-                // Get original name and sanitize it
-                $originalName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
-                $extension = $request->image->getClientOriginalExtension();
+                // // Get original name and sanitize it
+                // $originalName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
+                // $extension = $request->image->getClientOriginalExtension();
 
-                // Generate a clean file name
-                $sanitizedFileName = Str::slug($originalName) . '.' . $extension;
-                $profileImage = date('YmdHis') . "_" . $sanitizedFileName;
+                // // Generate a clean file name
+                // $sanitizedFileName = Str::slug($originalName) . '.' . $extension;
+                // $profileImage = date('YmdHis') . "_" . $sanitizedFileName;
 
-                Storage::putFileAs(strtolower($path), $request->file('image'), $profileImage);
+                // Storage::putFileAs(strtolower($path), $request->file('image'), $profileImage);
 
-                // Generate a public URL for the stored file
-                $data['image'] = '/DiscountImages/'. $profileImage;
+                $filename = date('YmdHis') . '_' . Str::slug(pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $request->image->getClientOriginalExtension();
+
+                // Store the new image
+                $request->file('image')->storeAs('public/images/DiscountImages', $filename);
+
+                // Save the path in database
+                $data['image'] = '/DiscountImages/' . $filename;
+
             }
 
             $discount = Discount::create($data);
@@ -133,26 +139,40 @@ class DiscountController extends Controller
 
             if($request->hasFile('image')){
                 // Define the folder path
-                $path = 'public/images/DiscountImages/';
+                // $path = 'public/images/DiscountImages/';
 
-                // Delete old image if it exists (adjust path to match your storage structure)
-                if($discount->image) {
-                    Storage::delete('public/images' . $discount->image);
+                // // Delete old image if it exists (adjust path to match your storage structure)
+                // if($discount->image) {
+                //     Storage::delete('public/images' . $discount->image);
+                // }
+
+                if ($discount->image) {
+                    $oldPath = 'public/images' . $discount->image; // e.g. /DiscountImages/file.jpg → public/images/DiscountImages/file.jpg
+                    Storage::delete($oldPath);
                 }
 
-                // Get original name and sanitize it
-                $originalName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
-                $extension = $request->image->getClientOriginalExtension();
+                // // Get original name and sanitize it
+                // $originalName = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
+                // $extension = $request->image->getClientOriginalExtension();
 
-                // Generate a clean file name
-                $sanitizedFileName = Str::slug($originalName) . '.' . $extension;
-                $profileImage = date('YmdHis') . "_" . $sanitizedFileName;
+                // // Generate a clean file name
+                // $sanitizedFileName = Str::slug($originalName) . '.' . $extension;
+                // $profileImage = date('YmdHis') . "_" . $sanitizedFileName;
 
-                // Store the new image
-                Storage::putFileAs(strtolower($path), $request->file('image'), $profileImage);
+                // // Store the new image
+                // Storage::putFileAs(strtolower($path), $request->file('image'), $profileImage);
 
                 // Set the database value to be consistent with the store method
-                $data['image'] = '/DiscountImages/'. $profileImage;
+                // $data['image'] = '/DiscountImages/'. $profileImage;
+
+
+                $filename = date('YmdHis') . '_' . Str::slug(pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $request->image->getClientOriginalExtension();
+
+                // Store the new image
+                $request->file('image')->storeAs('public/images/DiscountImages', $filename);
+
+                // Save the path in database
+                $data['image'] = '/DiscountImages/' . $filename;
             }
 
             $discount->update($data);
