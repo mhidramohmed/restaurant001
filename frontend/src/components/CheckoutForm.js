@@ -5,11 +5,35 @@ import axios from '@/lib/axios'
 import { toast } from 'react-toastify'
 // import logos from '@/assets/img/logos.png'
 
+// Country codes for selection
+const countryCodes = [
+  { code: '+212', country: 'Morocco' },
+  { code: '+1', country: 'USA/Canada' },
+  { code: '+33', country: 'France' },
+  { code: '+34', country: 'Spain' },
+  { code: '+44', country: 'UK' },
+  { code: '+49', country: 'Germany' },
+  { code: '+39', country: 'Italy' },
+  { code: '+31', country: 'Netherlands' },
+  { code: '+32', country: 'Belgium' },
+  { code: '+41', country: 'Switzerland' },
+  { code: '+351', country: 'Portugal' },
+  { code: '+971', country: 'UAE' },
+  { code: '+966', country: 'Saudi Arabia' },
+  { code: '+20', country: 'Egypt' },
+  { code: '+216', country: 'Tunisia' },
+  { code: '+213', country: 'Algeria' },
+  // Add more country codes as needed
+]
+
 const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
     const [formData, setFormData] = useState({
         client_name: '',
         client_email: '',
-        client_phone: '',
+        client_phone: {
+            country_code: '+212', // Default to Morocco
+            number: ''
+        },
         client_address: '',
         payment_method: 'cash',
         card_details: {
@@ -21,7 +45,7 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
 
     const [errors, setErrors] = useState({
         client_email: '',
-        client_phone: '',
+        client_phone_number: '',
     })
 
     // Handle Input Change
@@ -33,25 +57,45 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
         if (name === 'client_email') {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
             errorMsg = emailRegex.test(value) ? '' : 'Email invalide'
+            
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                [name]: errorMsg,
+            }))
+            
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }))
+        } 
+        else if (name === 'country_code') {
+            setFormData((prevData) => ({
+                ...prevData,
+                client_phone: {
+                    ...prevData.client_phone,
+                    country_code: value
+                }
+            }))
         }
-    
-        if (name === 'client_phone') {
-            // New international phone regex
-            // Accepts:
-            // - Optional plus sign at the beginning
-            // - Optional country code (1-3 digits)
-            // - Main phone number (at least 6 digits)
-            // - Total length between 7 and 15 digits
-            const phoneRegex = /^(\+?\d{1,3})?[ -]?\d{1,4}([ -]?\d{1,4}){1,4}$/
-            errorMsg = phoneRegex.test(value) ? '' : 'Numéro de téléphone invalide'
+        else if (name === 'phone_number') {
+            // Validate phone number (only digits allowed)
+            const phoneRegex = /^\d{6,12}$/
+            errorMsg = phoneRegex.test(value) ? '' : 'Numéro de téléphone invalide (6-12 chiffres)'
+            
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                client_phone_number: errorMsg,
+            }))
+            
+            setFormData((prevData) => ({
+                ...prevData,
+                client_phone: {
+                    ...prevData.client_phone,
+                    number: value
+                }
+            }))
         }
-    
-        setErrors((prevErrors) => ({
-            ...prevErrors,
-            [name]: errorMsg,
-        }))
-
-        if (name.startsWith('card_')) {
+        else if (name.startsWith('card_')) {
             setFormData((prevData) => ({
                 ...prevData,
                 card_details: {
@@ -71,16 +115,18 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-
-        if (errors.client_email || errors.client_phone) {
+        if (errors.client_email || errors.client_phone_number) {
             toast.error("Corrigez les erreurs avant de soumettre.", { position: "top-right" })
             return
         }
 
+        // Combine country code and phone number
+        const fullPhoneNumber = formData.client_phone.country_code + formData.client_phone.number
+
         const orderData = {
             client_name: formData.client_name,
             client_email: formData.client_email,
-            client_phone: formData.client_phone,
+            client_phone: fullPhoneNumber,
             client_address: formData.client_address,
             total_price: totalPrice,
             payment_method: formData.payment_method,
@@ -96,13 +142,10 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
             const response = await axios.post('/api/orders', orderData)
             const { data } = response
 
-
-
             if (data.success && data.redirect_url && data.payment_data) {
                 // Create and submit form for CMI payment
                 localStorage.setItem('pendingOrder', JSON.stringify(data.order))
 
-                
                 const form = document.createElement('form')
                 form.method = 'POST'
                 form.action = data.redirect_url
@@ -120,7 +163,7 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
                 document.body.appendChild(form)
                 form.submit()
             } else if (formData.payment_method === 'cash') {
-                    onSuccess('cash')
+                onSuccess('cash')
                 toast.success('Commande créée avec succès!', { position: 'top-right' })
             }
         } catch (error) {
@@ -133,26 +176,76 @@ const CheckoutForm = ({ onClose, onSuccess, cartItems, totalPrice }) => {
             <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md">
                 <h2 className="text-xl font-bold mb-4 text-text">Valider la commande</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* Client Information Fields */}
-                    {[
-                        { name: 'client_name', placeholder: 'Nom Complet' },
-                        { name: 'client_email', placeholder: 'Adresse Email' },
-                        { name: 'client_phone', placeholder: 'Numéro de Téléphone' },
-                        { name: 'client_address', placeholder: 'Adresse de Livraison' },
-                    ].map(({ name, placeholder }) => (
-                        <div key={name}>
+                    {/* Client Name */}
+                    <div>
+                        <input
+                            type="text"
+                            name="client_name"
+                            placeholder="Nom Complet"
+                            value={formData.client_name}
+                            onChange={handleChange}
+                            required
+                            className="w-full h-12 px-4 bg-secondary text-text rounded-lg"
+                        />
+                    </div>
+                    
+                    {/* Client Email */}
+                    <div>
+                        <input
+                            type="email"
+                            name="client_email"
+                            placeholder="Adresse Email"
+                            value={formData.client_email}
+                            onChange={handleChange}
+                            required
+                            className={`w-full h-12 px-4 bg-secondary text-text rounded-lg ${errors.client_email ? 'border-red-500' : ''}`}
+                        />
+                        {errors.client_email && <p className="text-red-500 text-sm">{errors.client_email}</p>}
+                    </div>
+                    
+                    {/* Client Phone - Split into country code and number */}
+                    <div>
+                        <div className="flex gap-2">
+                            <select
+                                name="country_code"
+                                value={formData.client_phone.country_code}
+                                onChange={handleChange}
+                                className="w-1/3 h-12 px-2 bg-secondary text-text rounded-lg"
+                            >
+                                {countryCodes.map((country) => (
+                                    <option key={country.code} value={country.code}>
+                                        {country.code} ({country.country})
+                                    </option>
+                                ))}
+                            </select>
+                            
                             <input
-                                type="text"
-                                name={name}
-                                placeholder={placeholder}
-                                value={formData[name]}
+                                type="tel"
+                                name="phone_number"
+                                placeholder="Numéro de Téléphone"
+                                value={formData.client_phone.number}
                                 onChange={handleChange}
                                 required
-                                className={`w-full h-12 px-4 bg-secondary text-text rounded-lg ${errors[name] ? 'border-red-500' : ''}`}
-                                />
-                                {errors[name] && <p className="text-red-500 text-sm">{errors[name]}</p>}
+                                className={`w-2/3 h-12 px-4 bg-secondary text-text rounded-lg ${errors.client_phone_number ? 'border-red-500' : ''}`}
+                            />
                         </div>
-                    ))}
+                        {errors.client_phone_number && <p className="text-red-500 text-sm">{errors.client_phone_number}</p>}
+                        {/* <p className="text-gray-400 text-xs mt-1">Exemple: {formData.client_phone.country_code} 612345678</p> */}
+                        <p className="text-gray-400 text-xs mt-1">Exemple: +212 612345678</p>
+                    </div>
+                    
+                    {/* Client Address */}
+                    <div>
+                        <input
+                            type="text"
+                            name="client_address"
+                            placeholder="Adresse de Livraison"
+                            value={formData.client_address}
+                            onChange={handleChange}
+                            required
+                            className="w-full h-12 px-4 bg-secondary text-text rounded-lg"
+                        />
+                    </div>
 
                     {/* City just for client to see*/}
                     <div>
