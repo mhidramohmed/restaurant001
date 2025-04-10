@@ -12,7 +12,7 @@ class Category extends Model
 
     use SoftDeletes;
 
-    protected $fillable = ['name','image'];
+    protected $fillable = ['name','image','order'];
 
     // protected $appends = ['image_url'];
 
@@ -28,11 +28,16 @@ class Category extends Model
     }
 
 
-    // public function getImageUrlAttribute()
-    // {
-    //     if ($this->image) {
-    //         return url($this->image); // Assumes images are stored in the "storage/app/public" directory
-    //     }
-    //     return null; // Return null if no image is set
-    // }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($category) {
+            $category->order = $category->id;
+            $category->save();
+        });
+    }
+
+
 }

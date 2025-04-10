@@ -15,8 +15,11 @@ class CategoryController extends Controller
     {
         try {
 
-            // $categories = Category::with("menuItems")->get();
-            $categories = Category::all();
+            $categories = Category::with('menuItems')
+                ->whereHas('menuItems') // 👈 Only categories that have at least one menu item
+                ->orderBy('order')
+                ->get();
+
 
             // return $categories;
 
@@ -121,7 +124,7 @@ class CategoryController extends Controller
             ]);
 
 
-            
+
 
             if ($request->has('image')) {
                 // Define the folder path relative to the public storage
