@@ -7,25 +7,25 @@ use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-       public function index()
+   // List all reservations
+    public function index()
     {
         return response()->json([
             'data' => Reservation::all()
         ]);
     }
 
-    // Create a new reservation
+    // Store a new reservation
     public function store(Request $request)
     {
         $request->validate([
             'name'   => 'required|string|max:255',
-            'phone'  => 'required|string|max:20',
+            'email'  => 'nullable|email',
+            'phone'  => 'nullable|string|max:20',
             'date'   => 'required|date',
-            'time'   => 'required|date_format:H:i',
+            'time'   => 'nullable',
             'guests' => 'required|integer|min:1',
+            'status' => 'in:pending,confirmed,cancelled',
             'notes'  => 'nullable|string',
         ]);
 
@@ -48,6 +48,10 @@ class ReservationController extends Controller
     public function update(Request $request, $id)
     {
         $reservation = Reservation::findOrFail($id);
+
+        $request->validate([
+            'status' => 'in:pending,confirmed,cancelled',
+        ]);
 
         $reservation->update($request->all());
 

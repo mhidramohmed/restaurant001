@@ -13,15 +13,16 @@ return new class extends Migration
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->string('name'); // Name of the person reserving
+            $table->string('name');
             $table->string('phone')->nullable();
-            $table->date('date'); // Reservation date
-            $table->time('time')->nullable(); // Reservation time
-            $table->integer('guests')->default(1); // Number of people
-            $table->text('notes')->nullable(); // Optional message or requests
+            $table->date('date');
+            $table->time('time')->nullable();
+            $table->integer('guests')->default(1);
+            $table->text('notes')->nullable();
+            $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
             $table->timestamps();
-            $table->softDeletes(); // Soft delete column
+            $table->softDeletes();
+            $table->timestamps();
         });
     }
 

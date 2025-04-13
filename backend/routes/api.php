@@ -91,3 +91,7 @@ Route::get('/analytics/menu-items/quantity-sold', [OrderElementController::class
 
 Route::resource('discount', DiscountController::class);
 
+
+Route::apiResource('reservations', ReservationController::class);
+
+

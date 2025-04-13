@@ -20,5 +20,6 @@ class Reservation extends Model
         'time',
         'guests',
         'notes',
+        'status',
     ];
 }
