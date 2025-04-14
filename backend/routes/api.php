@@ -7,6 +7,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\MenuItemController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\OrderElementController;
 
 /*
