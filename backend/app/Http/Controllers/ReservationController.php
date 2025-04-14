@@ -20,12 +20,11 @@ class ReservationController extends Controller
     {
         $request->validate([
             'name'   => 'required|string|max:255',
-            'email'  => 'nullable|email',
-            'phone'  => 'nullable|string|max:20',
+            'phone'  => 'required|string|max:20',
             'date'   => 'required|date',
-            'time'   => 'nullable',
+            'time'   => 'required',
             'guests' => 'required|integer|min:1',
-            'status' => 'in:pending,confirmed,cancelled',
+            'status' => 'required|in:pending,confirmed,cancelled',
             'notes'  => 'nullable|string',
         ]);
 
