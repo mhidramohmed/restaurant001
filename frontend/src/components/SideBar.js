@@ -10,7 +10,8 @@ import { HiOutlineUser } from 'react-icons/hi'
 import { HiOutlineShoppingCart } from 'react-icons/hi'
 import { HiOutlineTag } from 'react-icons/hi'
 import { HiOutlineTrash } from 'react-icons/hi'
-import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
+import { HiOutlineChevronLeft, HiOutlineChevronRight  } from 'react-icons/hi'
+import { LuCalendarClock } from "react-icons/lu";
 import { usePathname } from 'next/navigation'
 
 import { useAuth } from '@/hooks/auth'
@@ -100,16 +101,7 @@ const SideBar = ({ onToggle, isCollapsed }) => {
             {!collapsed && <span>Menu</span>}
           </MainButton>
         </Link>
-        <Link href="/dashboard/customers">
-          <MainButton
-            className={`w-full border-0 text-text hover:bg-secondary hover:text-primary ${
-              pathname === '/dashboard/customers' ? 'bg-secondary text-primary' : ''
-            } ${collapsed ? 'justify-center' : 'flex items-center'}`}
-          >
-            <HiOutlineUser className={`${collapsed ? '' : 'mr-2'} text-xl`} />
-            {!collapsed && <span>Customers</span>}
-          </MainButton>
-        </Link>
+        
         <Link href="/dashboard/orders">
           <MainButton
             className={`w-full border-0 text-text hover:bg-secondary hover:text-primary ${
@@ -118,6 +110,16 @@ const SideBar = ({ onToggle, isCollapsed }) => {
           >
             <HiOutlineShoppingCart className={`${collapsed ? '' : 'mr-2'} text-xl`} />
             {!collapsed && <span>Orders</span>}
+          </MainButton>
+        </Link>
+        <Link href="/dashboard/reservations">
+          <MainButton
+            className={`w-full border-0 text-text hover:bg-secondary hover:text-primary ${
+              pathname === '/dashboard/reservations' ? 'bg-secondary text-primary' : ''
+            } ${collapsed ? 'justify-center' : 'flex items-center'}`}
+          >
+            <LuCalendarClock className={`${collapsed ? '' : 'mr-2'} text-xl`} />
+            {!collapsed && <span>Reservations</span>}
           </MainButton>
         </Link>
         <Link href="/dashboard/discounts">
@@ -130,6 +132,16 @@ const SideBar = ({ onToggle, isCollapsed }) => {
             {!collapsed && <span>Discounts</span>}
           </MainButton>
         </Link>
+        <Link href="/dashboard/customers">
+          <MainButton
+            className={`w-full border-0 text-text hover:bg-secondary hover:text-primary ${
+              pathname === '/dashboard/customers' ? 'bg-secondary text-primary' : ''
+            } ${collapsed ? 'justify-center' : 'flex items-center'}`}
+          >
+            <HiOutlineUser className={`${collapsed ? '' : 'mr-2'} text-xl`} />
+            {!collapsed && <span>Customers</span>}
+          </MainButton>
+        </Link>
         <Link href="/dashboard/trash">
           <MainButton
             className={`w-full border-0 text-text hover:bg-secondary hover:text-primary ${
@@ -140,6 +152,7 @@ const SideBar = ({ onToggle, isCollapsed }) => {
             {!collapsed && <span>Trashed</span>}
           </MainButton>
         </Link>
+        
       </div>
 
       {/* Log Out Button at the bottom */}
