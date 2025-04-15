@@ -60,26 +60,26 @@ const Page = () => {
         const now = new Date()
         
         switch(filters.dateRange) {
-          case 'today':
+          case 'today': {
             matchesDate = reservationDate.toDateString() === now.toDateString()
-            break
-          case 'tomorrow':
+            break }
+          case 'tomorrow': {
             const tomorrow = new Date()
             tomorrow.setDate(now.getDate() + 1)
             matchesDate = reservationDate.toDateString() === tomorrow.toDateString()
-            break
-          case 'thisWeek':
+            break }
+          case 'thisWeek': {
             const weekEnd = new Date()
             weekEnd.setDate(now.getDate() + 7)
             matchesDate = reservationDate >= now && reservationDate <= weekEnd
-            break
-          case 'nextWeek':
+            break }
+          case 'nextWeek': {
             const nextWeekStart = new Date()
             nextWeekStart.setDate(now.getDate() + 7)
             const nextWeekEnd = new Date()
             nextWeekEnd.setDate(now.getDate() + 14)
             matchesDate = reservationDate >= nextWeekStart && reservationDate <= nextWeekEnd
-            break
+            break }
           default:
             matchesDate = true
         }

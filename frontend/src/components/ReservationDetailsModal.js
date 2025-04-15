@@ -6,8 +6,8 @@ import { Calendar, Clock, Users, MessageSquare, Edit, Save, X } from 'lucide-rea
 
 //function to format date in French
 const formatDateFrench = (dateString) => {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('fr-FR', options);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+    return new Date(dateString).toLocaleDateString('fr-FR', options)
   }
 
 const ReservationDetailsModal = ({ reservation, onClose, mutate, open = true }) => {

@@ -11,7 +11,7 @@ import { HiOutlineShoppingCart } from 'react-icons/hi'
 import { HiOutlineTag } from 'react-icons/hi'
 import { HiOutlineTrash } from 'react-icons/hi'
 import { HiOutlineChevronLeft, HiOutlineChevronRight  } from 'react-icons/hi'
-import { LuCalendarClock } from "react-icons/lu";
+import { LuCalendarClock } from "react-icons/lu"
 import { usePathname } from 'next/navigation'
 
 import { useAuth } from '@/hooks/auth'
