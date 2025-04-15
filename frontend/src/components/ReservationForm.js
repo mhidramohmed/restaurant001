@@ -27,7 +27,6 @@ const countryCodes = [
 const ReservationForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     phone: {
       country_code: '+212', // Default to Morocco
       number: ''
@@ -39,7 +38,6 @@ const ReservationForm = ({ onClose }) => {
   })
 
   const [errors, setErrors] = useState({
-    email: '',
     phone_number: '',
   })
 
@@ -66,23 +64,7 @@ const ReservationForm = ({ onClose }) => {
 
     let errorMsg = ''
 
-    if (name === 'email') {
-      if (value) { // Only validate if email is provided (it's optional)
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        errorMsg = emailRegex.test(value) ? '' : 'Email invalide'
-      }
-      
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        [name]: errorMsg,
-      }))
-      
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }))
-    } 
-    else if (name === 'country_code') {
+    if (name === 'country_code') {
       setFormData((prevData) => ({
         ...prevData,
         phone: {
@@ -130,36 +112,46 @@ const ReservationForm = ({ onClose }) => {
   // Submit Handler
   const handleSubmit = async (e) => {
     e.preventDefault()
-
+  
+    // Check for empty phone when submitting
+    if (!formData.phone.number) {
+      setErrors(prev => ({
+        ...prev,
+        phone_number: 'Numéro de téléphone est obligatoire'
+      }))
+      toast.error("Le numéro de téléphone est obligatoire.", { position: "top-right" })
+      return
+    }
+  
     if (errors.email || errors.phone_number) {
       toast.error("Corrigez les erreurs avant de soumettre.", { position: "top-right" })
       return
     }
-
-    // Combine country code and phone number if provided
-    const fullPhoneNumber = formData.phone.number ? 
-      formData.phone.country_code + formData.phone.number : null
-
+  
+    // Always combine country code and phone number
+    const fullPhoneNumber = (formData.phone.country_code + formData.phone.number).replace(/\s+/g, '')  
     const reservationData = {
       name: formData.name,
-      email: formData.email || null,
       phone: fullPhoneNumber,
       date: formData.date,
-      time: formData.time || null,
+      time: formData.time,
       guests: formData.guests,
       notes: formData.notes || null,
       status: 'pending' // Default status
     }
-
+  
     try {
-      const response = await axios.post('/api/reservations', reservationData)
-      
-      toast.success('Réservation créée avec succès!', { position: 'top-right' })
-      onClose()
-    } catch (error) {
-      console.error('Reservation error:', error)
-      toast.error('Échec de la réservation. Réessayez.', { position: 'top-right' })
-    }
+        await axios.post('/api/reservations', reservationData)
+        
+        toast.success('Réservation créée avec succès!', { position: 'top-right' })
+        onClose()
+      } catch (error) {
+        console.error('Reservation error:', error.response?.data || error)
+        
+        // More detailed error message
+        const errorMessage = error.response?.data?.message || 'Échec de la réservation. Réessayez.'
+        toast.error(errorMessage, { position: 'top-right' })
+      }
   }
 
   // Get tomorrow's date in YYYY-MM-DD format for min date attribute
@@ -184,19 +176,6 @@ const ReservationForm = ({ onClose }) => {
         />
       </div>
       
-      {/* Email */}
-      <div>
-        <input
-          type="email"
-          name="email"
-          placeholder="Adresse Email (optionnel)"
-          value={formData.email}
-          onChange={handleChange}
-          className={`w-full h-12 px-4 bg-secondary text-text rounded-lg ${errors.email ? 'border-red-500' : ''}`}
-        />
-        {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-      </div>
-      
       {/* Phone - Split into country code and number */}
       <div>
         <div className="flex gap-2">
@@ -214,16 +193,17 @@ const ReservationForm = ({ onClose }) => {
           </select>
           
           <input
-            type="tel"
-            name="phone_number"
-            placeholder="Numéro de Téléphone (optionnel)"
-            value={formData.phone.number}
-            onChange={handleChange}
-            className={`w-2/3 h-12 px-4 bg-secondary text-text rounded-lg ${errors.phone_number ? 'border-red-500' : ''}`}
-          />
+  type="tel"
+  name="phone_number"
+  placeholder="Numéro de Téléphone"
+  value={formData.phone.number}
+  onChange={handleChange}
+  required
+  className={`w-2/3 h-12 px-4 bg-secondary text-text rounded-lg ${errors.phone_number ? 'border-red-500' : ''}`}
+/>
         </div>
         {errors.phone_number && <p className="text-red-500 text-sm">{errors.phone_number}</p>}
-        <p className="text-gray-400 text-xs mt-1">Exemple: 612345678</p>
+        <p className="text-gray-400 text-xs mt-1">Exemple: 612345678 (sans le zéro initial)</p>
       </div>
       
       {/* Date */}

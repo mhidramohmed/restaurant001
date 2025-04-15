@@ -21,17 +21,20 @@ const Header = ({ setSearchTerm }) => {
         <SearchBar setSearchTerm={setSearchTerm} className={'hidden md:block'} />
 
         <div className="flex gap-1 md:gap-4 items-center">
+          {/* Wider reservation button replacing the previous CircleButton */}
+          <button 
+  onClick={() => setShowReservationModal(true)}
+  className="flex items-center gap-1 bg-primary text-white h-10 md:h-12 px-3 md:px-4 py-2 rounded-full hover:bg-opacity-90 transition-all
+             text-sm md:text-base whitespace-nowrap flex-shrink"
+>
+  <HiOutlineCalendar className="text-base md:text-lg" />
+  <span className="hidden sm:inline">Réservation</span>
+  <span className="inline sm:hidden">Résever</span> {/* Short label on tiny screens */}
+</button>
+
           <CircleButton href="tel:+212605274561 " icon={<HiOutlinePhone />} />
           <CircleButton href="https://maps.app.goo.gl/z1u3aWaZuMSjftQx8" icon={<HiOutlineLocationMarker />} />
           
-          {/* Wider reservation button replacing the previous CircleButton */}
-          <button 
-            onClick={() => setShowReservationModal(true)}
-            className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-full hover:bg-opacity-90 transition-all"
-          >
-            <HiOutlineCalendar className="text-lg" />
-            <span className="hidden md:inline">Réservation</span>
-          </button>
         </div>
       </div>
       <div>
