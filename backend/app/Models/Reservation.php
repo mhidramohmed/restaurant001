@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Reservation extends Model
 {
@@ -12,9 +13,7 @@ class Reservation extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'user_id',
         'name',
-        
         'phone',
         'date',
         'time',

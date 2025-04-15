@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('phone')->nullable();
+            $table->string('phone');
             $table->date('date');
             $table->time('time')->nullable();
             $table->integer('guests')->default(1);
             $table->text('notes')->nullable();
-            $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'confirmed', 'Canceled', 'Completed'])->default('pending');
             $table->softDeletes();
             $table->timestamps();
         });

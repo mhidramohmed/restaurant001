@@ -24,7 +24,7 @@ class ReservationController extends Controller
             'date'   => 'required|date',
             'time'   => 'required',
             'guests' => 'required|integer|min:1',
-            'status' => 'required|in:pending,confirmed,cancelled',
+            'status' => 'required|in:pending,confirmed,Canceled,Completed',
             'notes'  => 'nullable|string',
         ]);
 
@@ -49,7 +49,13 @@ class ReservationController extends Controller
         $reservation = Reservation::findOrFail($id);
 
         $request->validate([
-            'status' => 'in:pending,confirmed,cancelled',
+            'name'   => 'string|max:255',
+            'phone'  => 'string|max:20',
+            'date'   => 'date',
+            'time'   => '',
+            'guests' => 'integer|min:1',
+            'status' => 'in:pending,confirmed,Canceled,Completed',
+            'notes'  => 'string',
         ]);
 
         $reservation->update($request->all());
