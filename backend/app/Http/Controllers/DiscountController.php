@@ -33,8 +33,10 @@ class DiscountController extends Controller
     public function store(Request $request)
     {
         try {
+
+
+
             $validated = $request->validate([
-                // 'menu_item_id' => 'required|exists:menu_items,id',
                 'image' => 'nullable|file|image',
                 'discount_percentage' => 'required|numeric',
                 'expires_at' => 'nullable|date',
