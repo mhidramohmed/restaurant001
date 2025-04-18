@@ -18,6 +18,7 @@ class CategorieResource extends JsonResource
             "id"=>$this->id,
             "name"=>$this->name,
             "image"=>url("/storage/images".($this->image)),
+            "order"=>$this->order,
         ];
     }
 }
