@@ -3,18 +3,19 @@
 import { useAuth } from '@/hooks/auth'
 import Loading from '@/app/(app)/Loading'
 
-const AppLayout = ({ children }) => {
-    const { user } = useAuth({ middleware: 'auth' })
 
-    if (!user) {
-        return <Loading />
-    } 
+export default function RootLayout({ children }) {
+  const { user } = useAuth({ middleware: 'auth' })
 
-    return (
-        <div className="min-h-screen bg-gray-100">
-            <main>{children}</main>
-        </div>
-    )
+  if (!user) {
+    return <Loading />
+  }
+
+  return (
+    <html lang="en">
+      <body>
+        {children}
+      </body>
+    </html>
+  )
 }
-
-export default AppLayout

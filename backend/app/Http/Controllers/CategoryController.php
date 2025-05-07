@@ -16,7 +16,7 @@ class CategoryController extends Controller
         try {
 
             $categories = Category::with('menuItems')
-                ->whereHas('menuItems') // 👈 Only categories that have at least one menu item
+                // ->whereHas('menuItems') // 👈 Only categories that have at least one menu item
                 ->orderBy('order')
                 ->get();
 

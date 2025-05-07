@@ -24,7 +24,7 @@ class ReservationController extends Controller
             'date'   => 'required|date',
             'time'   => 'required',
             'guests' => 'required|integer|min:1',
-            'status' => 'required|in:pending,confirmed,Canceled,Completed',
+            'status' => 'required|in:pending,confirmed,canceled,completed',
             'notes'  => 'nullable|string',
         ]);
 
@@ -54,7 +54,7 @@ class ReservationController extends Controller
             'date'   => 'date',
             'time'   => '',
             'guests' => 'integer|min:1',
-            'status' => 'in:pending,confirmed,Canceled,Completed',
+            'status' => 'in:pending,confirmed,canceled,completed',
             'notes'  => 'string',
         ]);
 
