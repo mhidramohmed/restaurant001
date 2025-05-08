@@ -56,7 +56,8 @@ const ResponsiveReservationsTable = ({
     date: true,
     time: true,
     guests: true,
-    status: true
+    status: true,
+    created_at: true 
   })
   
   // Column dropdown state
@@ -88,16 +89,29 @@ const ResponsiveReservationsTable = ({
       setCurrentPage(pageNumber)
     }
   }
+
+  const formatDateTime = (dateString) => {
+    if (!dateString) return 'N/A'
+    const date = new Date(dateString)
+    return date.toLocaleString([], {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
   
   // Column definitions with labels
   const columns = [
     { id: 'id', label: 'ID' },
     { id: 'name', label: 'Name' },
     { id: 'phone', label: 'Phone' },
-    { id: 'date', label: 'Date' },
-    { id: 'time', label: 'Time' },
+    { id: 'date', label: 'Reservation Date' },
+    { id: 'time', label: 'Reservation Time' },
     { id: 'guests', label: 'Guests' },
-    { id: 'status', label: 'Status' }
+    { id: 'status', label: 'Status' },
+    { id: 'created_at', label: 'Booked On' }
   ]
   
   // Visible columns based on current state
@@ -142,6 +156,11 @@ const ResponsiveReservationsTable = ({
                     <ReservationStatusBadge status={reservation.status} />
                   </td>
                 )}
+                {visibleColumns.created_at && (
+    <td className="py-4 px-6 text-text text-sm">
+        {formatDateTime(reservation.created_at)}
+    </td>
+)}
               </tr>
             ))
           ) : (
@@ -208,7 +227,12 @@ const ResponsiveReservationsTable = ({
                   </div>
                 </div>
               )}
-              
+              {visibleColumns.created_at && (
+    <div className="grid grid-cols-2">
+        <span className="text-gray-500">Booked On:</span>
+        <span className="text-sm">{formatDateTime(reservation.created_at)}</span>
+    </div>
+)}
               {visibleColumns.id && (
                 <div className="grid grid-cols-2">
                   <span className="text-gray-500">ID:</span>

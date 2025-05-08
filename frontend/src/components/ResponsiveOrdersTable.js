@@ -35,7 +35,8 @@ const ResponsiveOrdersTable = ({
     client_address: true,
     order_status: true,
     payment_method: true,
-    payment_status: true
+    payment_status: true,
+    created_at: true
   })
   
   // Column dropdown state
@@ -75,7 +76,8 @@ const ResponsiveOrdersTable = ({
     { id: 'client_address', label: 'Client Address' },
     { id: 'order_status', label: 'Order Status' },
     { id: 'payment_method', label: 'Payment Method' },
-    { id: 'payment_status', label: 'Payment Status' }
+    { id: 'payment_status', label: 'Payment Status' },
+    { id: 'created_at', label: 'Date & Time' }
   ]
   
   // Visible columns based on current state
@@ -121,6 +123,17 @@ const ResponsiveOrdersTable = ({
                       {order.payment_status === 'paid' ? 'Paid' : 'Unpaid'}
                     </span>
                   </td>
+                )}
+                {visibleColumns.created_at && (
+                    <td className="py-4 px-6 text-text">
+                        {new Date(order.created_at).toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+})}
+                    </td>
                 )}
               </tr>
             ))
@@ -182,7 +195,18 @@ const ResponsiveOrdersTable = ({
                   <span>{order.payment_method}</span>
                 </div>
               )}
-              
+              {visibleColumns.created_at && (
+    <div className="grid grid-cols-2">
+        <span className="text-gray-500">Order Date:</span>
+        <span>{new Date(order.created_at).toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+})}</span>
+    </div>
+)}
               
              
               {visibleColumns.order_status && (
