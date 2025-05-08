@@ -16,10 +16,12 @@ class CategorieResource extends JsonResource
 
     {
         return [
-            "id"=>$this->id,
-            "name"=>$this->name,
-            "image"=>url("/storage/images".($this->image)),
-            "order"=>$this->order,
+            "id" => $this->id,
+            "name" => $this->name,
+            "image" => url("/storage/images".($this->image)),
+            "order" => $this->order,
+            "menu_items" => $this->whenLoaded('menuItems', $this->menuItems),
+            "menu_items_count" => $this->whenLoaded('menuItems', count($this->menuItems)),
         ];
     }
 
