@@ -11,9 +11,14 @@ import '@/app/global.css'
 const fetcher = (url) => axios.get(url).then((res) => res.data.data)
 
 const CategoryBar = () => {
-  const { data: categories, error } = useSWR("/api/categories", fetcher)
+  const { data: allCategories, error } = useSWR("/api/categories", fetcher)
   const [activeCategory, setActiveCategory] = useState(null)
   const [swiperInstance, setSwiperInstance] = useState(null)
+
+  // Filter categories to only show those with menu items
+  const categories = allCategories?.filter(category => 
+    category.menu_items && category.menu_items.length > 0
+  )
 
   useEffect(() => {
     if (!categories) return

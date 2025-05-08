@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { ChevronDown, X, Search, Calendar, SortAsc, SortDesc } from 'lucide-react'
+import { ChevronDown, X, Search, Calendar, Clock, CalendarDays } from 'lucide-react'
 
-const ReservationsFilterBar = ({ filters, setFilters, sortNewestFirst, setSortNewestFirst }) => {
+const ReservationsFilterBar = ({ filters, setFilters, sortByReservationDate, setSortByReservationDate, sortNewestFirst, setSortNewestFirst }) => {
   const [isStatusOpen, setIsStatusOpen] = useState(false)
   const [isDateOpen, setIsDateOpen] = useState(false)
   const statusRef = useRef(null)
@@ -45,6 +45,7 @@ const ReservationsFilterBar = ({ filters, setFilters, sortNewestFirst, setSortNe
       dateRange: null
     })
     setSortNewestFirst(true)
+    setSortByReservationDate(false)
   }
 
   return (
@@ -142,22 +143,30 @@ const ReservationsFilterBar = ({ filters, setFilters, sortNewestFirst, setSortNe
           )}
         </div>
 
-        {/* Sort Order Toggle */}
+        {/* Sort Type Toggle */}
+        <button
+          onClick={() => setSortByReservationDate(prev => !prev)}
+          className="flex items-center px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50"
+        >
+          {sortByReservationDate ? (
+            <>
+              <CalendarDays size={16} className="mr-2" />
+              <span>Sort by Reservation Date</span>
+            </>
+          ) : (
+            <>
+              <Clock size={16} className="mr-2" />
+              <span>Sort by Entry Date</span>
+            </>
+          )}
+        </button>
+
+        {/* Sort Direction Toggle */}
         <button
           onClick={() => setSortNewestFirst(prev => !prev)}
           className="flex items-center px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50"
         >
-          {sortNewestFirst ? (
-            <>
-              <SortDesc size={16} className="mr-2" />
-              <span>Newest First</span>
-            </>
-          ) : (
-            <>
-              <SortAsc size={16} className="mr-2" />
-              <span>Oldest First</span>
-            </>
-          )}
+          <span>{sortNewestFirst ? 'Newest First' : 'Oldest First'}</span>
         </button>
 
         {/* Clear All Filters */}

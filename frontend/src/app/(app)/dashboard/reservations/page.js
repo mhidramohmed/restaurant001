@@ -30,6 +30,7 @@ const Page = () => {
 
   const [selectedReservation, setSelectedReservation] = useState(null)
   const [sortNewestFirst, setSortNewestFirst] = useState(true)
+  const [sortByReservationDate, setSortByReservationDate] = useState(false)
 
   useEffect(() => {
     if (!user) {
@@ -95,14 +96,26 @@ const Page = () => {
   ])
 
   const sortedReservations = useMemo(() => {
+    if (!filteredReservations.length) return []
+    
     return [...filteredReservations].sort((a, b) => {
+      // Determine which date field to sort by
+      const getDateA = sortByReservationDate 
+          ? new Date(a.date + ' ' + (a.time || '00:00'))
+          : new Date(a.created_at || a.date) // Fallback to reservation date if entry date missing
+              
+      const getDateB = sortByReservationDate
+          ? new Date(b.date + ' ' + (b.time || '00:00'))
+          : new Date(b.created_at || b.date) // Fallback to reservation date if entry date missing
+      
+      // Sort by selected date type and direction
       if (sortNewestFirst) {
-        return new Date(b.date + ' ' + (b.time || '00:00')) - new Date(a.date + ' ' + (a.time || '00:00'))
+          return getDateB - getDateA // Newest first
       } else {
-        return new Date(a.date + ' ' + (a.time || '00:00')) - new Date(b.date + ' ' + (b.time || '00:00'))
+          return getDateA - getDateB // Oldest first
       }
     })
-  }, [filteredReservations, sortNewestFirst])
+  }, [filteredReservations, sortNewestFirst, sortByReservationDate])
 
   const handleRowClick = useCallback((reservation) => {
     setSelectedReservation(reservation)
@@ -133,6 +146,8 @@ const Page = () => {
           setFilters={setFilters}
           sortNewestFirst={sortNewestFirst}
           setSortNewestFirst={setSortNewestFirst}
+          sortByReservationDate={sortByReservationDate}
+          setSortByReservationDate={setSortByReservationDate}
         />
 
         {/* Enhanced Responsive Reservations Table */}

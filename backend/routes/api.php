@@ -96,3 +96,4 @@ Route::resource('discount', DiscountController::class);
 Route::apiResource('reservations', ReservationController::class);
 
 
+Route::post('/categories/reorder', [CategoryController::class, 'reorder']);
