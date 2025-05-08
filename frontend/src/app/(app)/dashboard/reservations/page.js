@@ -102,17 +102,17 @@ const Page = () => {
       // Determine which date field to sort by
       const getDateA = sortByReservationDate 
           ? new Date(a.date + ' ' + (a.time || '00:00'))
-          : new Date(a.created_at || a.date); // Fallback to reservation date if entry date missing
+          : new Date(a.created_at || a.date) // Fallback to reservation date if entry date missing
               
       const getDateB = sortByReservationDate
           ? new Date(b.date + ' ' + (b.time || '00:00'))
-          : new Date(b.created_at || b.date); // Fallback to reservation date if entry date missing
+          : new Date(b.created_at || b.date) // Fallback to reservation date if entry date missing
       
       // Sort by selected date type and direction
       if (sortNewestFirst) {
-          return getDateB - getDateA; // Newest first
+          return getDateB - getDateA // Newest first
       } else {
-          return getDateA - getDateB; // Oldest first
+          return getDateA - getDateB // Oldest first
       }
     })
   }, [filteredReservations, sortNewestFirst, sortByReservationDate])

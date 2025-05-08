@@ -223,4 +223,24 @@ class CategoryController extends Controller
 
         return response()->json(['message' => 'Category permanently deleted'], 200);
     }
+
+    public function reorder(Request $request)
+{
+    try {
+        $request->validate([
+            'categories' => 'required|array',
+            'categories.*.id' => 'required|exists:categories,id',
+            'categories.*.order' => 'required|integer'
+        ]);
+
+        foreach ($request->categories as $categoryData) {
+            Category::where('id', $categoryData['id'])
+                ->update(['order' => $categoryData['order']]);
+        }
+
+        return response()->json(['message' => 'Categories reordered successfully'], 200);
+    } catch (Exception $e) {
+        return response()->json(['error' => 'Failed to reorder categories'], 500);
+    }
+}
 }

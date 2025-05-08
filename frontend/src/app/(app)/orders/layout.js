@@ -7,7 +7,8 @@ import useSWR from 'swr'
 import axios from '@/lib/axios'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 
 const fetcher = async (url) => {
     const response = await axios.get(url)
@@ -23,10 +24,10 @@ const fetcher = async (url) => {
 const notificationSound = '/notification.mp3'
 
 // Create a context to share the data with child components
-export const DataContext = React.createContext({});
+export const DataContext = React.createContext({})
 
 const AppLayout = ({ children }) => {
-    const router = useRouter()
+    // const router = useRouter()
     const pathname = usePathname()
     const { user, logout } = useAuth({ middleware: 'auth' })
     
@@ -98,93 +99,93 @@ const AppLayout = ({ children }) => {
 
     // Handle initial data load and subsequent updates separately
     useEffect(() => {
-        if (!orders || !audio) return;
+        if (!orders || !audio) return
         
         // Convert orders to set of IDs
-        const currentOrderIds = new Set(orders.map(order => order.id));
+        const currentOrderIds = new Set(orders.map(order => order.id))
         
         if (initialDataLoadRef.current) {
             // Just update the previous IDs on first load, don't play sounds
-            previousOrderIdsRef.current = currentOrderIds;
+            previousOrderIdsRef.current = currentOrderIds
         } else {
             // Find truly new orders that weren't in the previous fetch
-            const newOrders = orders.filter(order => !previousOrderIdsRef.current.has(order.id));
+            const newOrders = orders.filter(order => !previousOrderIdsRef.current.has(order.id))
             
             if (newOrders.length > 0) {
                 try {
-                    audio.play().catch(e => console.error("Audio play error:", e));
+                    audio.play().catch(e => console.error("Audio play error:", e))
                 } catch (err) {
-                    console.error("Error playing notification sound:", err);
+                    console.error("Error playing notification sound:", err)
                 }
                 
                 // Auto-mark completed or cancelled orders as viewed
                 newOrders.forEach(order => {
                     if (order.order_status !== 'pending') {
-                        setViewedOrderIds(prev => new Set([...prev, order.id]));
+                        setViewedOrderIds(prev => new Set([...prev, order.id]))
                     }
-                });
+                })
             }
             
             // Update the previous IDs reference for next comparison
-            previousOrderIdsRef.current = currentOrderIds;
+            previousOrderIdsRef.current = currentOrderIds
         }
-    }, [orders, audio]);
+    }, [orders, audio])
 
     useEffect(() => {
-        if (!reservations || !audio) return;
+        if (!reservations || !audio) return
         
         // Convert reservations to set of IDs
-        const currentReservationIds = new Set(reservations.map(reservation => reservation.id));
+        const currentReservationIds = new Set(reservations.map(reservation => reservation.id))
         
         if (initialDataLoadRef.current) {
             // Just update the previous IDs on first load, don't play sounds
-            previousReservationIdsRef.current = currentReservationIds;
+            previousReservationIdsRef.current = currentReservationIds
         } else {
             // Find truly new reservations that weren't in the previous fetch
             const newReservations = reservations.filter(reservation => 
                 !previousReservationIdsRef.current.has(reservation.id)
-            );
+            )
             
             if (newReservations.length > 0) {
                 try {
-                    audio.play().catch(e => console.error("Audio play error:", e));
+                    audio.play().catch(e => console.error("Audio play error:", e))
                 } catch (err) {
-                    console.error("Error playing notification sound:", err);
+                    console.error("Error playing notification sound:", err)
                 }
                 
                 // Auto-mark completed or cancelled reservations as viewed
                 newReservations.forEach(reservation => {
                     if (reservation.status !== 'pending') {
-                        setViewedReservationIds(prev => new Set([...prev, reservation.id]));
+                        setViewedReservationIds(prev => new Set([...prev, reservation.id]))
                     }
-                });
+                })
             }
             
             // Update the previous IDs reference for next comparison
-            previousReservationIdsRef.current = currentReservationIds;
+            previousReservationIdsRef.current = currentReservationIds
         }
-    }, [reservations, audio]);
+    }, [reservations, audio])
 
     // After initial data is loaded for both orders and reservations, set initialization flag to false
     useEffect(() => {
         if (initialDataLoadRef.current && orders && reservations) {
             // Wait a bit to ensure everything is processed before enabling notifications
             const timer = setTimeout(() => {
-                initialDataLoadRef.current = false;
-            }, 1000);
+                initialDataLoadRef.current = false
+            }, 1000)
             
-            return () => clearTimeout(timer);
+            return () => clearTimeout(timer)
         }
-    }, [orders, reservations]);
+    }, [orders, reservations])
 
     // Function to mark order as viewed
     const markOrderViewed = (orderId) => {
-        setViewedOrderIds(prev => new Set([...prev, orderId]));
+        setViewedOrderIds(prev => new Set([...prev, orderId]))
     }
 
     // Function to mark reservation as viewed
     const markReservationViewed = (reservationId) => {
-        setViewedReservationIds(prev => new Set([...prev, reservationId]));
+        setViewedReservationIds(prev => new Set([...prev, reservationId]))
     }
 
     if (!user) {
@@ -194,12 +195,12 @@ const AppLayout = ({ children }) => {
     // Get unviewed pending counts for badges
     const pendingOrdersCount = orders?.filter(
         order => order.order_status === 'pending' && !viewedOrderIds.has(order.id)
-    ).length || 0;
+    ).length || 0
     
     // Fixed - use consistent variable name and property check
     const pendingReservationsCount = reservations?.filter(
         reservation => reservation.status === 'pending' && !viewedReservationIds.has(reservation.id)
-    ).length || 0;
+    ).length || 0
 
     // Context value to pass to children
     const contextValue = {
@@ -213,13 +214,6 @@ const AppLayout = ({ children }) => {
         reservationsError,
         viewedOrderIds,
         viewedReservationIds // Make sure to include this in the context
-    }
-
-    // Safely log data - only if it exists
-    if (process.env.NODE_ENV === 'development' && reservations) {
-        console.log('Reservations data:', reservations);
-        console.log('Viewed reservation IDs:', [...viewedReservationIds]);
-        console.log('Pending reservations count:', pendingReservationsCount);
     }
     
     return (
