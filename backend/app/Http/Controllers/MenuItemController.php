@@ -64,7 +64,7 @@ class MenuItemController extends Controller
                 $profileImage = date('YmdHis') . "_" . $sanitizedFileName;
 
                 // Store the file in the public disk
-                Storage::putFileAs(strtolower($path), $request->image, $profileImage);
+                Storage::putFileAs($path, $request->image, $profileImage);
 
                 // Generate a public URL for the stored file
                 $data['image'] = '/MenuItemsImages/'. $profileImage;
@@ -163,7 +163,7 @@ class MenuItemController extends Controller
                 $profileImage = date('YmdHis') . "_" . $sanitizedFileName;
 
                 // Store the file in the public disk
-                Storage::putFileAs(strtolower($path), $request->image, $profileImage);
+                Storage::putFileAs($path, $request->image, $profileImage);
 
                 // Generate a public URL for the stored file
                 $data['image'] = '/MenuItemsImages/'. $profileImage;
